@@ -20,6 +20,7 @@ namespace WPFHook
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// i am adding this part for a new commit to check myself
     /// </summary>
     public partial class MainWindow : Window
     {
