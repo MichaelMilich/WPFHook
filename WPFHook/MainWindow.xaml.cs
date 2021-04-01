@@ -26,6 +26,7 @@ namespace WPFHook
     {
         #region GUI
         private int counter = 0;
+        private HookManager manager;
         public MainWindow()
         {
             InitializeComponent();
@@ -34,15 +35,17 @@ namespace WPFHook
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
-
-            for (int i = 0; i < 200; i++)
-            {
-                AddLine(counter++ + ": Initial data");
-            }
-            SetHook();
+            AddLine(counter++ + ": Initial data");
+            manager = new HookManager();
+            manager.WindowChanged += Manager_WindowChanged;
         }
 
-        public void AddLine(string text)
+        private void Manager_WindowChanged(object sender, string e)
+        {
+            AddLine(counter++ +": "+ e);
+        }
+
+        private void AddLine(string text)
         {
             outputBox.AppendText(text);
             outputBox.AppendText("\u2028"); // Linebreak, not paragraph break
@@ -50,60 +53,11 @@ namespace WPFHook
         }
         void DataWindow_Closing(object sender, CancelEventArgs e)
         {
-            MessageBox.Show("Closing called");
-            UnHook();
+          // MessageBox.Show("Closing called");
+            manager.UnHook();
         }
         #endregion
 
 
-        #region hook foreground events
-        WinEventDelegate dele = null;
-        IntPtr m_hhook = IntPtr.Zero;
-        private void SetHook()
-        {
-            dele = new WinEventDelegate(WinEventProc);
-            m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
-        }
-        private void UnHook()
-        {
-            UnhookWinEvent(m_hhook);
-            dele = null;
-        }
-
-        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
-
-        [DllImport("user32.dll")]
-        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
-
-        private const uint WINEVENT_OUTOFCONTEXT = 0;
-        private const uint EVENT_SYSTEM_FOREGROUND = 3;
-
-        [DllImport("user32.dll")]
-        static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
-
-        private string GetActiveWindowTitle()
-        {
-            const int nChars = 256;
-            IntPtr handle = IntPtr.Zero;
-            StringBuilder Buff = new StringBuilder(nChars);
-            handle = GetForegroundWindow();
-
-            if (GetWindowText(handle, Buff, nChars) > 0)
-            {
-                return Buff.ToString();
-            }
-            return null;
-        }
-
-        public void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
-        {
-            AddLine(GetActiveWindowTitle());
-        }
-        [DllImport("user32.dll")]
-        private static extern int UnhookWinEvent(IntPtr hWinEventHook);
-        #endregion
     }
 }
