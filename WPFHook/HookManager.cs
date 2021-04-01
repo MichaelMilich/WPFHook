@@ -1,54 +1,73 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace WPFHook
 {
-    public static class HookManager
+    public class HookManager
     {
-        public static void SubscribeToWindowEvents()
+        #region public 
+        public event EventHandler<string> WindowChanged;
+        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+        WinEventDelegate dele = null;
+        IntPtr m_hhook = IntPtr.Zero;
+        public HookManager()
         {
-            if (windowEventHook == IntPtr.Zero)
-            {
-                windowEventHook = SetWinEventHook(
-                    EVENT_SYSTEM_FOREGROUND, // eventMin
-                    EVENT_SYSTEM_FOREGROUND, // eventMax
-                    IntPtr.Zero,             // hmodWinEventProc
-                    WindowEventCallback,     // lpfnWinEventProc
-                    0,                       // idProcess
-                    0,                       // idThread
-                    WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
-
-                if (windowEventHook == IntPtr.Zero)
-                {
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-                }
-            }
+            SetHook();
         }
-        public static void UnSubscribeToWindowEvents()
+        public void UnHook()
         {
-            UnhookWinEvent(windowEventHook);
-            windowEventHook = IntPtr.Zero;
+            UnhookWinEvent(m_hhook);
+            dele = null;
         }
-        private static void WindowEventCallback(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        public void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            //Console.WriteLine("Event {0}", hwnd);
+            string windowTitle = GetActiveWindowTitle();
+            OnWindowChanged(windowTitle);
         }
+        protected virtual void OnWindowChanged(string windowTitle)
+        {
+            WindowChanged?.Invoke(this, windowTitle);
+        }
+        #endregion
 
-        private static IntPtr windowEventHook;
-
-        private delegate void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr SetWinEventHook(int eventMin, int eventMax, IntPtr hmodWinEventProc, WinEventProc lpfnWinEventProc, int idProcess, int idThread, int dwflags);
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern int UnhookWinEvent(IntPtr hWinEventHook);
-
+        #region private
         private const int WINEVENT_INCONTEXT = 4;
         private const int WINEVENT_OUTOFCONTEXT = 0;
         private const int WINEVENT_SKIPOWNPROCESS = 2;
         private const int WINEVENT_SKIPOWNTHREAD = 1;
-
         private const int EVENT_SYSTEM_FOREGROUND = 3;
+        private void SetHook()
+        {
+            dele = new WinEventDelegate(WinEventProc);
+            m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
+        }
+        private string GetActiveWindowTitle()
+        {
+            const int nChars = 256;
+            IntPtr handle = IntPtr.Zero;
+            StringBuilder Buff = new StringBuilder(nChars);
+            handle = GetForegroundWindow();
+
+            if (GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
+        }
+
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+        [DllImport("user32.dll")]
+        private static extern int UnhookWinEvent(IntPtr hWinEventHook);
+        #endregion
     }
 }
