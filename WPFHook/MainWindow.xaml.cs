@@ -27,6 +27,7 @@ namespace WPFHook
         #region GUI
         private int counter = 0;
         private HookManager manager;
+        // start main window - for commits
         public MainWindow()
         {
             InitializeComponent();
