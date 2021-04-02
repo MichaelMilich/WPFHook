@@ -9,11 +9,13 @@ namespace WPFHook
     {
         private ActivityLine previousActivity;
         private HookManager manager;
+        private SqliteDataAccess dataAccess;
         public event EventHandler<string> UpdateHistoryLog;
         public event EventHandler<string> UpdateWindowTitle;
         public MiddleMan()
         {
             manager = new HookManager();
+            dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
             manager.WindowChanged += Manager_WindowChanged;
         }
@@ -40,6 +42,7 @@ namespace WPFHook
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
             windowTitle = previousActivity.ToString();
             OnUpdateHistoryLog(windowTitle);
+            dataAccess.saveActivityLine(previousActivity);
             previousActivity = new ActivityLine(DateTime.Now, e.process.MainWindowTitle, e.process.ProcessName);
         }
         public void appClosing()
