@@ -26,7 +26,8 @@ namespace WPFHook
     {
         #region GUI
         private int counter = 0;
-        private HookManager manager;
+        //private HookManager manager;
+        private MiddleMan middleMan;
         // start main window - for commits
         public MainWindow()
         {
@@ -37,25 +38,34 @@ namespace WPFHook
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             AddLine(counter++ + ": Initial data");
-            manager = new HookManager();
-            manager.WindowChanged += Manager_WindowChanged;
+            middleMan = new MiddleMan();
+            middleMan.UpdateHistoryLog += MiddleMan_UpdateHistoryLog;
+            middleMan.UpdateWindowTitle += MiddleMan_UpdateWindowTitle;
+            //manager = new HookManager();
+            //manager.WindowChanged += Manager_WindowChanged;
         }
 
-        private void Manager_WindowChanged(object sender, string e)
+        private void MiddleMan_UpdateWindowTitle(object sender, string e)
         {
-            AddLine(counter++ +": "+ e);
+            currentAppBox.Text = e;
+        }
+
+        private void MiddleMan_UpdateHistoryLog(object sender, string e)
+        {
+            AddLine(counter++ + ": " + e);
         }
 
         private void AddLine(string text)
         {
-            outputBox.AppendText(text);
-            outputBox.AppendText("\u2028"); // Linebreak, not paragraph break
-            outputBox.ScrollToEnd();
+            historyLogBox.AppendText(text);
+            historyLogBox.AppendText("\u2028"); // Linebreak, not paragraph break
+            historyLogBox.ScrollToEnd();
         }
         void DataWindow_Closing(object sender, CancelEventArgs e)
         {
-          // MessageBox.Show("Closing called");
-            manager.UnHook();
+            // MessageBox.Show("Closing called");
+            // manager.UnHook();
+            middleMan.appClosing();
         }
         #endregion
 

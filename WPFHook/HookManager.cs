@@ -9,7 +9,7 @@ namespace WPFHook
     public class HookManager
     {
         #region public 
-        public event EventHandler<string> WindowChanged;
+        public event EventHandler<WindowChangedEventArgs> WindowChanged;
         delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
         WinEventDelegate dele = null;
         IntPtr m_hhook = IntPtr.Zero;
@@ -29,11 +29,13 @@ namespace WPFHook
             windowTitle = DateTime.Now.ToString("HH:mm:ss") + " || ";
             windowTitle += foregroundProcess.MainWindowTitle + " || ";
             windowTitle += "tags (to be implemented)";
-            OnWindowChanged(windowTitle);
+            OnWindowChanged(foregroundProcess);
         }
-        protected virtual void OnWindowChanged(string windowTitle)
+        protected virtual void OnWindowChanged(Process foregroundProcess)
         {
-            WindowChanged?.Invoke(this, windowTitle);
+            WindowChangedEventArgs args = new WindowChangedEventArgs();
+            args.process = foregroundProcess;
+            WindowChanged?.Invoke(this, args);
         }
         #endregion
 
