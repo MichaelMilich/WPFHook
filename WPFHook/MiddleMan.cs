@@ -1,42 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace WPFHook
 {
     class MiddleMan
     {
+        private ActivityLine previousActivity;
         private HookManager manager;
         public event EventHandler<string> UpdateHistoryLog;
         public event EventHandler<string> UpdateWindowTitle;
         public MiddleMan()
         {
             manager = new HookManager();
+            previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
             manager.WindowChanged += Manager_WindowChanged;
+        }
+        public void AfterSettingSubscribers()
+        {
+            string s = "process : " + previousActivity.FGProcessName + " || window title : " + previousActivity.FGWindowName;
+            OnUpdateWindowTitle(s);
         }
         /// <summary>
         /// Event Handler - listens to events in the hook manager.
         /// It processes the data and sends it to GUI. 
         /// It sends to window title text box the foreground process window title.
-        /// To the history log it sends a log of the previous app - to be implemented
+        /// To the history log it sends a log of the previous app 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
             // send the current window title to the app.
-            string windowTitle = e.process.MainWindowTitle;
+            string windowTitle = "process : " + e.process.ProcessName + " || window title : " + e.process.MainWindowTitle;
             OnUpdateWindowTitle(windowTitle);
 
             // send to history log the time of the previous app
-            // ---------- TO BE IMPLEMENTED-------------------
-            windowTitle = "";
-            windowTitle = DateTime.Now.ToString("HH:mm:ss") + " || ";
-            windowTitle += e.process.MainWindowTitle + " || ";
-            windowTitle += "tags (to be implemented)";
+            previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
+            windowTitle = previousActivity.ToString();
             OnUpdateHistoryLog(windowTitle);
+            previousActivity = new ActivityLine(DateTime.Now, e.process.MainWindowTitle, e.process.ProcessName);
         }
-
         public void appClosing()
         {
             manager.UnHook();

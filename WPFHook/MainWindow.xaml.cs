@@ -41,6 +41,7 @@ namespace WPFHook
             middleMan = new MiddleMan();
             middleMan.UpdateHistoryLog += MiddleMan_UpdateHistoryLog;
             middleMan.UpdateWindowTitle += MiddleMan_UpdateWindowTitle;
+            middleMan.AfterSettingSubscribers();
             //manager = new HookManager();
             //manager.WindowChanged += Manager_WindowChanged;
         }
