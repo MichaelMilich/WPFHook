@@ -45,6 +45,10 @@ namespace WPFHook
             dataAccess.saveActivityLine(previousActivity);
             previousActivity = new ActivityLine(DateTime.Now, e.process.MainWindowTitle, e.process.ProcessName);
         }
+        public List<ActivityLine> LoadActivities()
+        {
+            return dataAccess.LoadActivities();
+        }
         public void appClosing()
         {
             manager.UnHook();

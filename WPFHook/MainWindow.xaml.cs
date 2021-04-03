@@ -68,8 +68,12 @@ namespace WPFHook
             // manager.UnHook();
             middleMan.appClosing();
         }
+        private void ShowActivityList_Click(object sender, RoutedEventArgs e)
+        {
+           ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();
+           subWindow.Show();
+           subWindow.ShowDataBase(middleMan.LoadActivities());
+        }
         #endregion
-
-
     }
 }

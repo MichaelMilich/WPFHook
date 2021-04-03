@@ -1,0 +1,28 @@
+﻿<Window x:Class="WPFHook.ActivityDatabaseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFHook"
+        mc:Ignorable="d"
+        Title="ActivityDatabaseWindow" Height="450" Width="800">
+    <Grid>
+        <Grid Margin="10">
+            <DataGrid Name="dgUsers" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Date" Binding="{Binding Date}" />
+                    <DataGridTextColumn Header="Time accessed Application" Binding="{Binding Time}" />
+                    <DataGridTextColumn Header="Main Window Name" Binding="{Binding FGWindowName}" />
+                    <DataGridTextColumn Header="Process Name" Binding="{Binding FGProcessName}" />
+                    <DataGridTextColumn Header="Time in Application" Binding="{Binding inAppTime}" />
+                    <DataGridTextColumn Header="Tag" Binding="{Binding Tag}" />
+                </DataGrid.Columns>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Details}" Margin="10" />
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</Window>

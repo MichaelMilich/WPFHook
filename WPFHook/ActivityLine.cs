@@ -5,16 +5,18 @@ using System.Text;
 
 namespace WPFHook
 {
-    class ActivityLine
+    public class ActivityLine
     {
         private DateTime dateAndTime;
         public DateTime DateAndTime => dateAndTime;
+
+        public int id;
         public string Date => dateAndTime.ToString("dd/MM/yyyy");
         public string Time => dateAndTime.ToString("HH:mm:ss");
         public string FGWindowName { get; set; }
         public string FGProcessName { get; set; }
         public TimeSpan inAppTime { get; set; }
-        public string InAppTimeString => string.Format("{0}:{1}:{2}", inAppTime.Hours, inAppTime.Minutes, inAppTime.Seconds);
+        public string InAppTime => string.Format("{0}:{1}:{2}", inAppTime.Hours, inAppTime.Minutes, inAppTime.Seconds);
         public string Tag { get; private set; }
         public void updateTag()
         {
@@ -22,6 +24,15 @@ namespace WPFHook
                 Tag = "distraction";
             else
                 Tag = "work";
+        }
+        public ActivityLine(Int64 id, string Date, string Time, string FGWindowName, string FGProcessName, string InAppTime, string Tag)
+        {
+            this.id = (int)id;
+            this.dateAndTime = ParseDateAndTime(Date, Time);
+            this.FGWindowName = FGWindowName;
+            this.FGProcessName = FGProcessName;
+            this.inAppTime = ParseTimeSpan(InAppTime);
+            this.Tag = Tag;
         }
         public ActivityLine(DateTime dateAndTime, string windowName,string processName, string tag)
         {
@@ -47,6 +58,11 @@ namespace WPFHook
             IFormatProvider culture = new CultureInfo("en-US", true);
             return DateTime.ParseExact(this.Date + " " + this.Time, "dd/MM/yyyy HH:mm:ss", culture);
         }
+        public DateTime ParseDateAndTime(string Date, string Time)
+        {
+            IFormatProvider culture = new CultureInfo("en-US", true);
+            return DateTime.ParseExact(Date + " " + Time, "dd/MM/yyyy HH:mm:ss", culture);
+        }
         public TimeSpan ParseTimeSpan(string time) => TimeSpan.Parse(time);
 
         public override string ToString()
@@ -55,7 +71,7 @@ namespace WPFHook
             s += FGProcessName + " || ";
             s += FGWindowName + " || ";
             s += Tag + " || ";
-            s += InAppTimeString;
+            s += InAppTime;
             return s;
         }
     }

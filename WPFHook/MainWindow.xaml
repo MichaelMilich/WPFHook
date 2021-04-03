@@ -5,17 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFHook"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="WPFHook" Height="450" Width="800"
         Closing="DataWindow_Closing" Background="DarkCyan">
-    <Grid>
-        <RichTextBox x:Name="historyLogBox"
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Background="LightGray">
+            <MenuItem Header="_File" >
+                <MenuItem Header="_Show Activity List" Click="ShowActivityList_Click"/>
+                <Separator />
+                <MenuItem Header="_Exit" />
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <RichTextBox x:Name="historyLogBox"
                      VerticalScrollBarVisibility="Visible" 
                      HorizontalScrollBarVisibility="Visible" 
                      IsReadOnly="True" Margin="10,102,0,0">
-            <FlowDocument/>
-        </RichTextBox>
-        <TextBox HorizontalAlignment="Left" Height="18" Margin="10,84,0,0" Text="Foreground Process History Log" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True" Background="LightGray"/>
-        <TextBox x:Name="currentAppBox" HorizontalAlignment="Left" Height="26" Margin="10,35,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True"/>
-        <TextBox HorizontalAlignment="Left" Height="17" Margin="10,18,0,0" Text="current foreground App" TextWrapping="Wrap" VerticalAlignment="Top" Width="790"  IsReadOnly="True" Background="LightGray"/>
-    </Grid>
+                <FlowDocument/>
+            </RichTextBox>
+            <TextBox HorizontalAlignment="Left" Height="18" Margin="10,84,0,0" Text="Foreground Process History Log" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True" Background="LightGray"/>
+            <TextBox x:Name="currentAppBox" HorizontalAlignment="Left" Height="26" Margin="10,35,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True"/>
+            <TextBox HorizontalAlignment="Left" Height="17" Margin="10,18,0,0" Text="current foreground App" TextWrapping="Wrap" VerticalAlignment="Top" Width="790"  IsReadOnly="True" Background="LightGray"/>
+        </Grid>
+    </DockPanel>
 </Window>
