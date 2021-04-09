@@ -37,6 +37,7 @@ namespace WPFHook
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
+            Tagger.StartUp();
             AddLine(counter++ + ": Initial data");
             middleMan = new MiddleMan();
             middleMan.UpdateHistoryLog += MiddleMan_UpdateHistoryLog;

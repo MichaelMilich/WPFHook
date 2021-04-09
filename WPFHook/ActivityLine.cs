@@ -20,10 +20,7 @@ namespace WPFHook
         public string Tag { get; private set; }
         public void updateTag()
         {
-            if (FGWindowName.Equals("chrome"))
-                Tag = "distraction";
-            else
-                Tag = "work";
+            Tag = Tagger.getTag(FGWindowName, FGProcessName);
         }
         public ActivityLine(Int64 id, string Date, string Time, string FGWindowName, string FGProcessName, string InAppTime, string Tag)
         {
