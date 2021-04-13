@@ -6,12 +6,22 @@ using System.Text;
 
 namespace WPFHook
 {
+    /// <summary>
+    /// This class is the gateway to all hooks and event listeners of the app outside the app.
+    /// an object of this class will have all the objects that handle the hooks.
+    /// NEED TO WORK ON EXCEPTION HANDELING
+    /// </summary>
     public class HookManager
     {
+        // system event hooks that are in place.
+        // it might be a good idea to have a general hook object or interface that all hooks works with.
         private WindowHook windowHook;
         private MouseHook mouseHook;
         private Process lastProcess;
         public event EventHandler<WindowChangedEventArgs> WindowChanged;
+        /// <summary>
+        /// sets up all the hooks for the windows events.
+        /// </summary>
         public HookManager()
         {
             lastProcess = Process.GetCurrentProcess();
@@ -20,11 +30,21 @@ namespace WPFHook
             mouseHook = new MouseHook();
             mouseHook.WindowChanged += Manager_WindowChanged;
         }
+        /// <summary>
+        /// use this when closing the app
+        /// </summary>
         public void UnHook()
         {
             windowHook.UnHook();
             mouseHook.Stop();
         }
+        /// <summary>
+        /// the general subscriber for all windows events.
+        /// each objects publishes an event with the same delegate. they all sbscribed here.
+        /// if the window title or the process have changed - than invoke the rest of the events in the middle man and so on.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
             e.process = getForegroundProcess();
@@ -42,6 +62,13 @@ namespace WPFHook
                 }
             }
         }
+
+        /// <summary>
+        /// code i found in the internet
+        /// returns the foreground process by using processID.
+        /// need to read more about it and have edge cases delt with.
+        /// </summary>
+        /// <returns></returns>
         private Process getForegroundProcess()
         {
             uint processID = 0;

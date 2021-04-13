@@ -6,10 +6,19 @@ using System.Text;
 
 namespace WPFHook
 {
+    /// <summary>
+    /// one of the hook objects. handles mouse clicks.
+    /// each time the mouse clicks, an event is fired.
+    /// basicly code i found in the internet. it does the job overall.
+    ///  NEED TO WORK ON EXCEPTION HANDELING.
+    /// </summary>
     public class MouseHook
     {
         #region public 
         public event EventHandler<WindowChangedEventArgs> WindowChanged;
+        /// <summary>
+        /// sets up the hook for mouse clicks
+        /// </summary>
         public MouseHook()
         {
             _proc = HookCallback;
@@ -24,6 +33,12 @@ namespace WPFHook
         #region private 
         private LowLevelMouseProc _proc;
         private IntPtr _hookID;
+        /// <summary>
+        /// Sets up the hook for mouse clicks.
+        /// usses SetWindowsHookEx and sets the handling funtion to be HookCallback by the delegate LowLevelMouseProc proc.
+        /// </summary>
+        /// <param name="proc"></param>
+        /// <returns></returns>
         private IntPtr SetHook(LowLevelMouseProc proc)
         {
             using (Process curProcess = Process.GetCurrentProcess())
@@ -35,7 +50,15 @@ namespace WPFHook
         }
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-
+        /// <summary>
+        /// The code that is responsible to fire an event.
+        /// SetWindowsHookEx sets the hook up, HookCallback tells what to do once there was a click
+        /// at the end of the function MUST USE CallNextHookEx
+        /// </summary>
+        /// <param name="nCode">int that indicates if the messege should be processed by this function. if <0 than should be processed</param>
+        /// <param name="wParam">idetifier and pointer of the mouse messege</param>
+        /// <param name="lParam"> mouse messege structure</param>
+        /// <returns></returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
@@ -44,9 +67,16 @@ namespace WPFHook
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
-
+        /// <summary>
+        /// a constant used for the SetWindowsHookEx to indicate the function to
+        /// Installs a hook procedure that monitors low-level mouse input events.
+        /// </summary>
         private const int WH_MOUSE_LL = 14;
 
+        /// <summary>
+        /// struct of the mouse messeges.
+        /// example: if you want to see if the mouse moved, check if the messege is WM_MOUSEMOVE
+        /// </summary>
         private enum MouseMessages
         {
             WM_LBUTTONDOWN = 0x0201,
@@ -56,7 +86,10 @@ namespace WPFHook
             WM_RBUTTONDOWN = 0x0204,
             WM_RBUTTONUP = 0x0205
         }
-
+        /// <summary>
+        /// publishing event to the hook manager. 
+        /// should make it an interface since it is also used in the hook manager and window change hook.
+        /// </summary>
         protected virtual void OnWindowChanged()
         {
             WindowChangedEventArgs args = new WindowChangedEventArgs();

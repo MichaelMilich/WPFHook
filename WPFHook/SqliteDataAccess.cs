@@ -8,6 +8,12 @@ using System.Text;
 
 namespace WPFHook
 {
+    /// <summary>
+    /// The connection to the data base.
+    /// should make into bigger class that enables me to get spesific activities and so on.
+    /// uses dapper and SQLite.core.
+    /// ow can only write to the database and read all of the database.
+    /// </summary>
     class SqliteDataAccess
     {
         private string connectionString;
@@ -17,7 +23,8 @@ namespace WPFHook
         }
         public List<ActivityLine> LoadActivities()
         {
-            using(IDbConnection cnn =new SQLiteConnection(connectionString))
+            // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
+            using (IDbConnection cnn =new SQLiteConnection(connectionString))
             {
                 var output = cnn.Query<ActivityLine>("select * from Activity", new DynamicParameters());
                 return output.ToList();

@@ -34,7 +34,12 @@ namespace WPFHook
             InitializeComponent();
             Loaded += OnLoaded;
         }
-
+        /// <summary>
+        /// sets up the background classes and object for the application to run.
+        /// the background is : middle man+Tagger(logic), hookmanger (all events), database connection object
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="routedEventArgs"></param>
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             Tagger.StartUp();
@@ -43,8 +48,6 @@ namespace WPFHook
             middleMan.UpdateHistoryLog += MiddleMan_UpdateHistoryLog;
             middleMan.UpdateWindowTitle += MiddleMan_UpdateWindowTitle;
             middleMan.AfterSettingSubscribers();
-            //manager = new HookManager();
-            //manager.WindowChanged += Manager_WindowChanged;
         }
 
         private void MiddleMan_UpdateWindowTitle(object sender, string e)
@@ -65,10 +68,13 @@ namespace WPFHook
         }
         void DataWindow_Closing(object sender, CancelEventArgs e)
         {
-            // MessageBox.Show("Closing called");
-            // manager.UnHook();
             middleMan.appClosing();
         }
+        /// <summary>
+        /// on asking to show the data base , call the database window - show all database
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ShowActivityList_Click(object sender, RoutedEventArgs e)
         {
            ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();

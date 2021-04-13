@@ -7,11 +7,22 @@ namespace WPFHook
 {
     public static class Tagger
     {
+        /// <summary>
+        /// all the key wods that the app looks foor to see if there is a distraction.
+        /// </summary>
         public static string[] distractionWords;
         public static void StartUp()
         {
+            // get the key words to look for from the txt file at the beginning of the application.
             distractionWords= System.IO.File.ReadAllLines(@".\DistractionWords.txt");
         }
+        /// <summary>
+        /// sets the tag of the activity. can be "work" , "system" or "distraction"
+        /// checks the key words that indicate "distraction" in the process name and the main window title.
+        /// </summary>
+        /// <param name="windowName"></param>
+        /// <param name="processName"></param>
+        /// <returns></returns>
         public static string getTag(string windowName, string processName)
         {
             if (windowName.Equals(""))
