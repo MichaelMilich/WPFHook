@@ -6,50 +6,69 @@ using System.Text;
 
 namespace WPFHook
 {
+    /// <summary>
+    /// This class is the gateway to all hooks and event listeners of the app outside the app.
+    /// an object of this class will have all the objects that handle the hooks.
+    /// NEED TO WORK ON EXCEPTION HANDELING
+    /// </summary>
     public class HookManager
     {
-        #region public 
+        // system event hooks that are in place.
+        // it might be a good idea to have a general hook object or interface that all hooks works with.
+        private WindowHook windowHook;
+        private MouseHook mouseHook;
+        private Process lastProcess;
         public event EventHandler<WindowChangedEventArgs> WindowChanged;
-        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
-        WinEventDelegate dele = null;
-        IntPtr m_hhook = IntPtr.Zero;
+        /// <summary>
+        /// sets up all the hooks for the windows events.
+        /// </summary>
         public HookManager()
         {
-            SetHook();
+            lastProcess = Process.GetCurrentProcess();
+            windowHook = new WindowHook();
+            windowHook.WindowChanged += Manager_WindowChanged;
+            mouseHook = new MouseHook();
+            mouseHook.WindowChanged += Manager_WindowChanged;
         }
+        /// <summary>
+        /// use this when closing the app
+        /// </summary>
         public void UnHook()
         {
-            UnhookWinEvent(m_hhook);
-            dele = null;
+            windowHook.UnHook();
+            mouseHook.Stop();
         }
-        public void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        /// <summary>
+        /// the general subscriber for all windows events.
+        /// each objects publishes an event with the same delegate. they all sbscribed here.
+        /// if the window title or the process have changed - than invoke the rest of the events in the middle man and so on.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
-            string windowTitle ="";
-            Process foregroundProcess = getForegroundProcess();
-            windowTitle = DateTime.Now.ToString("HH:mm:ss") + " || ";
-            windowTitle += foregroundProcess.MainWindowTitle + " || ";
-            windowTitle += "tags (to be implemented)";
-            OnWindowChanged(foregroundProcess);
+            e.process = getForegroundProcess();
+            if(!e.process.MainWindowTitle.Equals(lastProcess.MainWindowTitle))
+            {
+                lastProcess = e.process;
+                WindowChanged?.Invoke(this, e);
+            }
+            else
+            {
+                if (!e.process.ProcessName.Equals(lastProcess.ProcessName))
+                {
+                    lastProcess = e.process;
+                    WindowChanged?.Invoke(this, e);
+                }
+            }
         }
-        protected virtual void OnWindowChanged(Process foregroundProcess)
-        {
-            WindowChangedEventArgs args = new WindowChangedEventArgs();
-            args.process = foregroundProcess;
-            WindowChanged?.Invoke(this, args);
-        }
-        #endregion
 
-        #region private
-        private const int WINEVENT_INCONTEXT = 4;
-        private const int WINEVENT_OUTOFCONTEXT = 0;
-        private const int WINEVENT_SKIPOWNPROCESS = 2;
-        private const int WINEVENT_SKIPOWNTHREAD = 1;
-        private const int EVENT_SYSTEM_FOREGROUND = 3;
-        private void SetHook()
-        {
-            dele = new WinEventDelegate(WinEventProc);
-            m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
-        }
+        /// <summary>
+        /// code i found in the internet
+        /// returns the foreground process by using processID.
+        /// need to read more about it and have edge cases delt with.
+        /// </summary>
+        /// <returns></returns>
         private Process getForegroundProcess()
         {
             uint processID = 0;
@@ -60,18 +79,9 @@ namespace WPFHook
             // NOTE: In some rare cases ProcessID will be NULL. Handle this how you want. 
             return foregroundProcess;
         }
-
-        [DllImport("user32.dll")]
-        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
-
         [DllImport("user32.dll")]
         static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll", SetLastError = true)]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-        [DllImport("user32.dll")]
-        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
-        [DllImport("user32.dll")]
-        private static extern int UnhookWinEvent(IntPtr hWinEventHook);
-        #endregion
     }
 }
