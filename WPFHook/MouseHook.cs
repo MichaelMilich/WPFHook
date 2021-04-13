@@ -7,8 +7,8 @@ using System.Text;
 namespace WPFHook
 {
     /// <summary>
-    /// one of the hook objects. handles mouse clicks.
-    /// each time the mouse clicks, an event is fired.
+    /// one of the hook objects. handles mouse moves.
+    /// each time the mouse moves, an event is fired.
     /// basicly code i found in the internet. it does the job overall.
     ///  NEED TO WORK ON EXCEPTION HANDELING.
     /// </summary>
@@ -17,7 +17,7 @@ namespace WPFHook
         #region public 
         public event EventHandler<WindowChangedEventArgs> WindowChanged;
         /// <summary>
-        /// sets up the hook for mouse clicks
+        /// sets up the hook for mouse moves
         /// </summary>
         public MouseHook()
         {
@@ -34,7 +34,7 @@ namespace WPFHook
         private LowLevelMouseProc _proc;
         private IntPtr _hookID;
         /// <summary>
-        /// Sets up the hook for mouse clicks.
+        /// Sets up the hook for mouse moves.
         /// usses SetWindowsHookEx and sets the handling funtion to be HookCallback by the delegate LowLevelMouseProc proc.
         /// </summary>
         /// <param name="proc"></param>
@@ -52,7 +52,7 @@ namespace WPFHook
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
         /// <summary>
         /// The code that is responsible to fire an event.
-        /// SetWindowsHookEx sets the hook up, HookCallback tells what to do once there was a click
+        /// SetWindowsHookEx sets the hook up, HookCallback tells what to do once there was a the mouse moved
         /// at the end of the function MUST USE CallNextHookEx
         /// </summary>
         /// <param name="nCode">int that indicates if the messege should be processed by this function. if <0 than should be processed</param>
@@ -61,7 +61,7 @@ namespace WPFHook
         /// <returns></returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
+            if (nCode >= 0 && MouseMessages.WM_MOUSEMOVE == (MouseMessages)wParam)
             {
                 OnWindowChanged();
             }
