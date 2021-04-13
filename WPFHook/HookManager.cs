@@ -10,6 +10,7 @@ namespace WPFHook
     /// This class is the gateway to all hooks and event listeners of the app outside the app.
     /// an object of this class will have all the objects that handle the hooks.
     /// NEED TO WORK ON EXCEPTION HANDELING
+    /// test 
     /// </summary>
     public class HookManager
     {
