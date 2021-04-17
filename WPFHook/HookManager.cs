@@ -20,6 +20,7 @@ namespace WPFHook
         private MouseHook mouseHook;
         private Process lastProcess;
         public event EventHandler<WindowChangedEventArgs> WindowChanged;
+        public event EventHandler<Exception> ExceptionHappened;
         /// <summary>
         /// sets up all the hooks for the windows events.
         /// </summary>
@@ -48,22 +49,28 @@ namespace WPFHook
         /// <param name="e"></param>
         private void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
-            e.process = getForegroundProcess();
-            if(!e.process.MainWindowTitle.Equals(lastProcess.MainWindowTitle))
+            try 
             {
-                lastProcess = e.process;
-                WindowChanged?.Invoke(this, e);
-            }
-            else
-            {
-                if (!e.process.ProcessName.Equals(lastProcess.ProcessName))
+                e.process = getForegroundProcess();
+                if (!e.process.MainWindowTitle.Equals(lastProcess.MainWindowTitle))
                 {
                     lastProcess = e.process;
                     WindowChanged?.Invoke(this, e);
                 }
+                else
+                {
+                    if (!e.process.ProcessName.Equals(lastProcess.ProcessName))
+                    {
+                        lastProcess = e.process;
+                        WindowChanged?.Invoke(this, e);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ExceptionHappened?.Invoke(this, ex);
             }
         }
-
         /// <summary>
         /// code i found in the internet
         /// returns the foreground process by using processID.

@@ -29,7 +29,15 @@ namespace WPFHook
             dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
             manager.WindowChanged += Manager_WindowChanged;
+            manager.ExceptionHappened += Manager_ExceptionHappened;
         }
+
+        private void Manager_ExceptionHappened(object sender, Exception e)
+        {
+            // write the exception in the log.
+            // more stuff.
+        }
+
         /// <summary>
         /// sets up the application to write that the current running foreground app is this one.
         /// cant be writen while setting up the object because the GUI doesnt subscribe yet to the events.
