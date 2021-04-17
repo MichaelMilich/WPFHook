@@ -1,0 +1,30 @@
+﻿This is the progress text of the program. all features i want to impliment and steps in the project for now, untill i find a better way.
+components of the project:
+GUI, Logic, DataBase.
+
+
+17/4/2021 - current work is on point 2.4 - The program should be able to handle exceptions. Next step is to adress all the GUI parts.
+
+----------------GUI-----------------
+1.1) the application should run even if we close the main window. - NOT IMPLEMETED.
+1.2) the main window should only say the current app (and tag) and to show two major timers (work and distraction or other) - NOT IMPLEMENTED.
+1.3) the GUI should be able to show the timeline of today according to the technical spesifications. - NOT IMPLEMENTED.
+
+--------------Logic---------------
+2.1) the MiddleMan should be the center of the logic -DONE.
+2.2) there should be anumber of hooks - DONE.
+2.3) The program should be able to see when i am distracted and show me todays report. - NOT IMPLEMENTED.
+2.4) The program should be able to handle exceptions - IN PROCESS.
+2.5) The program should be able to define key words for the distraction tag. - DONE.
+2.6) The program should let the user set his own tags and define key words. - NOT IMPLEMENTED.
+
+----------DataBase------------
+3.1) The program should be able to write a line into database - DONE.
+3.2) The program should be able to read the whole database - DONE.
+3.3) The program should be able to read and load a section of the database i want - NOT IMPLEMENTED.
+
+
+-------------FUTURE -------------
+F.1) Implement the application on android phone.
+F.2) connect both windows and android applications together.
+F.3) make a centrlized database with only the time and the tags.
