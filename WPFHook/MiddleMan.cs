@@ -20,6 +20,7 @@ namespace WPFHook
         //the events that will be triggered when other classes at this app fire an event.
         public event EventHandler<string> UpdateHistoryLog;
         public event EventHandler<string> UpdateWindowTitle;
+        public event EventHandler<Exception> ExceptionHappened;
         /// <summary>
         /// Sets up all the components of the application background such as : hooks manager, database connection, activityline object saving the last activity.
         /// </summary>
@@ -34,8 +35,7 @@ namespace WPFHook
 
         private void Manager_ExceptionHappened(object sender, Exception e)
         {
-            // write the exception in the log.
-            // more stuff.
+            ExceptionHappened?.Invoke(sender, e);
         }
 
         /// <summary>

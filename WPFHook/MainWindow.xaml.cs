@@ -44,10 +44,28 @@ namespace WPFHook
         {
             Tagger.StartUp();
             AddLine(counter++ + ": Initial data");
+            SetUpMiddleMan();
+        }
+        private void SetUpMiddleMan()
+        {
             middleMan = new MiddleMan();
             middleMan.UpdateHistoryLog += MiddleMan_UpdateHistoryLog;
             middleMan.UpdateWindowTitle += MiddleMan_UpdateWindowTitle;
+            middleMan.ExceptionHappened += MiddleMan_ExceptionHappened;
             middleMan.AfterSettingSubscribers();
+        }
+        private void RemoveMiddleMan()
+        {
+            middleMan.appClosing();
+            middleMan.UpdateHistoryLog -= MiddleMan_UpdateHistoryLog;
+            middleMan.UpdateWindowTitle -= MiddleMan_UpdateWindowTitle;
+            middleMan.ExceptionHappened -= MiddleMan_ExceptionHappened;
+        }
+        private void MiddleMan_ExceptionHappened(object sender, Exception e)
+        {
+            App.LogExceptions(e, e.Message);
+            RemoveMiddleMan();
+            SetUpMiddleMan();
         }
 
         private void MiddleMan_UpdateWindowTitle(object sender, string e)

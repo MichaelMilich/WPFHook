@@ -64,7 +64,6 @@ namespace WPFHook
                 Application.Current.Shutdown();
             }
         }
-
         public static async Task LogExceptions(Exception e, string unhandledExceptionType)
         {
             string s = DateTime.Now.ToString() + " Exception #" + counter + " :" + $"Unexpected Error Occurred: {unhandledExceptionType} " + $"The following exception occurred:\n\n{e}";
