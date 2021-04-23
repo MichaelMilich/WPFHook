@@ -32,7 +32,11 @@ namespace WPFHook
             manager.WindowChanged += Manager_WindowChanged;
             manager.ExceptionHappened += Manager_ExceptionHappened;
         }
-
+        /// <summary>
+        /// escalates the exception to the main window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Manager_ExceptionHappened(object sender, Exception e)
         {
             ExceptionHappened?.Invoke(sender, e);

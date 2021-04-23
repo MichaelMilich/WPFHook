@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
@@ -12,15 +13,18 @@ namespace WPFHook
 {
     /// <summary>
     /// Interaction logic for App.xaml
+    /// sets up the exceptions and icon of the application.
+    /// NOTE - NO STARTUP URI IN THE XAML FILE, THE STARTUP OFF MAIN WINDOW IS IN on_Stratup.
     /// </summary>
     public partial class App : Application
     {
         private static int counter = 1;
+        private MainWindow mainWindow;
         public App() : base()
         {
             SetupUnhandledExceptionHandling();
         }
-
+        #region Exceptions
         private void SetupUnhandledExceptionHandling()
         {
             // Catch exceptions from all threads in the AppDomain.
@@ -44,7 +48,7 @@ namespace WPFHook
 
         }
 
-        void ShowUnhandledException(Exception e, string unhandledExceptionType, bool promptUserForShutdown)
+        private void ShowUnhandledException(Exception e, string unhandledExceptionType, bool promptUserForShutdown)
         {
             App.LogExceptions(e, unhandledExceptionType);
 
@@ -70,5 +74,84 @@ namespace WPFHook
             using StreamWriter file = new StreamWriter("ExceptionLog.txt", append: true);
             await file.WriteLineAsync(s);
         }
+        #endregion
+        #region background run
+
+        private System.Windows.Forms.NotifyIcon notifyIcon;
+        private bool isExit;
+        /// <summary>
+        /// What to do with the application on startup
+        /// open a new MainWindow (NOTE, THE XMAL FILE DOESNT HAVE STARTUP URI).
+        /// set the notification icon.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            mainWindow = new MainWindow();
+            mainWindow.Closing += MainWindow_Closing;
+            mainWindow.Show();
+
+            notifyIcon = new System.Windows.Forms.NotifyIcon();
+            notifyIcon.DoubleClick += (s, args) => ShowMainWindow();
+            Uri uri = new Uri("/Letter_M_red_con.ico", UriKind.Relative);
+            Stream iconStream = Application.GetResourceStream(uri).Stream;
+            notifyIcon.Icon = new System.Drawing.Icon(iconStream);
+            notifyIcon.Visible = true;
+
+            isExit = false;
+            CreateContextMenu();
+        }
+        /// <summary>
+        /// the content of the icon.
+        /// </summary>
+        private void CreateContextMenu()
+        {
+            notifyIcon.ContextMenuStrip =
+              new System.Windows.Forms.ContextMenuStrip();
+            notifyIcon.ContextMenuStrip.Items.Add("Open").Click += (s, e) => ShowMainWindow();
+            notifyIcon.ContextMenuStrip.Items.Add("Exit").Click += (s, e) => ExitApplication();
+        }
+        /// <summary>
+        /// what to do on shutdown
+        /// </summary>
+        private void ExitApplication()
+        {
+            isExit = true;
+            mainWindow.CloseWindow();
+            notifyIcon.Dispose();
+            notifyIcon = null;
+        }
+
+        private void ShowMainWindow()
+        {
+            if (mainWindow.IsVisible)
+            {
+                if (mainWindow.WindowState == WindowState.Minimized)
+                {
+                    mainWindow.WindowState = WindowState.Normal;
+                }
+                mainWindow.Activate();
+            }
+            else
+            {
+                mainWindow.Show();
+            }
+        }
+        /// <summary>
+        /// listens to closing event of the main window,
+        /// only closes if the exit is called from the icon.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            if (!isExit)
+            {
+                e.Cancel = true;
+                mainWindow.Hide(); // A hidden window can be shown again, a closed one not
+            }
+        }
+        #endregion
     }
 }

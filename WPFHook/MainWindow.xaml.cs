@@ -35,6 +35,14 @@ namespace WPFHook
             Loaded += OnLoaded;
         }
         /// <summary>
+        /// the function called to close the window, it uses close along with remove middle man
+        /// </summary>
+        public void CloseWindow()
+        {
+            RemoveMiddleMan();
+            this.Close();
+        }
+        /// <summary>
         /// sets up the background classes and object for the application to run.
         /// the background is : middle man+Tagger(logic), hookmanger (all events), database connection object
         /// </summary>
@@ -56,10 +64,10 @@ namespace WPFHook
         }
         private void RemoveMiddleMan()
         {
-            middleMan.appClosing();
             middleMan.UpdateHistoryLog -= MiddleMan_UpdateHistoryLog;
             middleMan.UpdateWindowTitle -= MiddleMan_UpdateWindowTitle;
             middleMan.ExceptionHappened -= MiddleMan_ExceptionHappened;
+            middleMan.appClosing();
         }
         private void MiddleMan_ExceptionHappened(object sender, Exception e)
         {
@@ -84,10 +92,7 @@ namespace WPFHook
             historyLogBox.AppendText("\u2028"); // Linebreak, not paragraph break
             historyLogBox.ScrollToEnd();
         }
-        void DataWindow_Closing(object sender, CancelEventArgs e)
-        {
-            middleMan.appClosing();
-        }
+
         /// <summary>
         /// on asking to show the data base , call the database window - show all database
         /// </summary>

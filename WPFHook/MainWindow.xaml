@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WPFHook"
         mc:Ignorable="d"
         Title="WPFHook" Height="450" Width="800"
-        Closing="DataWindow_Closing" Background="DarkCyan">
+        Background="DarkCyan">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="LightGray">
             <MenuItem Header="_File" >
