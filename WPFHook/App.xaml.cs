@@ -91,26 +91,36 @@ namespace WPFHook
             mainWindow = new MainWindow();
             mainWindow.Closing += MainWindow_Closing;
             mainWindow.Show();
+            isExit = false;
+            CreateNotificationIcon();
+            
+        }
+        /// <summary>
+        /// creates the icon with all the notifications.
+        /// </summary>
+        private void CreateNotificationIcon()
+        {
+            notifyIcon = new System.Windows.Forms.NotifyIcon(); //sets the icon
+            notifyIcon.DoubleClick += (s, args) => ShowMainWindow(); // sets when double clicked, use ShowMainWindow()
 
-            notifyIcon = new System.Windows.Forms.NotifyIcon();
-            notifyIcon.DoubleClick += (s, args) => ShowMainWindow();
+            // seting up the icon
             Uri uri = new Uri("/Letter_M_red_con.ico", UriKind.Relative);
             Stream iconStream = Application.GetResourceStream(uri).Stream;
             notifyIcon.Icon = new System.Drawing.Icon(iconStream);
-            notifyIcon.Visible = true;
-
-            isExit = false;
-            CreateContextMenu();
-        }
-        /// <summary>
-        /// the content of the icon.
-        /// </summary>
-        private void CreateContextMenu()
-        {
-            notifyIcon.ContextMenuStrip =
-              new System.Windows.Forms.ContextMenuStrip();
+           
+            //setting up the context.
+            notifyIcon.ContextMenuStrip =new System.Windows.Forms.ContextMenuStrip();
             notifyIcon.ContextMenuStrip.Items.Add("Open").Click += (s, e) => ShowMainWindow();
             notifyIcon.ContextMenuStrip.Items.Add("Exit").Click += (s, e) => ExitApplication();
+            
+            //setting up the icon hover text and baloontip text
+            notifyIcon.Text = "M.DailyLog";
+            notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            notifyIcon.BalloonTipTitle = "M.DailyLog still runs in the background";
+            notifyIcon.BalloonTipText = "To exit, use notification bar";
+            
+            //making the notification icon visible, end of function.
+            notifyIcon.Visible = true;
         }
         /// <summary>
         /// what to do on shutdown
@@ -148,6 +158,7 @@ namespace WPFHook
         {
             if (!isExit)
             {
+                notifyIcon.ShowBalloonTip(3000);
                 e.Cancel = true;
                 mainWindow.Hide(); // A hidden window can be shown again, a closed one not
             }
