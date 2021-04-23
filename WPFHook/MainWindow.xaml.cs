@@ -28,6 +28,8 @@ namespace WPFHook
         private int counter = 0;
         //private HookManager manager;
         private MiddleMan middleMan;
+        private TimeSpan globaltimer;
+        private TimeSpan[] timeSpans;
         // start main window - for commits
         public MainWindow()
         {
@@ -53,13 +55,21 @@ namespace WPFHook
             Tagger.StartUp();
             AddLine(counter++ + ": Initial data");
             SetUpMiddleMan();
+            globaltimer = new TimeSpan();
+            timeSpans = new TimeSpan[4];
+            timeSpans[0] = globaltimer;
+            timeSpans[1] = new TimeSpan(); // work time span
+            timeSpans[2] = new TimeSpan(); // distraction time span
+            timeSpans[3] = new TimeSpan(); // system time span
         }
+
         private void SetUpMiddleMan()
         {
             middleMan = new MiddleMan();
             middleMan.UpdateHistoryLog += MiddleMan_UpdateHistoryLog;
             middleMan.UpdateWindowTitle += MiddleMan_UpdateWindowTitle;
             middleMan.ExceptionHappened += MiddleMan_ExceptionHappened;
+            middleMan.timer.Tick += GlobalTimer_Tick;
             middleMan.AfterSettingSubscribers();
         }
         private void RemoveMiddleMan()
@@ -103,6 +113,18 @@ namespace WPFHook
            ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();
            subWindow.Show();
            subWindow.ShowDataBase(middleMan.LoadActivities());
+        }
+       
+        private void GlobalTimer_Tick(object sender, EventArgs e)
+        {
+            globaltimer= globaltimer.Add(middleMan.timer.Interval);
+            if(middleMan.currentTag.Equals("work"))
+                timeSpans[1] = timeSpans[1].Add(middleMan.timer.Interval);
+            else if(middleMan.currentTag.Equals("distraction"))
+                timeSpans[2] = timeSpans[2].Add(middleMan.timer.Interval);
+            else if (middleMan.currentTag.Equals("system"))
+                timeSpans[3] = timeSpans[3].Add(middleMan.timer.Interval);
+            GlobalTimerDisplay.Text = string.Format("{0}:{1}:{2}", globaltimer.Hours, globaltimer.Minutes, globaltimer.Seconds);
         }
         #endregion
     }

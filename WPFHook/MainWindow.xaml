@@ -23,8 +23,10 @@
                 <FlowDocument/>
             </RichTextBox>
             <TextBox HorizontalAlignment="Left" Height="18" Margin="10,84,0,0" Text="Foreground Process History Log" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True" Background="LightGray"/>
-            <TextBox x:Name="currentAppBox" HorizontalAlignment="Left" Height="26" Margin="10,35,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True"/>
-            <TextBox HorizontalAlignment="Left" Height="17" Margin="10,18,0,0" Text="current foreground App" TextWrapping="Wrap" VerticalAlignment="Top" Width="790"  IsReadOnly="True" Background="LightGray"/>
+            <TextBox x:Name="currentAppBox" HorizontalAlignment="Left" Height="26" Margin="10,58,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True"/>
+            <TextBox HorizontalAlignment="Left" Height="17" Margin="10,41,0,0" Text="current foreground App" TextWrapping="Wrap" VerticalAlignment="Top" Width="790"  IsReadOnly="True" Background="LightGray"/>
+            <TextBox HorizontalAlignment="Left" Height="20" Margin="10,0,0,0" Text="Global Timer:" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True" Background="LightGray"/>
+            <TextBox x:Name="GlobalTimerDisplay" HorizontalAlignment="Left" Height="21" Margin="10,20,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="790"/>
         </Grid>
     </DockPanel>
 </Window>
