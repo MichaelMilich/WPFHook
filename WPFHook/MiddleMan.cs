@@ -18,7 +18,6 @@ namespace WPFHook
         public DispatcherTimer timer;
         public string currentTag;
         //the events that will be triggered when other classes at this app fire an event.
-        public event EventHandler<string> UpdateHistoryLog;
         public event EventHandler<string> UpdateWindowTitle;
         public event EventHandler<Exception> ExceptionHappened;
         /// <summary>
@@ -92,21 +91,11 @@ namespace WPFHook
             // send to history log the time of the previous app
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
             windowTitle = previousActivity.ToString();
-            OnUpdateHistoryLog(windowTitle);
             dataAccess.saveActivityLine(previousActivity);
             previousActivity = new ActivityLine(DateTime.Now, e.process.MainWindowTitle, e.process.ProcessName);
             currentTag = previousActivity.Tag;
         }
 
-        /// <summary>
-        /// the event that the object published to change texts.
-        /// </summary>
-        /// <param name="windowTitle"> what text to write on the history log</param>
-        protected virtual void OnUpdateHistoryLog(string windowTitle)
-        {
-
-            UpdateHistoryLog?.Invoke(this, windowTitle);
-        }
         /// <summary>
         /// the event that the object published to change texts
         /// </summary>
