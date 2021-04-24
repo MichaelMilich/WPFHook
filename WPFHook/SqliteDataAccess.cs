@@ -21,12 +21,32 @@ namespace WPFHook
         {
             connectionString = @"Data Source =.\ActivityDB.db; Version = 3;";
         }
+        /// <summary>
+        /// connects to the ActivityDB.db and queries the whole database
+        /// </summary>
+        /// <returns>List of ActivityLines that the database has (the whole database)</returns>
         public List<ActivityLine> LoadActivities()
         {
             // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
             using (IDbConnection cnn =new SQLiteConnection(connectionString))
             {
                 var output = cnn.Query<ActivityLine>("select * from Activity", new DynamicParameters());
+                return output.ToList();
+            }
+        }
+        /// <summary>
+        /// connects to the ActivityDB.db and queries data according the a parameter with a certian value
+        /// </summary>
+        /// <param name="parameter"> what we looking for, Date or Tag or App name and so on</param>
+        /// <param name="value">the value of the parameter for example 23/04/2021 or "work" or "chrome" and so on </param>
+        /// <returns></returns>
+        public List<ActivityLine> LoadActivities(string parameter, string value)
+        {
+            // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
+            using (IDbConnection cnn = new SQLiteConnection(connectionString))
+            {
+                string query = "select * from Activity where "+ parameter+" = '"+value+"'";
+                var output = cnn.Query<ActivityLine>(query, new DynamicParameters());
                 return output.ToList();
             }
         }
