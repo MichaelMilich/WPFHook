@@ -116,5 +116,10 @@ namespace WPFHook
             SystemTimerDisplay.Text = string.Format("{0}:{1}:{2}", timeSpans[3].Hours, timeSpans[3].Minutes, timeSpans[3].Seconds);
         }
         #endregion
+
+        private void LoadSecondToLastActivity_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(middleMan.LoadSecondToLastActivity().ToString());
+        }
     }
 }

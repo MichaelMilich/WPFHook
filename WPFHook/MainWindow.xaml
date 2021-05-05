@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFHook"
         mc:Ignorable="d"
-        Title="WPFHook" Height="200" Width="300"
+        Title="WPFHook"  SizeToContent="WidthAndHeight"
         Background="DarkCyan">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="LightGray">
             <MenuItem Header="_File" >
                 <MenuItem Header="_Show Activity List" Click="ShowActivityList_Click"/>
+                <MenuItem Header="_Show second to last activity" Click="LoadSecondToLastActivity_Click"/>
                 <Separator />
-                <MenuItem Header="_Exit" />
+                <MenuItem x:Name="ExitHeader" Header="_Exit" />
             </MenuItem>
         </Menu>
         <Grid>
@@ -22,7 +23,7 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

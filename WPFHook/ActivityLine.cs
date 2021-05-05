@@ -60,6 +60,10 @@ namespace WPFHook
             IFormatProvider culture = new CultureInfo("en-US", true);
             return DateTime.ParseExact(Date + " " + Time, "dd/MM/yyyy HH:mm:ss", culture);
         }
+        public void SetDateAndTime(DateTime dateAndTime)
+        {
+            this.dateAndTime = dateAndTime;
+        }
         public TimeSpan ParseTimeSpan(string time) => TimeSpan.Parse(time);
 
         public override string ToString()

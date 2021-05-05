@@ -90,11 +90,18 @@ namespace WPFHook
             base.OnStartup(e);
             mainWindow = new MainWindow();
             mainWindow.Closing += MainWindow_Closing;
+            mainWindow.ExitHeader.Click += ExitHeader_Click;
             mainWindow.Show();
             isExit = false;
             CreateNotificationIcon();
             
         }
+
+        private void ExitHeader_Click(object sender, RoutedEventArgs e)
+        {
+            ExitApplication();
+        }
+
         /// <summary>
         /// creates the icon with all the notifications.
         /// </summary>

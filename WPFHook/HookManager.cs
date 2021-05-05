@@ -21,6 +21,7 @@ namespace WPFHook
         private Process lastProcess;
         public event EventHandler<WindowChangedEventArgs> WindowChanged;
         public event EventHandler<Exception> ExceptionHappened;
+        public event EventHandler MouseMessaged;
         /// <summary>
         /// sets up all the hooks for the windows events.
         /// </summary>
@@ -31,7 +32,14 @@ namespace WPFHook
             windowHook.WindowChanged += Manager_WindowChanged;
             mouseHook = new MouseHook();
             mouseHook.WindowChanged += Manager_WindowChanged;
+            mouseHook.MouseMessaged += MouseHook_MouseMessaged;
         }
+
+        private void MouseHook_MouseMessaged(object sender, EventArgs e)
+        {
+            MouseMessaged?.Invoke(this, EventArgs.Empty);
+        }
+
         /// <summary>
         /// use this when closing the app
         /// </summary>

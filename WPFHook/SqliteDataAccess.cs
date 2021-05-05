@@ -50,6 +50,21 @@ namespace WPFHook
                 return output.ToList();
             }
         }
+        /// <summary>
+        /// connects to the ActivityDB.db and queries the second to last line
+        /// </summary>
+        /// <returns></returns>
+        public ActivityLine LoadSecondToLastActivity()
+        {
+            // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
+            using (IDbConnection cnn = new SQLiteConnection(connectionString))
+            {
+                string query = "select * from Activity order by ID DESC LIMIT 1,1 ";
+                var output = cnn.Query<ActivityLine>(query, new DynamicParameters());
+                return output.ToList().ElementAt(0);
+            }
+        }
+
         public void saveActivityLine(ActivityLine activity)
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionString))
