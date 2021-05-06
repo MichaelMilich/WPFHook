@@ -5,28 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFHook"
         mc:Ignorable="d"
-        Title="WPFHook" Height="450" Width="800"
+        Title="WPFHook"  SizeToContent="WidthAndHeight"
         Background="DarkCyan">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="LightGray">
             <MenuItem Header="_File" >
                 <MenuItem Header="_Show Activity List" Click="ShowActivityList_Click"/>
+                <MenuItem Header="_Show second to last activity" Click="LoadSecondToLastActivity_Click"/>
                 <Separator />
-                <MenuItem Header="_Exit" />
+                <MenuItem x:Name="ExitHeader" Header="_Exit" />
             </MenuItem>
         </Menu>
         <Grid>
-            <RichTextBox x:Name="historyLogBox"
-                     VerticalScrollBarVisibility="Visible" 
-                     HorizontalScrollBarVisibility="Visible" 
-                     IsReadOnly="True" Margin="10,102,0,0">
-                <FlowDocument/>
-            </RichTextBox>
-            <TextBox HorizontalAlignment="Left" Height="18" Margin="10,84,0,0" Text="Foreground Process History Log" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True" Background="LightGray"/>
-            <TextBox x:Name="currentAppBox" HorizontalAlignment="Left" Height="26" Margin="10,58,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True"/>
-            <TextBox HorizontalAlignment="Left" Height="17" Margin="10,41,0,0" Text="current foreground App" TextWrapping="Wrap" VerticalAlignment="Top" Width="790"  IsReadOnly="True" Background="LightGray"/>
-            <TextBox HorizontalAlignment="Left" Height="20" Margin="10,0,0,0" Text="Global Timer:" TextWrapping="Wrap" VerticalAlignment="Top" Width="790" IsReadOnly="True" Background="LightGray"/>
-            <TextBox x:Name="GlobalTimerDisplay" HorizontalAlignment="Left" Height="21" Margin="10,20,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="790"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="currentAppBox" Text="current App || Tag" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  IsReadOnly="True" Grid.Row="0" Grid.Column="1"/>
+            <TextBox Text="current foreground App" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"  Grid.Row="0" Grid.Column="0" Background="LightGray"/>
+            <TextBox Text="Global Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="1" Grid.Column="0" Background="LightGray"/>
+            <TextBox x:Name="GlobalTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="1" Grid.Column="1"/>
+            <TextBox Text="Work Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="2" Grid.Column="0" Background="LightGray"/>
+            <TextBox x:Name="WorkTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="2" Grid.Column="1"/>
+            <TextBox Text="Distraction Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="3" Grid.Column="0" Background="LightGray"/>
+            <TextBox x:Name="DistractionTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="3" Grid.Column="1"/>
+            <TextBox Text="System Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="4" Grid.Column="0" Background="LightGray"/>
+            <TextBox x:Name="SystemTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="4" Grid.Column="1"/>
+            <Button x:Name="ReportButton" Grid.Row="5"  Grid.ColumnSpan="2" >Daily Report</Button>
         </Grid>
     </DockPanel>
 </Window>

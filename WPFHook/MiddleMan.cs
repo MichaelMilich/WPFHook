@@ -18,7 +18,6 @@ namespace WPFHook
         public DispatcherTimer timer;
         public string currentTag;
         //the events that will be triggered when other classes at this app fire an event.
-        public event EventHandler<string> UpdateHistoryLog;
         public event EventHandler<string> UpdateWindowTitle;
         public event EventHandler<Exception> ExceptionHappened;
         /// <summary>
@@ -26,17 +25,23 @@ namespace WPFHook
         /// </summary>
         public MiddleMan()
         {
+            counter = 0;
             manager = new HookManager();
             dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
             currentTag = previousActivity.Tag;
             manager.WindowChanged += Manager_WindowChanged;
             manager.ExceptionHappened += Manager_ExceptionHappened;
+            manager.MouseMessaged += Manager_MouseMessaged;
             // setting the timers
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(100);
             timer.Start();
+            timer.Tick += Timer_Tick;
         }
+
+
+
         /// <summary>
         /// sets up the application to write that the current running foreground app is this one.
         /// cant be writen while setting up the object because the GUI doesnt subscribe yet to the events.
@@ -45,10 +50,24 @@ namespace WPFHook
         {
             string s = "process : " + previousActivity.FGProcessName + " || window title : " + previousActivity.FGWindowName +" || "+previousActivity.Tag;
             OnUpdateWindowTitle(s);
-        } 
+        }
+        /// <summary>
+        /// connects to the ActivityDB.db and queries the whole database
+        /// </summary>
+        /// <returns>List of ActivityLines that the database has (the whole database)</returns>
         public List<ActivityLine> LoadActivities()
         {
             return dataAccess.LoadActivities();
+        }
+        /// <summary>
+        /// connects to the ActivityDB.db and queries data according the a parameter with a certian value
+        /// </summary>
+        /// <param name="parameter"> what we looking for, Date or Tag or App name and so on</param>
+        /// <param name="value">the value of the parameter for example 23/04/2021 or "work" or "chrome" and so on </param>
+        /// <returns></returns>
+        public List<ActivityLine> LoadActivities(string parameter, string value)
+        {
+            return dataAccess.LoadActivities(parameter,value);
         }
         /// <summary>
         /// To be used when the application is closing - to Unhook and not forget any last bits of data
@@ -64,7 +83,9 @@ namespace WPFHook
         private ActivityLine previousActivity;
         private HookManager manager;
         private SqliteDataAccess dataAccess;
-        
+        private int counter;
+        private static bool isIdle = false;
+        private static readonly int idleTimeInMilliseconds = 300000;
         /// <summary>
         /// escalates the exception to the main window
         /// </summary>
@@ -85,27 +106,53 @@ namespace WPFHook
         /// <param name="e"></param>
         private void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
+            UpdatePreviousActivity(e);
             // send the current window title to the app.
-            string windowTitle = "process : " + e.process.ProcessName + " || window title : " + e.process.MainWindowTitle+" || " + previousActivity.Tag;
+            string windowTitle = "process : " + e.process.ProcessName + " || window title : " + e.process.MainWindowTitle + " || " + previousActivity.Tag;
             OnUpdateWindowTitle(windowTitle);
-
-            // send to history log the time of the previous app
+            counter = 0;
+            isIdle = false;
+        }
+        /// <summary>
+        /// updates the previousActivity and the current Tag and saves the activity in the database
+        /// </summary>
+        /// <param name="e"></param>
+        private void UpdatePreviousActivity(WindowChangedEventArgs e)
+        {
+            //set the previous time span
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
-            windowTitle = previousActivity.ToString();
-            OnUpdateHistoryLog(windowTitle);
             dataAccess.saveActivityLine(previousActivity);
             previousActivity = new ActivityLine(DateTime.Now, e.process.MainWindowTitle, e.process.ProcessName);
             currentTag = previousActivity.Tag;
         }
-
         /// <summary>
-        /// the event that the object published to change texts.
+        /// updates the previousActivity and the current Tag and saves the activity in the database
         /// </summary>
-        /// <param name="windowTitle"> what text to write on the history log</param>
-        protected virtual void OnUpdateHistoryLog(string windowTitle)
+        /// <param name="e"></param>
+        private void UpdatePreviousActivity(string MainWindowTitle, string ProcessName)
         {
-
-            UpdateHistoryLog?.Invoke(this, windowTitle);
+            //set the previous time span
+            previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
+            dataAccess.saveActivityLine(previousActivity);
+            previousActivity = new ActivityLine(DateTime.Now, MainWindowTitle, ProcessName);
+            currentTag = previousActivity.Tag;
+        }
+        /// <summary>
+        /// updates the previousActivity and the current Tag and saves the activity in the database
+        /// </summary>
+        /// <param name="e"></param>
+        private void UpdatePreviousActivity(ActivityLine activity)
+        {
+            //set the previous time span
+            previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
+            dataAccess.saveActivityLine(previousActivity);
+            previousActivity = activity;
+            previousActivity.SetDateAndTime(DateTime.Now);
+            currentTag = previousActivity.Tag;
+        }
+        public ActivityLine LoadSecondToLastActivity()
+        {
+            return dataAccess.LoadSecondToLastActivity();
         }
         /// <summary>
         /// the event that the object published to change texts
@@ -115,6 +162,30 @@ namespace WPFHook
         {
 
             UpdateWindowTitle?.Invoke(this, windowTitle);
+        }
+
+
+        private void Manager_MouseMessaged(object sender, EventArgs e)
+        {
+            // add here code that sets the previous activity to the pre-last activity in the database
+            if(isIdle)
+            {
+                ActivityLine activity = LoadSecondToLastActivity();
+                UpdatePreviousActivity(activity);
+                OnUpdateWindowTitle(activity.ToString());
+            }
+            counter = 0;
+            isIdle = false;
+        }
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            counter += 100;
+            if(counter > idleTimeInMilliseconds && !isIdle)
+            {
+                isIdle = true;
+                UpdatePreviousActivity("", "Idle");
+
+            }
         }
         #endregion
     }

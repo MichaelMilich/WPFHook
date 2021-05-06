@@ -53,7 +53,6 @@ namespace WPFHook
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             Tagger.StartUp();
-            AddLine(counter++ + ": Initial data");
             SetUpMiddleMan();
             globaltimer = new TimeSpan();
             timeSpans = new TimeSpan[4];
@@ -66,7 +65,6 @@ namespace WPFHook
         private void SetUpMiddleMan()
         {
             middleMan = new MiddleMan();
-            middleMan.UpdateHistoryLog += MiddleMan_UpdateHistoryLog;
             middleMan.UpdateWindowTitle += MiddleMan_UpdateWindowTitle;
             middleMan.ExceptionHappened += MiddleMan_ExceptionHappened;
             middleMan.timer.Tick += GlobalTimer_Tick;
@@ -74,7 +72,6 @@ namespace WPFHook
         }
         private void RemoveMiddleMan()
         {
-            middleMan.UpdateHistoryLog -= MiddleMan_UpdateHistoryLog;
             middleMan.UpdateWindowTitle -= MiddleMan_UpdateWindowTitle;
             middleMan.ExceptionHappened -= MiddleMan_ExceptionHappened;
             middleMan.appClosing();
@@ -89,18 +86,6 @@ namespace WPFHook
         private void MiddleMan_UpdateWindowTitle(object sender, string e)
         {
             currentAppBox.Text = e;
-        }
-
-        private void MiddleMan_UpdateHistoryLog(object sender, string e)
-        {
-            AddLine(counter++ + ": " + e);
-        }
-
-        private void AddLine(string text)
-        {
-            historyLogBox.AppendText(text);
-            historyLogBox.AppendText("\u2028"); // Linebreak, not paragraph break
-            historyLogBox.ScrollToEnd();
         }
 
         /// <summary>
@@ -124,8 +109,17 @@ namespace WPFHook
                 timeSpans[2] = timeSpans[2].Add(middleMan.timer.Interval);
             else if (middleMan.currentTag.Equals("system"))
                 timeSpans[3] = timeSpans[3].Add(middleMan.timer.Interval);
+
             GlobalTimerDisplay.Text = string.Format("{0}:{1}:{2}", globaltimer.Hours, globaltimer.Minutes, globaltimer.Seconds);
+            WorkTimerDisplay.Text = string.Format("{0}:{1}:{2}", timeSpans[1].Hours, timeSpans[1].Minutes, timeSpans[1].Seconds);
+            DistractionTimerDisplay.Text = string.Format("{0}:{1}:{2}", timeSpans[2].Hours, timeSpans[2].Minutes, timeSpans[2].Seconds);
+            SystemTimerDisplay.Text = string.Format("{0}:{1}:{2}", timeSpans[3].Hours, timeSpans[3].Minutes, timeSpans[3].Seconds);
         }
         #endregion
+
+        private void LoadSecondToLastActivity_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(middleMan.LoadSecondToLastActivity().ToString());
+        }
     }
 }
