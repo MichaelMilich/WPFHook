@@ -60,22 +60,45 @@ namespace WPFHook
             return dataAccess.LoadActivities();
         }
         /// <summary>
-        /// connects to the ActivityDB.db and queries data according the a parameter with a certian value
-        /// </summary>
-        /// <param name="parameter"> what we looking for, Date or Tag or App name and so on</param>
-        /// <param name="value">the value of the parameter for example 23/04/2021 or "work" or "chrome" and so on </param>
-        /// <returns></returns>
-        public List<ActivityLine> LoadActivities(string parameter, string value)
-        {
-            return dataAccess.LoadActivities(parameter,value);
-        }
-        /// <summary>
         /// To be used when the application is closing - to Unhook and not forget any last bits of data
         /// </summary>
         public void appClosing()
         {
             manager.UnHook();
             // maybe write the last process?
+        }
+        public ActivityLine LoadSecondToLastActivity()
+        {
+            return dataAccess.LoadSecondToLastActivity();
+        }
+        public string getDailyReport(DateTime date)
+        {
+            string parameter = "Date";
+            string value = date.ToString("dd/MM/yyyy");
+            TimeSpan workTime = new TimeSpan(0, 0, 0);
+            TimeSpan distractionTime = new TimeSpan(0, 0, 0);
+            TimeSpan systemTime = new TimeSpan(0, 0, 0);
+            List<ActivityLine> dailyList = dataAccess.LoadActivities(parameter, value);
+            foreach(ActivityLine line in dailyList)
+            {
+                switch(line.Tag)
+                {
+                    case "work":
+                        workTime = workTime.Add(line.inAppTime);
+                        break;
+                    case "distraction":
+                        distractionTime = workTime.Add(line.inAppTime);
+                        break;
+                    case "system":
+                        systemTime = workTime.Add(line.inAppTime);
+                        break;
+                }
+            }
+            string output = "on the " + date.ToString("dd/MM/yyyy") +
+                "\n you worked " + string.Format("{0}:{1}:{2}", workTime.Hours, workTime.Minutes, workTime.Seconds) +
+                "\n you were distracted " + string.Format("{0}:{1}:{2}", distractionTime.Hours, distractionTime.Minutes, distractionTime.Seconds) +
+                "\n computer had system time " + string.Format("{0}:{1}:{2}", systemTime.Hours, systemTime.Minutes, systemTime.Seconds);
+            return output;
         }
         #endregion
         #region private / protected
@@ -150,10 +173,7 @@ namespace WPFHook
             previousActivity.SetDateAndTime(DateTime.Now);
             currentTag = previousActivity.Tag;
         }
-        public ActivityLine LoadSecondToLastActivity()
-        {
-            return dataAccess.LoadSecondToLastActivity();
-        }
+
         /// <summary>
         /// the event that the object published to change texts
         /// </summary>

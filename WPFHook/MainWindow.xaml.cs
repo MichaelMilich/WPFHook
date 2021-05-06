@@ -121,5 +121,10 @@ namespace WPFHook
         {
             MessageBox.Show(middleMan.LoadSecondToLastActivity().ToString());
         }
+
+        private void ReportButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(middleMan.getDailyReport(DateTime.Today));
+        }
     }
 }

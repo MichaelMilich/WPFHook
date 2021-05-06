@@ -39,7 +39,7 @@
             <TextBox x:Name="DistractionTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="3" Grid.Column="1"/>
             <TextBox Text="System Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="4" Grid.Column="0" Background="LightGray"/>
             <TextBox x:Name="SystemTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="4" Grid.Column="1"/>
-            <Button x:Name="ReportButton" Grid.Row="5"  Grid.ColumnSpan="2" >Daily Report</Button>
+            <Button x:Name="ReportButton" Grid.Row="5"  Grid.ColumnSpan="2" Click="ReportButton_Click">Daily Report</Button>
         </Grid>
     </DockPanel>
 </Window>
