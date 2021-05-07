@@ -73,6 +73,7 @@ namespace WPFHook
         }
         public string getDailyReport(DateTime date)
         {
+            /// test commit from 23:08 07/05/2021
             string parameter = "Date";
             string value = date.ToString("dd/MM/yyyy");
             TimeSpan workTime = new TimeSpan(0, 0, 0);
