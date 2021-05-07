@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFHook"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="WPFHook"  SizeToContent="WidthAndHeight"
-        Background="Wheat">
+        Background="LightBlue">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="LightGray">
             <MenuItem Header="_File" >
@@ -18,7 +19,6 @@
         </Menu>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -40,8 +40,8 @@
             <TextBox x:Name="DistractionTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="3" Grid.Column="1"/>
             <TextBox Text="System Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="4" Grid.Column="0" Background="LightGray"/>
             <TextBox x:Name="SystemTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="4" Grid.Column="1"/>
-            <DatePicker x:Name="dailyReportDayPicker" Grid.Row="5" Grid.ColumnSpan="2" SelectedDate="2021-4-24" ></DatePicker>
-            <Button x:Name="ReportButton" Grid.Row="6"  Grid.ColumnSpan="2" Click="ReportButton_Click">Daily Report</Button>
+            <DatePicker x:Name="dailyReportDayPicker" Grid.Row="5" Grid.Column="1" SelectedDate="{x:Static sys:DateTime.Now}" ></DatePicker>
+            <Button x:Name="ReportButton" Grid.Row="5"  Grid.Column="0" Click="ReportButton_Click" Background="AliceBlue">Daily Report</Button>
         </Grid>
     </DockPanel>
 </Window>

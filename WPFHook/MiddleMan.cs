@@ -78,6 +78,7 @@ namespace WPFHook
             TimeSpan workTime = new TimeSpan(0, 0, 0);
             TimeSpan distractionTime = new TimeSpan(0, 0, 0);
             TimeSpan systemTime = new TimeSpan(0, 0, 0);
+            TimeSpan totalTime = new TimeSpan(0, 0, 0);
             List<ActivityLine> dailyList = dataAccess.LoadActivities(parameter, value);
             foreach(ActivityLine line in dailyList)
             {
@@ -87,14 +88,18 @@ namespace WPFHook
                         workTime = workTime.Add(line.inAppTime);
                         break;
                     case "distraction":
-                        distractionTime = workTime.Add(line.inAppTime);
+                        distractionTime = distractionTime.Add(line.inAppTime);
                         break;
                     case "system":
-                        systemTime = workTime.Add(line.inAppTime);
+                        systemTime = distractionTime.Add(line.inAppTime);
                         break;
                 }
+                totalTime = totalTime.Add(line.inAppTime);
             }
+            double eff = workTime.Divide(totalTime) *100;
             string output = "on the " + date.ToString("dd/MM/yyyy") +
+                "\n you were " + string.Format("{0}:{1}:{2}", totalTime.Hours, totalTime.Minutes, totalTime.Seconds) + " on the computer"+
+                "\n your effieceny was "  + string.Format("{0:N2}%", eff)+
                 "\n you worked " + string.Format("{0}:{1}:{2}", workTime.Hours, workTime.Minutes, workTime.Seconds) +
                 "\n you were distracted " + string.Format("{0}:{1}:{2}", distractionTime.Hours, distractionTime.Minutes, distractionTime.Seconds) +
                 "\n computer had system time " + string.Format("{0}:{1}:{2}", systemTime.Hours, systemTime.Minutes, systemTime.Seconds);
