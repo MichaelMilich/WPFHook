@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WPFHook"
         mc:Ignorable="d"
         Title="WPFHook"  SizeToContent="WidthAndHeight"
-        Background="DarkCyan">
+        Background="Wheat">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="LightGray">
             <MenuItem Header="_File" >
@@ -18,6 +18,7 @@
         </Menu>
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -39,7 +40,8 @@
             <TextBox x:Name="DistractionTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="3" Grid.Column="1"/>
             <TextBox Text="System Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="4" Grid.Column="0" Background="LightGray"/>
             <TextBox x:Name="SystemTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="4" Grid.Column="1"/>
-            <Button x:Name="ReportButton" Grid.Row="5"  Grid.ColumnSpan="2" Click="ReportButton_Click">Daily Report</Button>
+            <DatePicker x:Name="dailyReportDayPicker" Grid.Row="5" Grid.ColumnSpan="2" SelectedDate="2021-4-24" ></DatePicker>
+            <Button x:Name="ReportButton" Grid.Row="6"  Grid.ColumnSpan="2" Click="ReportButton_Click">Daily Report</Button>
         </Grid>
     </DockPanel>
 </Window>

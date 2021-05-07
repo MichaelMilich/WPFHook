@@ -124,7 +124,10 @@ namespace WPFHook
 
         private void ReportButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(middleMan.getDailyReport(DateTime.Today));
+            DateTime date = (DateTime)dailyReportDayPicker.SelectedDate;
+            if( date == null)
+                date = DateTime.Now;
+            MessageBox.Show(middleMan.getDailyReport(date));
         }
     }
 }
