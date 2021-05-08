@@ -64,8 +64,11 @@ namespace WPFHook
         /// </summary>
         public void appClosing()
         {
+            //save the current activity and than close the app.
+            previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
+            dataAccess.saveActivityLine(previousActivity);
+            //all that is left is to close the app
             manager.UnHook();
-            // maybe write the last process?
         }
         public ActivityLine LoadSecondToLastActivity()
         {
