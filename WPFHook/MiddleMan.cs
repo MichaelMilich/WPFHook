@@ -71,7 +71,7 @@ namespace WPFHook
         {
             return dataAccess.LoadSecondToLastActivity();
         }
-        public string getDailyReport(DateTime date)
+        public (TimeSpan totalTime, TimeSpan workTime, TimeSpan distractionTime, TimeSpan systemTime) getDailyReport(DateTime date)
         {
             /// test commit from 23:08 07/05/2021
             string parameter = "Date";
@@ -97,14 +97,7 @@ namespace WPFHook
                 }
                 totalTime = totalTime.Add(line.inAppTime);
             }
-            double eff = workTime.Divide(totalTime) *100;
-            string output = "on the " + date.ToString("dd/MM/yyyy") +
-                "\n you were " + string.Format("{0}:{1}:{2}", totalTime.Hours, totalTime.Minutes, totalTime.Seconds) + " on the computer"+
-                "\n your effieceny was "  + string.Format("{0:N2}%", eff)+
-                "\n you worked " + string.Format("{0}:{1}:{2}", workTime.Hours, workTime.Minutes, workTime.Seconds) +
-                "\n you were distracted " + string.Format("{0}:{1}:{2}", distractionTime.Hours, distractionTime.Minutes, distractionTime.Seconds) +
-                "\n computer had system time " + string.Format("{0}:{1}:{2}", systemTime.Hours, systemTime.Minutes, systemTime.Seconds);
-            return output;
+            return (totalTime, workTime, distractionTime, systemTime);
         }
         #endregion
         #region private / protected

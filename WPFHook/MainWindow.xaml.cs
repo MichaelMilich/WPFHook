@@ -127,7 +127,9 @@ namespace WPFHook
             DateTime date = (DateTime)dailyReportDayPicker.SelectedDate;
             if( date == null)
                 date = DateTime.Now;
-            MessageBox.Show(middleMan.getDailyReport(date));
+            (TimeSpan totalTime, TimeSpan workTime, TimeSpan distractionTime, TimeSpan systemTime) = middleMan.getDailyReport(date);
+            ReportWindow reportWindow = new ReportWindow(date, totalTime, workTime, distractionTime, systemTime);
+            reportWindow.Show();
         }
     }
 }
