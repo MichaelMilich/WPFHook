@@ -91,7 +91,6 @@ namespace WPFHook
             mainWindow = new MainWindow();
             mainWindow.Closing += MainWindow_Closing;
             mainWindow.ExitHeader.Click += ExitHeader_Click;
-            mainWindow.Show();
             isExit = false;
             CreateNotificationIcon();
             
