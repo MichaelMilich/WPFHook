@@ -16,6 +16,7 @@ namespace WPFHook
     {
         #region public
         public DispatcherTimer timer;
+        public TimeSpan[] timeSpans;
         public string currentTag;
         //the events that will be triggered when other classes at this app fire an event.
         public event EventHandler<string> UpdateWindowTitle;
@@ -36,6 +37,11 @@ namespace WPFHook
             // setting the timers
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(100);
+            timeSpans = new TimeSpan[4];
+            for(int i =0; i<4; i++)
+            {
+                timeSpans[i] = new TimeSpan(); // case 0 = global time, case 1 = work time, case 2= distraction time, case 3 = system time
+            }
             timer.Start();
             timer.Tick += Timer_Tick;
         }
@@ -201,12 +207,40 @@ namespace WPFHook
         }
         private void Timer_Tick(object sender, EventArgs e)
         {
+            // check for idle first, then update the timers.
             counter += 100;
             if(counter > idleTimeInMilliseconds && !isIdle)
             {
                 isIdle = true;
                 UpdatePreviousActivity("", "Idle");
 
+            }
+            // -----NOTE FOR THE FUTURE ----
+            // I should make a tag string array in the same length as the timers, maybe timers.length=tags.length+1 because i want also the global timer to be timers[0].
+            // I should than do a for loop in the following manner:
+
+            /*
+            timeSpans[0] = timeSpans[0].Add(timer.Interval);
+            for (int i = 1; i < timeSpans.Length;i++)
+            {
+                if (currentTag.Equals(tags[i-1]))
+                    timeSpans[i] = timeSpans[i].Add(timer.Interval);
+            }
+            */
+
+            // ----- END NOTE FOR THE FUTURE ----
+            timeSpans[0] = timeSpans[0].Add(timer.Interval);
+            switch(currentTag)
+            {
+                case "work":
+                    timeSpans[1] = timeSpans[1].Add(timer.Interval);
+                    break;
+                case "distraction":
+                    timeSpans[2] = timeSpans[2].Add(timer.Interval);
+                    break;
+                case "system":
+                    timeSpans[3] = timeSpans[3].Add(timer.Interval);
+                    break;
             }
         }
         #endregion

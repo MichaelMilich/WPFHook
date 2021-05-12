@@ -25,16 +25,17 @@ namespace WPFHook
     public partial class MainWindow : Window
     {
         #region GUI
-        private int counter = 0;
         //private HookManager manager;
         private MiddleMan middleMan;
-        private TimeSpan globaltimer;
-        private TimeSpan[] timeSpans;
-        // start main window - for commits
+        /// <summary>
+        /// sets up the background classes and object for the application to run.
+        /// the background is : middle man+Tagger(logic), hookmanger (all events), database connection object
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
-            Loaded += OnLoaded;
+            Tagger.StartUp();
+            SetUpMiddleMan();
         }
         /// <summary>
         /// the function called to close the window, it uses close along with remove middle man
@@ -44,24 +45,6 @@ namespace WPFHook
             RemoveMiddleMan();
             this.Close();
         }
-        /// <summary>
-        /// sets up the background classes and object for the application to run.
-        /// the background is : middle man+Tagger(logic), hookmanger (all events), database connection object
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="routedEventArgs"></param>
-        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            Tagger.StartUp();
-            SetUpMiddleMan();
-            globaltimer = new TimeSpan();
-            timeSpans = new TimeSpan[4];
-            timeSpans[0] = globaltimer;
-            timeSpans[1] = new TimeSpan(); // work time span
-            timeSpans[2] = new TimeSpan(); // distraction time span
-            timeSpans[3] = new TimeSpan(); // system time span
-        }
-
         private void SetUpMiddleMan()
         {
             middleMan = new MiddleMan();
@@ -102,18 +85,10 @@ namespace WPFHook
        
         private void GlobalTimer_Tick(object sender, EventArgs e)
         {
-            globaltimer= globaltimer.Add(middleMan.timer.Interval);
-            if(middleMan.currentTag.Equals("work"))
-                timeSpans[1] = timeSpans[1].Add(middleMan.timer.Interval);
-            else if(middleMan.currentTag.Equals("distraction"))
-                timeSpans[2] = timeSpans[2].Add(middleMan.timer.Interval);
-            else if (middleMan.currentTag.Equals("system"))
-                timeSpans[3] = timeSpans[3].Add(middleMan.timer.Interval);
-
-            GlobalTimerDisplay.Text = string.Format("{0}:{1}:{2}", globaltimer.Hours, globaltimer.Minutes, globaltimer.Seconds);
-            WorkTimerDisplay.Text = string.Format("{0}:{1}:{2}", timeSpans[1].Hours, timeSpans[1].Minutes, timeSpans[1].Seconds);
-            DistractionTimerDisplay.Text = string.Format("{0}:{1}:{2}", timeSpans[2].Hours, timeSpans[2].Minutes, timeSpans[2].Seconds);
-            SystemTimerDisplay.Text = string.Format("{0}:{1}:{2}", timeSpans[3].Hours, timeSpans[3].Minutes, timeSpans[3].Seconds);
+            GlobalTimerDisplay.Text = string.Format("{0}:{1}:{2}", middleMan.timeSpans[0].Hours, middleMan.timeSpans[0].Minutes, middleMan.timeSpans[0].Seconds);
+            WorkTimerDisplay.Text = string.Format("{0}:{1}:{2}", middleMan.timeSpans[1].Hours, middleMan.timeSpans[1].Minutes, middleMan.timeSpans[1].Seconds);
+            DistractionTimerDisplay.Text = string.Format("{0}:{1}:{2}", middleMan.timeSpans[2].Hours, middleMan.timeSpans[2].Minutes, middleMan.timeSpans[2].Seconds);
+            SystemTimerDisplay.Text = string.Format("{0}:{1}:{2}", middleMan.timeSpans[3].Hours, middleMan.timeSpans[3].Minutes, middleMan.timeSpans[3].Seconds);
         }
         #endregion
 
