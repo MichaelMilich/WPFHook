@@ -36,7 +36,7 @@ namespace WPFHook
             manager.MouseMessaged += Manager_MouseMessaged;
             // setting the timers
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
+            timer.Interval = TimeSpan.FromMilliseconds(1000);
             timeSpans = new TimeSpan[4];
             for(int i =0; i<4; i++)
             {
@@ -82,7 +82,6 @@ namespace WPFHook
         }
         public (TimeSpan totalTime, TimeSpan workTime, TimeSpan distractionTime, TimeSpan systemTime) getDailyReport(DateTime date)
         {
-            /// test commit from 23:08 07/05/2021
             string parameter = "Date";
             string value = date.ToString("dd/MM/yyyy");
             TimeSpan workTime = new TimeSpan(0, 0, 0);
@@ -92,7 +91,8 @@ namespace WPFHook
             List<ActivityLine> dailyList = dataAccess.LoadActivities(parameter, value);
             foreach(ActivityLine line in dailyList)
             {
-                switch(line.Tag)
+                totalTime = totalTime.Add(line.inAppTime);
+                switch (line.Tag)
                 {
                     case "work":
                         workTime = workTime.Add(line.inAppTime);
@@ -104,7 +104,6 @@ namespace WPFHook
                         systemTime = distractionTime.Add(line.inAppTime);
                         break;
                 }
-                totalTime = totalTime.Add(line.inAppTime);
             }
             return (totalTime, workTime, distractionTime, systemTime);
         }
