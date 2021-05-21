@@ -93,7 +93,6 @@ namespace WPFHook
             mainWindow.ExitHeader.Click += ExitHeader_Click;
             isExit = false;
             CreateNotificationIcon();
-            
         }
 
         private void ExitHeader_Click(object sender, RoutedEventArgs e)
@@ -110,10 +109,8 @@ namespace WPFHook
             notifyIcon.DoubleClick += (s, args) => ShowMainWindow(); // sets when double clicked, use ShowMainWindow()
 
             // seting up the icon
-            Uri uri = new Uri("/Letter_M_red_con.ico", UriKind.Relative);
-            Stream iconStream = Application.GetResourceStream(uri).Stream;
-            notifyIcon.Icon = new System.Drawing.Icon(iconStream);
-           
+            notifyIcon.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             //setting up the context.
             notifyIcon.ContextMenuStrip =new System.Windows.Forms.ContextMenuStrip();
             notifyIcon.ContextMenuStrip.Items.Add("Open").Click += (s, e) => ShowMainWindow();
