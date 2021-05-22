@@ -115,7 +115,7 @@ namespace WPFHook
         private SqliteDataAccess dataAccess;
         private int counter;
         private static bool isIdle = false;
-        private static readonly int idleTimeInMilliseconds = 300000;
+        private static readonly int idleTimeInMilliseconds = 300000; // 300,000 miliseconds = 5 minutes
         /// <summary>
         /// escalates the exception to the main window
         /// </summary>
@@ -207,12 +207,12 @@ namespace WPFHook
         private void Timer_Tick(object sender, EventArgs e)
         {
             // check for idle first, then update the timers.
-            counter += 100;
+            counter += (int)timer.Interval.TotalMilliseconds;
             if(counter > idleTimeInMilliseconds && !isIdle)
             {
                 isIdle = true;
                 UpdatePreviousActivity("", "Idle");
-
+                OnUpdateWindowTitle(previousActivity.ToString());
             }
             // -----NOTE FOR THE FUTURE ----
             // I should make a tag string array in the same length as the timers, maybe timers.length=tags.length+1 because i want also the global timer to be timers[0].

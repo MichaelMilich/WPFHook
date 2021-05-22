@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Win32;
 
 namespace WPFHook
 {
@@ -70,9 +71,9 @@ namespace WPFHook
         }
         public static async Task LogExceptions(Exception e, string unhandledExceptionType)
         {
-            string s = DateTime.Now.ToString() + " Exception #" + counter + " :" + $"Unexpected Error Occurred: {unhandledExceptionType} " + $"The following exception occurred:\n\n{e}";
+            string s = DateTime.Now.ToString() + " Exception #" + counter + " :" + $"Unexpected Error Occurred: {unhandledExceptionType} " + $"The following exception occurred:\n{e}\n";
             using StreamWriter file = new StreamWriter("ExceptionLog.txt", append: true);
-            await file.WriteLineAsync(s);
+            file.WriteLine(s);
         }
         #endregion
         #region background run
@@ -164,6 +165,18 @@ namespace WPFHook
                 notifyIcon.ShowBalloonTip(3000);
                 e.Cancel = true;
                 mainWindow.Hide(); // A hidden window can be shown again, a closed one not
+            }
+        }
+        public static void SetStartup(bool isOnStartUp)
+        {
+            RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            if(isOnStartUp)
+            {
+                rk.SetValue("WPFHook", AppDomain.CurrentDomain.BaseDirectory +"WPFHook.exe");
+            }
+            else
+            {
+                rk.DeleteValue("WPFHook", false);
             }
         }
         #endregion

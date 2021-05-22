@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace WPFHook
 {
@@ -35,7 +36,7 @@ namespace WPFHook
 
             // If found, return the connection string.
             if (settings != null)
-                returnValue = settings.ConnectionString;
+                returnValue = "Data Source="+ AppDomain.CurrentDomain.BaseDirectory+ settings.ConnectionString;
 
             return returnValue;
         }

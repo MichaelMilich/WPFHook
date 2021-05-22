@@ -10,11 +10,19 @@
 
   <ItemGroup>
     <None Remove="ActivityDB.db" />
+    <None Remove="DistractionWords.txt" />
+    <None Remove="ExceptionLog.txt" />
     <None Remove="Letter_M_red_con.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="ActivityDB.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DistractionWords.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ExceptionLog.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -28,15 +36,6 @@
     <Resource Include="Letter_M_red_con.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="DistractionWords.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="ExceptionLog.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

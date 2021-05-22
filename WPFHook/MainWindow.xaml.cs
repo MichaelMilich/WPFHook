@@ -1,20 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace WPFHook
 {
@@ -61,6 +46,7 @@ namespace WPFHook
         }
         private void MiddleMan_ExceptionHappened(object sender, Exception e)
         {
+            MessageBox.Show(e.ToString() + "\n \n " + e.Message, "Hook Error!", MessageBoxButton.OK, MessageBoxImage.Error);
             App.LogExceptions(e, e.Message);
             RemoveMiddleMan();
             SetUpMiddleMan();
@@ -105,6 +91,15 @@ namespace WPFHook
             (TimeSpan totalTime, TimeSpan workTime, TimeSpan distractionTime, TimeSpan systemTime) = middleMan.getDailyReport(date);
             ReportWindow reportWindow = new ReportWindow(date, totalTime, workTime, distractionTime, systemTime);
             reportWindow.Show();
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Do you want the DailyLog to run on startup?", "DailyLog", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (result ==MessageBoxResult.Yes)
+                App.SetStartup(true);
+            else if(result == MessageBoxResult.No)
+                App.SetStartup(false);
         }
     }
 }

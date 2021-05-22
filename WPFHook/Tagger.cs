@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace WPFHook
@@ -14,7 +12,8 @@ namespace WPFHook
         public static void StartUp()
         {
             // get the key words to look for from the txt file at the beginning of the application.
-            distractionWords= System.IO.File.ReadAllLines(@".\DistractionWords.txt");
+            // from checking, AppDomain.CurrentDomain.BaseDirectory is the path! 
+            distractionWords = System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "DistractionWords.txt");
         }
         /// <summary>
         /// sets the tag of the activity. can be "work" , "system" or "distraction"
