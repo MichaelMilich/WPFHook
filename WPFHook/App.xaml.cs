@@ -51,7 +51,7 @@ namespace WPFHook
 
         private void ShowUnhandledException(Exception e, string unhandledExceptionType, bool promptUserForShutdown)
         {
-            App.LogExceptions(e, unhandledExceptionType);
+            Task LogExceptionTask = LogExceptions(e, unhandledExceptionType);
 
             var messageBoxTitle = $"Unexpected Error Occurred: {unhandledExceptionType}";
             var messageBoxMessage = $"The following exception occurred:\n\n{e}";
@@ -62,7 +62,7 @@ namespace WPFHook
                 messageBoxMessage += "\n\nNormally the app would die now. Should we let it die?";
                 messageBoxButtons = MessageBoxButton.YesNo;
             }
-
+            LogExceptionTask.Wait();
             // Let the user decide if the app should die or not (if applicable).
             if (MessageBox.Show(messageBoxMessage, messageBoxTitle, messageBoxButtons) == MessageBoxResult.Yes)
             {
@@ -73,7 +73,7 @@ namespace WPFHook
         {
             string s = DateTime.Now.ToString() + " Exception #" + counter + " :" + $"Unexpected Error Occurred: {unhandledExceptionType} " + $"The following exception occurred:\n{e}\n";
             using StreamWriter file = new StreamWriter("ExceptionLog.txt", append: true);
-            file.WriteLine(s);
+            await file.WriteLineAsync(s);
         }
         #endregion
         #region background run

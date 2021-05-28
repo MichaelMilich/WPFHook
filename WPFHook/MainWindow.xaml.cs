@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace WPFHook
@@ -47,9 +48,10 @@ namespace WPFHook
         private void MiddleMan_ExceptionHappened(object sender, Exception e)
         {
             MessageBox.Show(e.ToString() + "\n \n " + e.Message, "Hook Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-            App.LogExceptions(e, e.Message);
+            Task LogExceptionTask = App.LogExceptions(e, e.Message);
             RemoveMiddleMan();
             SetUpMiddleMan();
+            LogExceptionTask.Wait();
         }
 
         private void MiddleMan_UpdateWindowTitle(object sender, string e)

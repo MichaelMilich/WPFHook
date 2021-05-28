@@ -101,7 +101,7 @@ namespace WPFHook
                         distractionTime = distractionTime.Add(line.inAppTime);
                         break;
                     case "system":
-                        systemTime = distractionTime.Add(line.inAppTime);
+                        systemTime = systemTime.Add(line.inAppTime);
                         break;
                 }
             }
