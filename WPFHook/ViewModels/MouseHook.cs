@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace WPFHook
+namespace WPFHook.ViewModels
 {
     /// <summary>
     /// one of the hook objects. handles mouse moves.

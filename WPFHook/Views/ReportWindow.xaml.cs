@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WPFHook
+namespace WPFHook.Views
 {
     /// <summary>
     /// Interaction logic for ReportWindow.xaml
@@ -20,16 +20,6 @@ namespace WPFHook
         public ReportWindow()
         {
             InitializeComponent();
-        }
-        public ReportWindow(DateTime Date, TimeSpan TotalTime, TimeSpan WorkTime, TimeSpan DistractionTime, TimeSpan SystemTime)
-        {
-            InitializeComponent();
-            Report.Date = Date;
-            Report.TotalTime = TotalTime;
-            Report.WorkTime = WorkTime;
-            Report.DistractionTime = DistractionTime;
-            Report.SystemTime = SystemTime;
-            Report.CalculateEfficiency();
         }
     }
 }

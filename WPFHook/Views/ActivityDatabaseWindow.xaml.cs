@@ -9,8 +9,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WPFHook.ViewModels;
 
-namespace WPFHook
+namespace WPFHook.Views
 {
     /// <summary>
     /// Interaction logic for ActivityDatabaseWindow.xaml

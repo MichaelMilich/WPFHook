@@ -2,9 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
+using WPFHook.Commands;
+using WPFHook.Models;
+using WPFHook.ViewModels;
+using WPFHook.Views;
 
-namespace WPFHook
+namespace WPFHook.ViewModels
 {
     /// <summary>
     /// This class is in charge of the logics of the application.
@@ -12,20 +18,21 @@ namespace WPFHook
     /// IT listens to events from the event listeners, processes the data and sends the relevant information to the GUI.
     ///  NEED TO WORK ON EXCEPTION HANDELING
     /// </summary>
-    class MiddleMan
+    public class MiddleMan
     {
         #region public
         public DispatcherTimer timer;
         public TimeSpan[] timeSpans;
         public string currentTag;
+ 
         //the events that will be triggered when other classes at this app fire an event.
-        public event EventHandler<string> UpdateWindowTitle;
         public event EventHandler<Exception> ExceptionHappened;
         /// <summary>
         /// Sets up all the components of the application background such as : hooks manager, database connection, activityline object saving the last activity.
         /// </summary>
-        public MiddleMan()
+        public MiddleMan(MainWindow mainWindow)
         {
+            view = mainWindow;
             counter = 0;
             manager = new HookManager();
             dataAccess = new SqliteDataAccess();
@@ -44,18 +51,8 @@ namespace WPFHook
             }
             timer.Start();
             timer.Tick += Timer_Tick;
-        }
-
-
-
-        /// <summary>
-        /// sets up the application to write that the current running foreground app is this one.
-        /// cant be writen while setting up the object because the GUI doesnt subscribe yet to the events.
-        /// </summary>
-        public void AfterSettingSubscribers()
-        {
-            string s = "process : " + previousActivity.FGProcessName + " || window title : " + previousActivity.FGWindowName +" || "+previousActivity.Tag;
-            OnUpdateWindowTitle(s);
+            model = new MainWindowModel();
+            model.ActivityTitle = "process : " + previousActivity.FGProcessName + " || window title : " + previousActivity.FGWindowName + " || " + previousActivity.Tag;
         }
         /// <summary>
         /// connects to the ActivityDB.db and queries the whole database
@@ -108,6 +105,7 @@ namespace WPFHook
             return (totalTime, workTime, distractionTime, systemTime);
         }
         #endregion
+
         #region private / protected
         //class properties
         private ActivityLine previousActivity;
@@ -138,8 +136,7 @@ namespace WPFHook
         {
             UpdatePreviousActivity(e);
             // send the current window title to the app.
-            string windowTitle = "process : " + e.process.ProcessName + " || window title : " + e.process.MainWindowTitle + " || " + previousActivity.Tag;
-            OnUpdateWindowTitle(windowTitle);
+            model.ActivityTitle = "process : " + e.process.ProcessName + " || window title : " + e.process.MainWindowTitle + " || " + previousActivity.Tag;
             counter = 0;
             isIdle = false;
         }
@@ -181,15 +178,6 @@ namespace WPFHook
             currentTag = previousActivity.Tag;
         }
 
-        /// <summary>
-        /// the event that the object published to change texts
-        /// </summary>
-        /// <param name="windowTitle"></param>
-        protected virtual void OnUpdateWindowTitle(string windowTitle)
-        {
-
-            UpdateWindowTitle?.Invoke(this, windowTitle);
-        }
 
 
         private void Manager_MouseMessaged(object sender, EventArgs e)
@@ -199,7 +187,7 @@ namespace WPFHook
             {
                 ActivityLine activity = LoadSecondToLastActivity();
                 UpdatePreviousActivity(activity);
-                OnUpdateWindowTitle(activity.ToString());
+                model.ActivityTitle = activity.ToString();
             }
             counter = 0;
             isIdle = false;
@@ -212,7 +200,7 @@ namespace WPFHook
             {
                 isIdle = true;
                 UpdatePreviousActivity("", "Idle");
-                OnUpdateWindowTitle(previousActivity.ToString());
+                model.ActivityTitle = previousActivity.ToString();
             }
             // -----NOTE FOR THE FUTURE ----
             // I should make a tag string array in the same length as the timers, maybe timers.length=tags.length+1 because i want also the global timer to be timers[0].
@@ -241,6 +229,50 @@ namespace WPFHook
                     timeSpans[3] = timeSpans[3].Add(timer.Interval);
                     break;
             }
+        }
+        #endregion
+
+        #region ViewModel region
+        private MainWindow view;
+        private MainWindowModel model;
+        public MainWindowModel Model
+        {
+            get { return model; }
+        }
+        #endregion
+
+
+        #region ViewModelsCommands
+        public ICommand ShowActivityListCommand { get { return new RelayCommand(e => true, this.ShowActivityList); } }
+        public ICommand LoadSecondToLastActivityCommand { get { return new RelayCommand(e => true, this.LoadSecondToLastActivity); } }
+        public ICommand RunOnStartupCommand { get { return new RelayCommand(e => true, this.RunOnStartup); } }
+        public ICommand DailyReportCommand { get { return new RelayCommand(e => true, this.DailyReport); } }
+        public void ShowActivityList(object obj)
+        {
+            ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();
+            subWindow.Show();
+            subWindow.ShowDataBase(LoadActivities());
+        }
+        private void LoadSecondToLastActivity(object obj)
+        {
+            MessageBox.Show(this.LoadSecondToLastActivity().ToString());
+        }
+        private void RunOnStartup(object obj)
+        {
+            MessageBoxResult result = MessageBox.Show("Do you want the DailyLog to run on startup?", "DailyLog", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+                App.SetStartup(true);
+            else if (result == MessageBoxResult.No)
+                App.SetStartup(false);
+        }
+        private void DailyReport(object obj)
+        {
+            DateTime date = (DateTime)view.dailyReportDayPicker.SelectedDate;
+            if (date == null)
+                date = DateTime.Now;
+            (TimeSpan totalTime, TimeSpan workTime, TimeSpan distractionTime, TimeSpan systemTime) = getDailyReport(date);
+            DayReportViewModel reportWindow = new DayReportViewModel(date, totalTime, workTime, distractionTime, systemTime);
+            reportWindow.Show();
         }
         #endregion
     }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace WPFHook
+namespace WPFHook.ViewModels
 {
     public class ActivityLine
     {

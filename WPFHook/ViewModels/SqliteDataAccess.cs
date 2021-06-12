@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-namespace WPFHook
+namespace WPFHook.ViewModels
 {
     /// <summary>
     /// The connection to the data base.

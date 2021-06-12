@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 
-namespace WPFHook
+namespace WPFHook.ViewModels
 {
     /// <summary>
     /// This class is the gateway to all hooks and event listeners of the app outside the app.

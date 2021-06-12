@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using WPFHook.Models;
+using WPFHook.ViewModels;
 
-namespace WPFHook
+namespace WPFHook.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -20,7 +22,6 @@ namespace WPFHook
         public MainWindow()
         {
             InitializeComponent();
-            Tagger.StartUp();
             SetUpMiddleMan();
         }
         /// <summary>
@@ -33,15 +34,13 @@ namespace WPFHook
         }
         private void SetUpMiddleMan()
         {
-            middleMan = new MiddleMan();
-            middleMan.UpdateWindowTitle += MiddleMan_UpdateWindowTitle;
+            middleMan = new MiddleMan(this);
             middleMan.ExceptionHappened += MiddleMan_ExceptionHappened;
             middleMan.timer.Tick += GlobalTimer_Tick;
-            middleMan.AfterSettingSubscribers();
+            DataContext = middleMan;
         }
         private void RemoveMiddleMan()
         {
-            middleMan.UpdateWindowTitle -= MiddleMan_UpdateWindowTitle;
             middleMan.ExceptionHappened -= MiddleMan_ExceptionHappened;
             middleMan.appClosing();
         }
@@ -53,23 +52,6 @@ namespace WPFHook
             SetUpMiddleMan();
             LogExceptionTask.Wait();
         }
-
-        private void MiddleMan_UpdateWindowTitle(object sender, string e)
-        {
-            currentAppBox.Text = e;
-        }
-
-        /// <summary>
-        /// on asking to show the data base , call the database window - show all database
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ShowActivityList_Click(object sender, RoutedEventArgs e)
-        {
-           ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();
-           subWindow.Show();
-           subWindow.ShowDataBase(middleMan.LoadActivities());
-        }
        
         private void GlobalTimer_Tick(object sender, EventArgs e)
         {
@@ -79,29 +61,5 @@ namespace WPFHook
             SystemTimerDisplay.Text = string.Format("{0}:{1}:{2}", middleMan.timeSpans[3].Hours, middleMan.timeSpans[3].Minutes, middleMan.timeSpans[3].Seconds);
         }
         #endregion
-
-        private void LoadSecondToLastActivity_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(middleMan.LoadSecondToLastActivity().ToString());
-        }
-
-        private void ReportButton_Click(object sender, RoutedEventArgs e)
-        {
-            DateTime date = (DateTime)dailyReportDayPicker.SelectedDate;
-            if( date == null)
-                date = DateTime.Now;
-            (TimeSpan totalTime, TimeSpan workTime, TimeSpan distractionTime, TimeSpan systemTime) = middleMan.getDailyReport(date);
-            ReportWindow reportWindow = new ReportWindow(date, totalTime, workTime, distractionTime, systemTime);
-            reportWindow.Show();
-        }
-
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = MessageBox.Show("Do you want the DailyLog to run on startup?", "DailyLog", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-            if (result ==MessageBoxResult.Yes)
-                App.SetStartup(true);
-            else if(result == MessageBoxResult.No)
-                App.SetStartup(false);
-        }
     }
 }

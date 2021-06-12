@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace WPFHook
+namespace WPFHook.ViewModels
 {
     public static class Tagger
     {

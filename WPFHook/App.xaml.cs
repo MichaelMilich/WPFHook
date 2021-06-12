@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
+using WPFHook.ViewModels;
+using WPFHook.Views;
 
 namespace WPFHook
 {
@@ -19,13 +21,13 @@ namespace WPFHook
     /// </summary>
     public partial class App : Application
     {
-        private static int counter = 1;
         private MainWindow mainWindow;
         public App() : base()
         {
             SetupUnhandledExceptionHandling();
         }
         #region Exceptions
+        private static int counter = 1;
         private void SetupUnhandledExceptionHandling()
         {
             // Catch exceptions from all threads in the AppDomain.
@@ -94,6 +96,7 @@ namespace WPFHook
             mainWindow.ExitHeader.Click += ExitHeader_Click;
             isExit = false;
             CreateNotificationIcon();
+            Tagger.StartUp();
         }
 
         private void ExitHeader_Click(object sender, RoutedEventArgs e)

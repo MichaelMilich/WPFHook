@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace WPFHook
+namespace WPFHook.ViewModels
 {
     public class WindowChangedEventArgs : EventArgs
     {
