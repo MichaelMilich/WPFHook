@@ -8,6 +8,33 @@
         mc:Ignorable="d"
         Title="ReportWindow" SizeToContent="WidthAndHeight">
     <Grid>
-        <uc:DayReport x:Name="Report" />
+        <TabControl>
+            <TabItem Header="Summery">
+                <Grid>
+                    <uc:DayReport x:Name="Report" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Details">
+                
+                <Grid Margin="10">
+                    <DataGrid Name="DataGridActivities" AutoGenerateColumns="False" ItemsSource="{Binding Data}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Date" Binding="{Binding Date}" />
+                            <DataGridTextColumn Header="Time accessed Application" Binding="{Binding Time}" />
+                            <DataGridTextColumn Header="Main Window Name" Binding="{Binding FGWindowName}" />
+                            <DataGridTextColumn Header="Process Name" Binding="{Binding FGProcessName}" />
+                            <DataGridTextColumn Header="Time in Application" Binding="{Binding inAppTime}" />
+                            <DataGridTextColumn Header="Tag" Binding="{Binding Tag}" />
+                        </DataGrid.Columns>
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Details}" Margin="10" />
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+                </Grid>
+                
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

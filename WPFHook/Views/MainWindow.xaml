@@ -34,13 +34,13 @@
             <TextBox x:Name="currentAppBox" Text="{Binding Model.ActivityTitle}" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  IsReadOnly="True" Grid.Row="0" Grid.Column="1"/>
             <TextBox Text="Current App" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"  Grid.Row="0" Grid.Column="0" Background="LightGray"/>
             <TextBox Text="Global Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="1" Grid.Column="0" Background="LightGray"/>
-            <TextBox x:Name="GlobalTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="1" Grid.Column="1"/>
+            <TextBox x:Name="GlobalTimerDisplay" Text="{Binding Model.TotalTime}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="1" Grid.Column="1"/>
             <TextBox Text="Work Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="2" Grid.Column="0" Background="LightGray"/>
-            <TextBox x:Name="WorkTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="2" Grid.Column="1"/>
+            <TextBox x:Name="WorkTimerDisplay" Text="{Binding Model.WorkTime}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="2" Grid.Column="1"/>
             <TextBox Text="Distraction Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="3" Grid.Column="0" Background="LightGray"/>
-            <TextBox x:Name="DistractionTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="3" Grid.Column="1"/>
+            <TextBox x:Name="DistractionTimerDisplay" Text="{Binding Model.DistractionTime}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="3" Grid.Column="1"/>
             <TextBox Text="System Timer:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Row="4" Grid.Column="0" Background="LightGray"/>
-            <TextBox x:Name="SystemTimerDisplay" Text="00:00:00" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="4" Grid.Column="1"/>
+            <TextBox x:Name="SystemTimerDisplay" Text="{Binding Model.SystemTime}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Row="4" Grid.Column="1"/>
             <Border  Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="2" BorderBrush="CornflowerBlue"/>
             <DatePicker x:Name="dailyReportDayPicker" Grid.Row="5" Grid.Column="1" SelectedDate="{x:Static sys:DateTime.Now}" ></DatePicker>
             <Button x:Name="ReportButton" Grid.Row="5" Margin="2,2,2,2"  Grid.Column="0" Command="{Binding DailyReportCommand}" Background="AliceBlue">Daily Report</Button>

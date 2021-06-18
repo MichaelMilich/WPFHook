@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using WPFHook.ViewModels;
 
 namespace WPFHook.Models
 {
@@ -13,6 +14,7 @@ namespace WPFHook.Models
         private TimeSpan workTime;
         private TimeSpan distractionTime;
         private TimeSpan systemTime;
+        private List<ActivityLine> data;
         public DateTime Date
         {
             get { return date; }
@@ -56,6 +58,15 @@ namespace WPFHook.Models
             {
                 systemTime = value;
                 OnPropertyChanged("SystemTime");
+            }
+        }
+        public List<ActivityLine> Data
+        {
+            get { return data; }
+            set
+            {
+                data = value;
+                OnPropertyChanged("Data");
             }
         }
         public double Efficiency { get { return WorkTime.Divide(TotalTime); } }

@@ -9,6 +9,46 @@ namespace WPFHook.Models
     public class MainWindowModel : INotifyPropertyChanged
     {
         private string activityTitle;
+        private TimeSpan totalTime;
+        private TimeSpan workTime;
+        private TimeSpan distractionTime;
+        private TimeSpan systemTime;
+        public TimeSpan TotalTime
+        {
+            get { return totalTime; }
+            set
+            {
+                totalTime = value;
+                OnPropertyChanged("TotalTime");
+            }
+        }
+        public TimeSpan WorkTime
+        {
+            get { return workTime; }
+            set
+            {
+                workTime = value;
+                OnPropertyChanged("WorkTime");
+            }
+        }
+        public TimeSpan DistractionTime
+        {
+            get { return distractionTime; }
+            set
+            {
+                distractionTime = value;
+                OnPropertyChanged("DistractionTime");
+            }
+        }
+        public TimeSpan SystemTime
+        {
+            get { return systemTime; }
+            set
+            {
+                systemTime = value;
+                OnPropertyChanged("SystemTime");
+            }
+        }
         public string ActivityTitle
         {
             get { return activityTitle; }

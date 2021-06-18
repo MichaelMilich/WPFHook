@@ -8,30 +8,24 @@ namespace WPFHook.ViewModels
 {
     class DayReportViewModel
     {
-        private DayReportModel model;
+        public DayReportModel model;
         private ReportWindow view;
-        public DayReportModel Model
-        {
-            get { return model; }
-        }
         public ReportWindow View
         {
             get { return view; }
         }
-
-        public DayReportViewModel(DateTime Date, TimeSpan TotalTime, TimeSpan WorkTime, TimeSpan DistractionTime, TimeSpan SystemTime)
+        public DayReportViewModel()
         {
-            model = new DayReportModel();
-            model.Date = Date;
-            model.TotalTime = TotalTime;
-            model.WorkTime = WorkTime;
-            model.DistractionTime = DistractionTime;
-            model.SystemTime = SystemTime;
-
             view = new ReportWindow();
             view.Report.DataContext = model;
             view.DataContext = this;
-
+        }
+        public DayReportViewModel(DayReportModel model)
+        {
+            this.model = model;
+            view = new ReportWindow();
+            view.Report.DataContext = model;
+            view.DataContext = model;
         }
         public void Show()
         {

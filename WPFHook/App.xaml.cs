@@ -22,6 +22,7 @@ namespace WPFHook
     public partial class App : Application
     {
         private MainWindow mainWindow;
+        private MiddleMan mainViewModel;
         public App() : base()
         {
             SetupUnhandledExceptionHandling();
@@ -91,14 +92,23 @@ namespace WPFHook
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            SetUpView();
+            SetUpViewModel();
+            Tagger.StartUp();
+        }
+        private void SetUpView()
+        {
             mainWindow = new MainWindow();
             mainWindow.Closing += MainWindow_Closing;
             mainWindow.ExitHeader.Click += ExitHeader_Click;
             isExit = false;
             CreateNotificationIcon();
-            Tagger.StartUp();
         }
-
+        private void SetUpViewModel()
+        {
+            mainViewModel = new MiddleMan(mainWindow);
+            mainWindow.DataContext = mainViewModel;
+        }
         private void ExitHeader_Click(object sender, RoutedEventArgs e)
         {
             ExitApplication();
@@ -135,7 +145,7 @@ namespace WPFHook
         private void ExitApplication()
         {
             isExit = true;
-            mainWindow.CloseWindow();
+            mainWindow.Close();
             notifyIcon.Dispose();
             notifyIcon = null;
         }

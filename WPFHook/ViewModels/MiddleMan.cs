@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -24,9 +25,6 @@ namespace WPFHook.ViewModels
         public DispatcherTimer timer;
         public TimeSpan[] timeSpans;
         public string currentTag;
- 
-        //the events that will be triggered when other classes at this app fire an event.
-        public event EventHandler<Exception> ExceptionHappened;
         /// <summary>
         /// Sets up all the components of the application background such as : hooks manager, database connection, activityline object saving the last activity.
         /// </summary>
@@ -34,13 +32,10 @@ namespace WPFHook.ViewModels
         {
             view = mainWindow;
             counter = 0;
-            manager = new HookManager();
+            SetUpHook();
             dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
             currentTag = previousActivity.Tag;
-            manager.WindowChanged += Manager_WindowChanged;
-            manager.ExceptionHappened += Manager_ExceptionHappened;
-            manager.MouseMessaged += Manager_MouseMessaged;
             // setting the timers
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(1000);
@@ -62,48 +57,12 @@ namespace WPFHook.ViewModels
         {
             return dataAccess.LoadActivities();
         }
-        /// <summary>
-        /// To be used when the application is closing - to Unhook and not forget any last bits of data
-        /// </summary>
-        public void appClosing()
-        {
-            //save the current activity and than close the app.
-            previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
-            dataAccess.saveActivityLine(previousActivity);
-            //all that is left is to close the app
-            manager.UnHook();
-        }
+
         public ActivityLine LoadSecondToLastActivity()
         {
             return dataAccess.LoadSecondToLastActivity();
         }
-        public (TimeSpan totalTime, TimeSpan workTime, TimeSpan distractionTime, TimeSpan systemTime) getDailyReport(DateTime date)
-        {
-            string parameter = "Date";
-            string value = date.ToString("dd/MM/yyyy");
-            TimeSpan workTime = new TimeSpan(0, 0, 0);
-            TimeSpan distractionTime = new TimeSpan(0, 0, 0);
-            TimeSpan systemTime = new TimeSpan(0, 0, 0);
-            TimeSpan totalTime = new TimeSpan(0, 0, 0);
-            List<ActivityLine> dailyList = dataAccess.LoadActivities(parameter, value);
-            foreach(ActivityLine line in dailyList)
-            {
-                totalTime = totalTime.Add(line.inAppTime);
-                switch (line.Tag)
-                {
-                    case "work":
-                        workTime = workTime.Add(line.inAppTime);
-                        break;
-                    case "distraction":
-                        distractionTime = distractionTime.Add(line.inAppTime);
-                        break;
-                    case "system":
-                        systemTime = systemTime.Add(line.inAppTime);
-                        break;
-                }
-            }
-            return (totalTime, workTime, distractionTime, systemTime);
-        }
+
         #endregion
 
         #region private / protected
@@ -115,13 +74,38 @@ namespace WPFHook.ViewModels
         private static bool isIdle = false;
         private static readonly int idleTimeInMilliseconds = 300000; // 300,000 miliseconds = 5 minutes
         /// <summary>
+        /// To be used when the application is closing - to Unhook and not forget any last bits of data
+        /// </summary>
+        private void appClosing()
+        {
+            //save the current activity and than close the app.
+            previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
+            dataAccess.saveActivityLine(previousActivity);
+            //all that is left is to close the app
+            manager.UnHook();
+            manager.WindowChanged -= Manager_WindowChanged;
+            manager.ExceptionHappened -= Manager_ExceptionHappened;
+            manager.MouseMessaged -= Manager_MouseMessaged;
+        }
+        private void SetUpHook()
+        {
+            manager = new HookManager();
+            manager.WindowChanged += Manager_WindowChanged;
+            manager.ExceptionHappened += Manager_ExceptionHappened;
+            manager.MouseMessaged += Manager_MouseMessaged;
+        }
+        /// <summary>
         /// escalates the exception to the main window
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Manager_ExceptionHappened(object sender, Exception e)
         {
-            ExceptionHappened?.Invoke(sender, e);
+            MessageBox.Show(e.ToString() + "\n \n " + e.Message, "Hook Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+            Task LogExceptionTask = App.LogExceptions(e, e.Message);
+            appClosing();
+            SetUpHook();
+            LogExceptionTask.Wait();
         }
 
         /// <summary>
@@ -216,17 +200,17 @@ namespace WPFHook.ViewModels
             */
 
             // ----- END NOTE FOR THE FUTURE ----
-            timeSpans[0] = timeSpans[0].Add(timer.Interval);
-            switch(currentTag)
+            model.TotalTime= model.TotalTime.Add(timer.Interval);
+            switch (currentTag)
             {
                 case "work":
-                    timeSpans[1] = timeSpans[1].Add(timer.Interval);
+                    model.WorkTime = model.WorkTime.Add(timer.Interval);
                     break;
                 case "distraction":
-                    timeSpans[2] = timeSpans[2].Add(timer.Interval);
+                    model.DistractionTime = model.DistractionTime.Add(timer.Interval);
                     break;
                 case "system":
-                    timeSpans[3] = timeSpans[3].Add(timer.Interval);
+                    model.SystemTime = model.SystemTime.Add(timer.Interval);
                     break;
             }
         }
@@ -270,9 +254,34 @@ namespace WPFHook.ViewModels
             DateTime date = (DateTime)view.dailyReportDayPicker.SelectedDate;
             if (date == null)
                 date = DateTime.Now;
-            (TimeSpan totalTime, TimeSpan workTime, TimeSpan distractionTime, TimeSpan systemTime) = getDailyReport(date);
-            DayReportViewModel reportWindow = new DayReportViewModel(date, totalTime, workTime, distractionTime, systemTime);
-            reportWindow.Show();
+            DayReportViewModel reportWindowViewModel = new DayReportViewModel(getDailyReport(date));
+            reportWindowViewModel.Show();
+        }
+        private DayReportModel getDailyReport(DateTime date)
+        {
+            string parameter = "Date";
+            string value = date.ToString("dd/MM/yyyy");
+            DayReportModel dayReportModel = new DayReportModel();
+            dayReportModel.Date = date;
+            List<ActivityLine> dailyList = dataAccess.LoadActivities(parameter, value);
+            foreach (ActivityLine line in dailyList)
+            {
+                dayReportModel.TotalTime = dayReportModel.TotalTime.Add(line.inAppTime);
+                switch (line.Tag)
+                {
+                    case "work":
+                        dayReportModel.WorkTime = dayReportModel.WorkTime.Add(line.inAppTime);
+                        break;
+                    case "distraction":
+                        dayReportModel.DistractionTime = dayReportModel.DistractionTime.Add(line.inAppTime);
+                        break;
+                    case "system":
+                        dayReportModel.SystemTime = dayReportModel.SystemTime.Add(line.inAppTime);
+                        break;
+                }
+            }
+            dayReportModel.Data = dailyList;
+            return dayReportModel;
         }
         #endregion
     }
