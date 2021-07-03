@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.ComponentModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -15,39 +18,72 @@ namespace WPFHook.ViewModels
     /// </summary>
     public class HookManager
     {
+        #region public
         // system event hooks that are in place.
         // it might be a good idea to have a general hook object or interface that all hooks works with.
-        private WindowHook windowHook;
-        private MouseHook mouseHook;
-        private Process lastProcess;
-        public event EventHandler<WindowChangedEventArgs> WindowChanged;
-        public event EventHandler<Exception> ExceptionHappened;
-        public event EventHandler MouseMessaged;
+        //public event EventHandler<WindowChangedEventArgs> WindowChanged;
+        //public event EventHandler MouseMessaged;
+
+        // The link to the backgroundWorker that manages the Hook
+        public BackgroundWorker backgroundWorker;
         /// <summary>
         /// sets up all the hooks for the windows events.
         /// </summary>
-        public HookManager()
+        public HookManager(BackgroundWorker backgroundWorker)
         {
-            lastProcess = Process.GetCurrentProcess();
-            windowHook = new WindowHook();
-            windowHook.WindowChanged += Manager_WindowChanged;
-            mouseHook = new MouseHook();
-            mouseHook.WindowChanged += Manager_WindowChanged;
-            mouseHook.MouseMessaged += MouseHook_MouseMessaged;
+            this.backgroundWorker = backgroundWorker;
+            hooks = new List<IHook>();
+            SetHooks();
+            Subscribe();
+            //this.Start();
         }
 
-        private void MouseHook_MouseMessaged(object sender, EventArgs e)
+        public void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs e)
         {
-            MouseMessaged?.Invoke(this, EventArgs.Empty);
+            this.Start();
+            //EventLoop loop = new EventLoop(backgroundWorker);
+           // EventLoop.Run();
         }
-
         /// <summary>
         /// use this when closing the app
         /// </summary>
         public void UnHook()
         {
-            windowHook.UnHook();
-            mouseHook.Stop();
+            foreach(IHook hook in hooks)
+            {
+                hook.UnHook();
+            }
+        }
+        public void Start()
+        {
+            foreach (IHook hook in hooks)
+            {
+                hook.Start();
+            }
+        }
+        #endregion
+        #region private
+        private List<IHook> hooks;
+        private void SetHooks()
+        {
+            hooks.Add(new MouseHook() as IHook);
+            hooks.Add(new WindowHook() as IHook);
+        }
+        private void Subscribe()
+        {
+            foreach (IHook hook in hooks)
+            {
+                hook.WindowChanged += Manager_WindowChanged;
+                if (hook is MouseHook)
+                {
+                    var mouse = hook as MouseHook;
+                    mouse.MouseMessaged += MouseHook_MouseMessaged;
+                }
+            }
+        }
+        private void MouseHook_MouseMessaged(object sender, EventArgs e)
+        {
+            backgroundWorker.ReportProgress(0, "mouse messeged");
         }
         /// <summary>
         /// the general subscriber for all windows events.
@@ -58,47 +94,9 @@ namespace WPFHook.ViewModels
         /// <param name="e"></param>
         private void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
-            try 
-            {
-                e.process = getForegroundProcess();
-                if (!e.process.MainWindowTitle.Equals(lastProcess.MainWindowTitle))
-                {
-                    lastProcess = e.process;
-                    WindowChanged?.Invoke(this, e);
-                }
-                else
-                {
-                    if (!e.process.ProcessName.Equals(lastProcess.ProcessName))
-                    {
-                        lastProcess = e.process;
-                        WindowChanged?.Invoke(this, e);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ExceptionHappened?.Invoke(this, ex);
-            }
+            backgroundWorker.ReportProgress(0, "window changed");
         }
-        /// <summary>
-        /// code i found in the internet
-        /// returns the foreground process by using processID.
-        /// need to read more about it and have edge cases delt with.
-        /// </summary>
-        /// <returns></returns>
-        private Process getForegroundProcess()
-        {
-            uint processID = 0;
-            IntPtr handle = IntPtr.Zero;
-            handle = GetForegroundWindow();
-            uint threadID = GetWindowThreadProcessId(handle, out processID); // Get PID from window handle
-            Process foregroundProcess = Process.GetProcessById(Convert.ToInt32(processID)); // Get it as a C# obj.
-            // NOTE: In some rare cases ProcessID will be NULL. Handle this how you want. 
-            return foregroundProcess;
-        }
-        [DllImport("user32.dll")]
-        static extern IntPtr GetForegroundWindow();
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        #endregion
     }
 }

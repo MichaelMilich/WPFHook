@@ -12,7 +12,7 @@ namespace WPFHook.ViewModels
     /// basicly code i found in the internet. it does the job overall.
     ///  NEED TO WORK ON EXCEPTION HANDELING.
     /// </summary>
-    public class MouseHook
+    public class MouseHook : IHook
     {
         #region public 
         public event EventHandler<WindowChangedEventArgs> WindowChanged;
@@ -24,10 +24,9 @@ namespace WPFHook.ViewModels
         {
             _proc = HookCallback;
             _hookID = IntPtr.Zero;
-            Start();
         } 
         public void Start() => _hookID = SetHook(_proc);
-        public  void Stop() => UnhookWindowsHookEx(_hookID);
+        public  void UnHook() => UnhookWindowsHookEx(_hookID);
 
         #endregion
 

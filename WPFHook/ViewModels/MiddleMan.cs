@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,7 +19,6 @@ namespace WPFHook.ViewModels
     /// This class is in charge of the logics of the application.
     /// this class is the connection between the event listeners, database and so on to the GUI.
     /// IT listens to events from the event listeners, processes the data and sends the relevant information to the GUI.
-    ///  NEED TO WORK ON EXCEPTION HANDELING
     /// </summary>
     public class MiddleMan
     {
@@ -32,6 +33,11 @@ namespace WPFHook.ViewModels
         {
             view = mainWindow;
             counter = 0;
+            managerBackgroundWorker = new BackgroundWorker
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
             SetUpHook();
             dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
@@ -69,31 +75,41 @@ namespace WPFHook.ViewModels
         //class properties
         private ActivityLine previousActivity;
         private HookManager manager;
+        private BackgroundWorker managerBackgroundWorker;
         private SqliteDataAccess dataAccess;
         private int counter;
         private static bool isIdle = false;
         private static readonly int idleTimeInMilliseconds = 300000; // 300,000 miliseconds = 5 minutes
-        /// <summary>
-        /// To be used when the application is closing - to Unhook and not forget any last bits of data
-        /// </summary>
-        private void appClosing()
-        {
-            //save the current activity and than close the app.
-            previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
-            dataAccess.saveActivityLine(previousActivity);
-            //all that is left is to close the app
-            manager.UnHook();
-            manager.WindowChanged -= Manager_WindowChanged;
-            manager.ExceptionHappened -= Manager_ExceptionHappened;
-            manager.MouseMessaged -= Manager_MouseMessaged;
-        }
+        #region Hooks
+
         private void SetUpHook()
         {
-            manager = new HookManager();
-            manager.WindowChanged += Manager_WindowChanged;
-            manager.ExceptionHappened += Manager_ExceptionHappened;
-            manager.MouseMessaged += Manager_MouseMessaged;
+            manager = new HookManager(managerBackgroundWorker);
+            managerBackgroundWorker.DoWork += manager.BackgroundWorkerOnDoWork;
+            managerBackgroundWorker.ProgressChanged += ManagerBackgroundWorker_ProgressChanged;
+            managerBackgroundWorker.RunWorkerAsync();
         }
+
+        private void ManagerBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            //MessageBox.Show("progress" + e.UserState.ToString(), "messeged!", MessageBoxButton.OK, MessageBoxImage.Information);
+            var userObject = e.UserState;
+            if (userObject is string)
+            {
+                string func = userObject as string;
+                if(func.Equals("mouse messeged"))
+                {
+                    Manager_MouseMessaged(sender, e);
+                }
+                if (func.Equals("window changed"))
+                {
+                    WindowChangedEventArgs args = new WindowChangedEventArgs();
+                    Manager_WindowChanged(sender, args);
+                }
+            }
+
+        }
+
         /// <summary>
         /// escalates the exception to the main window
         /// </summary>
@@ -118,12 +134,45 @@ namespace WPFHook.ViewModels
         /// <param name="e"></param>
         private void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
-            UpdatePreviousActivity(e);
-            // send the current window title to the app.
-            model.ActivityTitle = "process : " + e.process.ProcessName + " || window title : " + e.process.MainWindowTitle + " || " + previousActivity.Tag;
-            counter = 0;
-            isIdle = false;
+            e.process = getForegroundProcess();
+            if (!previousActivity.FGProcessName.Equals(e.process.ProcessName) || !previousActivity.FGWindowName.Equals(e.process.MainWindowTitle))
+            {
+                try
+                {
+                    UpdatePreviousActivity(e);
+                    // send the current window title to the app.
+                    model.ActivityTitle = "process : " + e.process.ProcessName + " || window title : " + e.process.MainWindowTitle + " || " + previousActivity.Tag;
+                    counter = 0;
+                    isIdle = false;
+                }
+                catch (Exception ex)
+                {
+                    Manager_ExceptionHappened(this, ex);
+                }
+            }
         }
+        /// <summary>
+        /// code i found in the internet
+        /// returns the foreground process by using processID.
+        /// need to read more about it and have edge cases delt with.
+        /// </summary>
+        /// <returns></returns>
+        private Process getForegroundProcess()
+        {
+            uint processID = 0;
+            IntPtr handle = IntPtr.Zero;
+            handle = GetForegroundWindow();
+            uint threadID = GetWindowThreadProcessId(handle, out processID); // Get PID from window handle
+            Process foregroundProcess = Process.GetProcessById(Convert.ToInt32(processID)); // Get it as a C# obj.
+            // NOTE: In some rare cases ProcessID will be NULL. Handle this how you want. 
+            return foregroundProcess;
+        }
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        #endregion
+        #region UpdatePreviousActivity
         /// <summary>
         /// updates the previousActivity and the current Tag and saves the activity in the database
         /// </summary>
@@ -161,9 +210,19 @@ namespace WPFHook.ViewModels
             previousActivity.SetDateAndTime(DateTime.Now);
             currentTag = previousActivity.Tag;
         }
-
-
-
+        #endregion
+        /// <summary>
+        /// To be used when the application is closing - to Unhook and not forget any last bits of data
+        /// </summary>
+        private void appClosing()
+        {
+            //save the current activity and than close the app.
+            previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
+            dataAccess.saveActivityLine(previousActivity);
+            //all that is left is to close the app
+            managerBackgroundWorker.CancelAsync();
+            manager.UnHook();
+        }
         private void Manager_MouseMessaged(object sender, EventArgs e)
         {
             // add here code that sets the previous activity to the pre-last activity in the database
