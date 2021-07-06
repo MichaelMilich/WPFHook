@@ -16,7 +16,6 @@ namespace WPFHook.ViewModels
     {
         #region public 
         public event EventHandler<WindowChangedEventArgs> WindowChanged;
-        public event EventHandler MouseMessaged;
         /// <summary>
         /// sets up the hook for mouse moves
         /// </summary>
@@ -61,12 +60,7 @@ namespace WPFHook.ViewModels
         /// <returns></returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if(nCode >= 0)
-                MouseMessaged?.Invoke(this, EventArgs.Empty);
-            if (nCode >= 0 && MouseMessages.WM_MOUSEMOVE == (MouseMessages)wParam)
-            {
-                OnWindowChanged();
-            }
+            OnWindowChanged();
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
         /// <summary>

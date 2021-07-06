@@ -33,11 +33,6 @@ namespace WPFHook.ViewModels
         {
             view = mainWindow;
             counter = 0;
-            managerBackgroundWorker = new BackgroundWorker
-            {
-                WorkerReportsProgress = true,
-                WorkerSupportsCancellation = true
-            };
             SetUpHook();
             dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
@@ -75,7 +70,6 @@ namespace WPFHook.ViewModels
         //class properties
         private ActivityLine previousActivity;
         private HookManager manager;
-        private BackgroundWorker managerBackgroundWorker;
         private SqliteDataAccess dataAccess;
         private int counter;
         private static bool isIdle = false;
@@ -84,31 +78,10 @@ namespace WPFHook.ViewModels
 
         private void SetUpHook()
         {
-            manager = new HookManager(managerBackgroundWorker);
-            managerBackgroundWorker.DoWork += manager.BackgroundWorkerOnDoWork;
-            managerBackgroundWorker.ProgressChanged += ManagerBackgroundWorker_ProgressChanged;
-            managerBackgroundWorker.RunWorkerAsync();
+            manager = new HookManager();
+            manager.WindowChanged += Manager_WindowChanged;
         }
 
-        private void ManagerBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            //MessageBox.Show("progress" + e.UserState.ToString(), "messeged!", MessageBoxButton.OK, MessageBoxImage.Information);
-            var userObject = e.UserState;
-            if (userObject is string)
-            {
-                string func = userObject as string;
-                if(func.Equals("mouse messeged"))
-                {
-                    Manager_MouseMessaged(sender, e);
-                }
-                if (func.Equals("window changed"))
-                {
-                    WindowChangedEventArgs args = new WindowChangedEventArgs();
-                    Manager_WindowChanged(sender, args);
-                }
-            }
-
-        }
 
         /// <summary>
         /// escalates the exception to the main window
@@ -150,6 +123,15 @@ namespace WPFHook.ViewModels
                     Manager_ExceptionHappened(this, ex);
                 }
             }
+
+            if (isIdle)
+            {
+                ActivityLine activity = LoadSecondToLastActivity();
+                UpdatePreviousActivity(activity);
+                model.ActivityTitle = activity.ToString();
+            }
+            counter = 0;
+            isIdle = false;
         }
         /// <summary>
         /// code i found in the internet
@@ -220,21 +202,10 @@ namespace WPFHook.ViewModels
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
             dataAccess.saveActivityLine(previousActivity);
             //all that is left is to close the app
-            managerBackgroundWorker.CancelAsync();
+            manager.WindowChanged -= Manager_WindowChanged;
             manager.UnHook();
         }
-        private void Manager_MouseMessaged(object sender, EventArgs e)
-        {
-            // add here code that sets the previous activity to the pre-last activity in the database
-            if(isIdle)
-            {
-                ActivityLine activity = LoadSecondToLastActivity();
-                UpdatePreviousActivity(activity);
-                model.ActivityTitle = activity.ToString();
-            }
-            counter = 0;
-            isIdle = false;
-        }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
             // check for idle first, then update the timers.

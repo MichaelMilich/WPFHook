@@ -16,34 +16,24 @@ namespace WPFHook.ViewModels
     /// NEED TO WORK ON EXCEPTION HANDELING
     /// test 
     /// </summary>
-    public class HookManager
+    public class HookManager: IHook
     {
         #region public
         // system event hooks that are in place.
         // it might be a good idea to have a general hook object or interface that all hooks works with.
-        //public event EventHandler<WindowChangedEventArgs> WindowChanged;
-        //public event EventHandler MouseMessaged;
-
-        // The link to the backgroundWorker that manages the Hook
-        public BackgroundWorker backgroundWorker;
+        public event EventHandler<WindowChangedEventArgs> WindowChanged;
         /// <summary>
         /// sets up all the hooks for the windows events.
         /// </summary>
-        public HookManager(BackgroundWorker backgroundWorker)
+        public HookManager()
         {
-            this.backgroundWorker = backgroundWorker;
             hooks = new List<IHook>();
             SetHooks();
             Subscribe();
-            //this.Start();
+            this.Start();
         }
 
-        public void BackgroundWorkerOnDoWork(object sender, DoWorkEventArgs e)
-        {
-            this.Start();
-            //EventLoop loop = new EventLoop(backgroundWorker);
-           // EventLoop.Run();
-        }
+
         /// <summary>
         /// use this when closing the app
         /// </summary>
@@ -74,16 +64,7 @@ namespace WPFHook.ViewModels
             foreach (IHook hook in hooks)
             {
                 hook.WindowChanged += Manager_WindowChanged;
-                if (hook is MouseHook)
-                {
-                    var mouse = hook as MouseHook;
-                    mouse.MouseMessaged += MouseHook_MouseMessaged;
-                }
             }
-        }
-        private void MouseHook_MouseMessaged(object sender, EventArgs e)
-        {
-            backgroundWorker.ReportProgress(0, "mouse messeged");
         }
         /// <summary>
         /// the general subscriber for all windows events.
@@ -94,7 +75,7 @@ namespace WPFHook.ViewModels
         /// <param name="e"></param>
         private void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
-            backgroundWorker.ReportProgress(0, "window changed");
+            WindowChanged?.Invoke(sender, e);
         }
 
         #endregion
