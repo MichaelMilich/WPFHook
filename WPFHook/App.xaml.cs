@@ -22,7 +22,7 @@ namespace WPFHook
     public partial class App : Application
     {
         private MainWindow mainWindow;
-        private MiddleMan mainViewModel;
+        private MainViewModel mainViewModel;
         public App() : base()
         {
             SetupUnhandledExceptionHandling();
@@ -106,7 +106,7 @@ namespace WPFHook
         }
         private void SetUpViewModel()
         {
-            mainViewModel = new MiddleMan(mainWindow);
+            mainViewModel = new MainViewModel(mainWindow);
             mainWindow.DataContext = mainViewModel;
         }
         private void ExitHeader_Click(object sender, RoutedEventArgs e)
