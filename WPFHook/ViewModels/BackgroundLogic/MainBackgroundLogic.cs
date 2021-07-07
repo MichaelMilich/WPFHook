@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,27 +12,41 @@ namespace WPFHook.ViewModels.BackgroundLogic
     public class MainBackgroundLogic
     {
         public ActivityLine previousActivity;
-        public HookManager manager;
         public SqliteDataAccess dataAccess;
         public int counter;
         public static bool isIdle = false;
         public static readonly int idleTimeInMilliseconds = 30000; // 300,000 miliseconds = 5 minutes
         public MainViewModel mainViewModel;
+        public BackgroundWorker managerWindowChangedWorker;
 
-        public MainBackgroundLogic(ActivityLine previousActivity, HookManager manager, SqliteDataAccess dataAccess, int counter)
-        {
-            this.previousActivity = previousActivity;
-            this.manager = manager;
-            this.dataAccess = dataAccess;
-        }
         public MainBackgroundLogic(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
+            var model = mainViewModel.Model;
             dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
+            model.ActivityTitle = "process : " + previousActivity.FGProcessName + " || window title : " + previousActivity.FGWindowName + " || " + previousActivity.Tag;
             counter = 0;
-            SetUpHook();
+            managerWindowChangedWorker = new BackgroundWorker(); // so i want to send off a notification from my main thread (where the hooks are) to the background thread.
+                                                                 // The background thread will make all the checks and database connections and will send back the results
+                                                                 // The results being the properties to update and with what.
+            managerWindowChangedWorker.DoWork += ManagerWindowChangedWorker_DoWork;
+            managerWindowChangedWorker.RunWorkerCompleted += ManagerWindowChangedWorker_RunWorkerCompleted;
         }
+
+        private void ManagerWindowChangedWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // sends the UpdatePreviousActivity 
+            // returns previous activity
+            throw new NotImplementedException();
+        }
+
+        private void ManagerWindowChangedWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // update the tags
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// To be used when the application is closing - to Unhook and not forget any last bits of data
         /// </summary>
@@ -41,39 +56,21 @@ namespace WPFHook.ViewModels.BackgroundLogic
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
             dataAccess.saveActivityLine(previousActivity);
             //all that is left is to close the app
-            manager.WindowChanged -= Manager_WindowChanged;
-            manager.UnHook();
+            mainViewModel.manager.WindowChanged -= mainViewModel.Manager_WindowChanged;
+            mainViewModel.manager.UnHook();
         }
 
 
-        public void SetUpHook()
-        {
-            manager = new HookManager();
-            manager.WindowChanged += Manager_WindowChanged;
-        }
-
-        /// <summary>
-        /// escalates the exception to the main window
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         public void Manager_ExceptionHappened(object sender, Exception e)
         {
             MessageBox.Show(e.ToString() + "\n \n " + e.Message, "Hook Error!", MessageBoxButton.OK, MessageBoxImage.Error);
             Task LogExceptionTask = App.LogExceptions(e, e.Message);
             appClosing();
-            SetUpHook();
+            mainViewModel.SetUpHook();
             LogExceptionTask.Wait();
         }
 
-        /// <summary>
-        /// Event Handler - listens to events in the hook manager.
-        /// It processes the data and sends it to GUI. 
-        /// It sends to window title text box the foreground process window title.
-        /// To the history log it sends a log of the previous app and saves it in the database.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         public void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
             e.process = getForegroundProcess();

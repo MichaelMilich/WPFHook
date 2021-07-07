@@ -23,20 +23,24 @@ namespace WPFHook.ViewModels
     /// </summary>
     public class MainViewModel
     {
-        #region public
-        public DispatcherTimer timer;
-        public TimeSpan[] timeSpans;
-        public string currentTag;
+        #region constructor and background logic
+        //class properties
+        private MainBackgroundLogic backgroundLogic;
+        public HookManager manager;
+
         /// <summary>
         /// Sets up all the components of the application background such as : hooks manager, database connection, activityline object saving the last activity.
         /// </summary>
         public MainViewModel(MainWindow mainWindow)
         {
+            // ------ viewmodel code---------
             view = mainWindow;
+            model = new MainWindowModel();
+            // ------ viewmodel code---------
+            // ------ background logic code---------
+            SetUpHook();
             backgroundLogic = new MainBackgroundLogic(this);
             currentTag = backgroundLogic.previousActivity.Tag;
-            model = new MainWindowModel();
-            model.ActivityTitle = "process : " + previousActivity.FGProcessName + " || window title : " + previousActivity.FGWindowName + " || " + previousActivity.Tag;
             // setting the timers
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(1000);
@@ -47,6 +51,25 @@ namespace WPFHook.ViewModels
             }
             timer.Start();
             timer.Tick += backgroundLogic.Timer_Tick;
+            // ------ background logic code---------
+        }
+        public void SetUpHook()
+        {
+            manager = new HookManager();
+            manager.WindowChanged += Manager_WindowChanged;
+        }
+
+        /// <summary>
+        /// Event Handler - listens to events in the hook manager.
+        /// It processes the data and sends it to GUI. 
+        /// It sends to window title text box the foreground process window title.
+        /// To the history log it sends a log of the previous app and saves it in the database.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
+        {
+            backgroundLogic.Manager_WindowChanged(sender, e);
         }
         /// <summary>
         /// connects to the ActivityDB.db and queries the whole database
@@ -64,14 +87,6 @@ namespace WPFHook.ViewModels
 
         #endregion
 
-        #region private / protected
-        //class properties
-        private MainBackgroundLogic backgroundLogic;
-        private ActivityLine previousActivity;
-        private SqliteDataAccess dataAccess;
-
-        #endregion
-
         #region ViewModel region
         private MainWindow view;
         private MainWindowModel model;
@@ -79,6 +94,9 @@ namespace WPFHook.ViewModels
         {
             get { return model; }
         }
+        public DispatcherTimer timer;
+        public TimeSpan[] timeSpans;
+        public string currentTag;
         #endregion
 
 
@@ -119,7 +137,7 @@ namespace WPFHook.ViewModels
             string value = date.ToString("dd/MM/yyyy");
             DayReportModel dayReportModel = new DayReportModel();
             dayReportModel.Date = date;
-            List<ActivityLine> dailyList = dataAccess.LoadActivities(parameter, value);
+            List<ActivityLine> dailyList = backgroundLogic.dataAccess.LoadActivities(parameter, value);
             foreach (ActivityLine line in dailyList)
             {
                 dayReportModel.TotalTime = dayReportModel.TotalTime.Add(line.inAppTime);
