@@ -77,5 +77,6 @@ namespace WPFHook.ViewModels
             s += InAppTime;
             return s;
         }
+
     }
 }

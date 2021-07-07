@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -30,21 +31,58 @@ namespace WPFHook.ViewModels.BackgroundLogic
             managerWindowChangedWorker = new BackgroundWorker(); // so i want to send off a notification from my main thread (where the hooks are) to the background thread.
                                                                  // The background thread will make all the checks and database connections and will send back the results
                                                                  // The results being the properties to update and with what.
+            managerWindowChangedWorker.WorkerReportsProgress = true;
             managerWindowChangedWorker.DoWork += ManagerWindowChangedWorker_DoWork;
             managerWindowChangedWorker.RunWorkerCompleted += ManagerWindowChangedWorker_RunWorkerCompleted;
+            managerWindowChangedWorker.ProgressChanged += ManagerWindowChangedWorker_ProgressChanged;
+        }
+
+        private void ManagerWindowChangedWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            switch (e.ProgressPercentage)
+            {
+                case 0:
+                    Exception ex = e.UserState as Exception;
+                    Manager_ExceptionHappened(sender, ex);
+                    break;
+                case 1:
+                    ActivityLine activity = e.UserState as ActivityLine;
+                    mainViewModel.Model.ActivityTitle = activity.ToString();
+                    break;
+            }
         }
 
         private void ManagerWindowChangedWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            // sends the UpdatePreviousActivity 
-            // returns previous activity
-            throw new NotImplementedException();
+            counter = 0;
+            isIdle = false;
+            mainViewModel.currentTag = previousActivity.Tag;
+            mainViewModel.Model.ActivityTitle = previousActivity.ToString();
+
         }
 
         private void ManagerWindowChangedWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            // update the tags
-            throw new NotImplementedException();
+            Thread.Sleep(5000);
+            var process = getForegroundProcess();
+            if (!previousActivity.FGProcessName.Equals(process.ProcessName) || !previousActivity.FGWindowName.Equals(process.MainWindowTitle))
+            {
+                try
+                {
+                    UpdatePreviousActivity(process);
+                }
+                catch (Exception ex)
+                {
+                    managerWindowChangedWorker.ReportProgress(0, ex); // the number will be code for what situation it is 0 =exception
+                }
+            }
+
+            if (isIdle)
+            {
+                ActivityLine activity = LoadSecondToLastActivity();
+                UpdatePreviousActivity(activity);
+                managerWindowChangedWorker.ReportProgress(1, activity);
+            }
         }
 
         /// <summary>
@@ -73,6 +111,8 @@ namespace WPFHook.ViewModels.BackgroundLogic
 
         public void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
+           /* managerWindowChangedWorker.RunWorkerAsync();
+            var process = getForegroundProcess();
             e.process = getForegroundProcess();
             if (!previousActivity.FGProcessName.Equals(e.process.ProcessName) || !previousActivity.FGWindowName.Equals(e.process.MainWindowTitle))
             {
@@ -97,7 +137,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 mainViewModel.Model.ActivityTitle = activity.ToString();
             }
             counter = 0;
-            isIdle = false;
+            isIdle = false;*/
         }
         /// <summary>
         /// code i found in the internet
@@ -123,12 +163,12 @@ namespace WPFHook.ViewModels.BackgroundLogic
         /// updates the previousActivity and the current Tag and saves the activity in the database
         /// </summary>
         /// <param name="e"></param>
-        public void UpdatePreviousActivity(WindowChangedEventArgs e)
+        public void UpdatePreviousActivity(Process e)
         {
             //set the previous time span
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
             dataAccess.saveActivityLine(previousActivity);
-            previousActivity = new ActivityLine(DateTime.Now, e.process.MainWindowTitle, e.process.ProcessName);
+            previousActivity = new ActivityLine(DateTime.Now, e.MainWindowTitle, e.ProcessName);
             mainViewModel.currentTag = previousActivity.Tag;
         }
         /// <summary>
@@ -195,6 +235,14 @@ namespace WPFHook.ViewModels.BackgroundLogic
                     model.SystemTime = model.SystemTime.Add(timer.Interval);
                     break;
             }
+        }
+        public List<ActivityLine> LoadActivities()
+        {
+            return dataAccess.LoadActivities();
+        }
+        public ActivityLine LoadSecondToLastActivity()
+        {
+            return dataAccess.LoadSecondToLastActivity();
         }
     }
 }

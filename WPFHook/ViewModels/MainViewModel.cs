@@ -69,7 +69,8 @@ namespace WPFHook.ViewModels
         /// <param name="e"></param>
         public void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
         {
-            backgroundLogic.Manager_WindowChanged(sender, e);
+            if(!backgroundLogic.managerWindowChangedWorker.IsBusy)
+                backgroundLogic.managerWindowChangedWorker.RunWorkerAsync();
         }
         /// <summary>
         /// connects to the ActivityDB.db and queries the whole database
