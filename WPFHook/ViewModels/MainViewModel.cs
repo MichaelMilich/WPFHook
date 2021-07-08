@@ -43,7 +43,7 @@ namespace WPFHook.ViewModels
             currentTag = backgroundLogic.previousActivity.Tag;
             // setting the timers
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(1000);
+            timer.Interval = TimeSpan.FromSeconds(1);
             timeSpans = new TimeSpan[4];
             for(int i =0; i<4; i++)
             {
@@ -72,19 +72,6 @@ namespace WPFHook.ViewModels
             if(!backgroundLogic.managerWindowChangedWorker.IsBusy)
                 backgroundLogic.managerWindowChangedWorker.RunWorkerAsync();
         }
-        /// <summary>
-        /// connects to the ActivityDB.db and queries the whole database
-        /// </summary>
-        /// <returns>List of ActivityLines that the database has (the whole database)</returns>
-        public List<ActivityLine> LoadActivities()
-        {
-            return backgroundLogic.dataAccess.LoadActivities();
-        }
-
-        public ActivityLine LoadSecondToLastActivity()
-        {
-            return backgroundLogic.dataAccess.LoadSecondToLastActivity();
-        }
 
         #endregion
 
@@ -106,15 +93,16 @@ namespace WPFHook.ViewModels
         public ICommand LoadSecondToLastActivityCommand { get { return new RelayCommand(e => true, this.LoadSecondToLastActivity); } }
         public ICommand RunOnStartupCommand { get { return new RelayCommand(e => true, this.RunOnStartup); } }
         public ICommand DailyReportCommand { get { return new RelayCommand(e => true, this.DailyReport); } }
+        public ICommand OpenTestWindowCommand { get { return new RelayCommand(e => true, this.OpenTestWindow); } }
         public void ShowActivityList(object obj)
         {
             ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();
             subWindow.Show();
-            subWindow.ShowDataBase(LoadActivities());
+            subWindow.ShowDataBase(backgroundLogic.LoadActivities());
         }
         private void LoadSecondToLastActivity(object obj)
         {
-            MessageBox.Show(this.LoadSecondToLastActivity().ToString());
+            MessageBox.Show(backgroundLogic.LoadSecondToLastActivity().ToString());
         }
         private void RunOnStartup(object obj)
         {
@@ -157,6 +145,11 @@ namespace WPFHook.ViewModels
             }
             dayReportModel.Data = dailyList;
             return dayReportModel;
+        }
+        private void OpenTestWindow(object obj)
+        {
+            TimeLineViewModel timeLineViewModel = new TimeLineViewModel();
+            timeLineViewModel.view.Show();
         }
         #endregion
     }

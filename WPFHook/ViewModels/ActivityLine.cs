@@ -77,6 +77,11 @@ namespace WPFHook.ViewModels
             s += InAppTime;
             return s;
         }
+        public string ToTitle()
+        {
+            string s = "Window: " + FGWindowName + " || Tag: " + Tag;
+            return s;
+        }
 
     }
 }

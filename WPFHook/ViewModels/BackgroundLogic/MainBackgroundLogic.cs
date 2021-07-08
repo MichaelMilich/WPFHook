@@ -26,7 +26,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             var model = mainViewModel.Model;
             dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
-            model.ActivityTitle = "process : " + previousActivity.FGProcessName + " || window title : " + previousActivity.FGWindowName + " || " + previousActivity.Tag;
+            model.ActivityTitle = previousActivity.ToTitle();
             counter = 0;
             managerWindowChangedWorker = new BackgroundWorker(); // so i want to send off a notification from my main thread (where the hooks are) to the background thread.
                                                                  // The background thread will make all the checks and database connections and will send back the results
@@ -36,18 +36,22 @@ namespace WPFHook.ViewModels.BackgroundLogic
             managerWindowChangedWorker.RunWorkerCompleted += ManagerWindowChangedWorker_RunWorkerCompleted;
             managerWindowChangedWorker.ProgressChanged += ManagerWindowChangedWorker_ProgressChanged;
         }
-
+        #region logic main functions
         private void ManagerWindowChangedWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             switch (e.ProgressPercentage)
             {
-                case 0:
+                case 0: // case 0 - there is an error - if so, deal with it.
                     Exception ex = e.UserState as Exception;
-                    Manager_ExceptionHappened(sender, ex);
+                    MessageBox.Show(ex.ToString() + "\n \n " + ex.Message, "Hook Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Task LogExceptionTask = App.LogExceptions(ex, ex.Message);
+                    appClosing();
+                    mainViewModel.SetUpHook();
+                    LogExceptionTask.Wait();
                     break;
-                case 1:
+                case 1: // case 1 - the computer came of being idle.
                     ActivityLine activity = e.UserState as ActivityLine;
-                    mainViewModel.Model.ActivityTitle = activity.ToString();
+                    mainViewModel.Model.ActivityTitle = activity.ToTitle();
                     break;
             }
         }
@@ -57,13 +61,12 @@ namespace WPFHook.ViewModels.BackgroundLogic
             counter = 0;
             isIdle = false;
             mainViewModel.currentTag = previousActivity.Tag;
-            mainViewModel.Model.ActivityTitle = previousActivity.ToString();
+            mainViewModel.Model.ActivityTitle = previousActivity.ToTitle();
 
         }
 
         private void ManagerWindowChangedWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            Thread.Sleep(5000);
             var process = getForegroundProcess();
             if (!previousActivity.FGProcessName.Equals(process.ProcessName) || !previousActivity.FGWindowName.Equals(process.MainWindowTitle))
             {
@@ -84,7 +87,48 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 managerWindowChangedWorker.ReportProgress(1, activity);
             }
         }
+        public void Timer_Tick(object sender, EventArgs e)
+        {
+            // check for idle first, then update the timers.
+            var model = mainViewModel.Model;
+            var timer = mainViewModel.timer;
+            counter += (int)timer.Interval.TotalMilliseconds;
+            if (counter > idleTimeInMilliseconds && !isIdle)
+            {
+                isIdle = true;
+                UpdatePreviousActivity("", "Idle");
+                model.ActivityTitle = previousActivity.ToTitle();
+            }
+            // -----NOTE FOR THE FUTURE ----
+            // I should make a tag string array in the same length as the timers, maybe timers.length=tags.length+1 because i want also the global timer to be timers[0].
+            // I should than do a for loop in the following manner:
 
+            /*
+            timeSpans[0] = timeSpans[0].Add(timer.Interval);
+            for (int i = 1; i < timeSpans.Length;i++)
+            {
+                if (currentTag.Equals(tags[i-1]))
+                    timeSpans[i] = timeSpans[i].Add(timer.Interval);
+            }
+            */
+
+            // ----- END NOTE FOR THE FUTURE ----
+            model.TotalTime = model.TotalTime.Add(timer.Interval);
+            switch (mainViewModel.currentTag)
+            {
+                case "work":
+                    model.WorkTime = model.WorkTime.Add(timer.Interval);
+                    break;
+                case "distraction":
+                    model.DistractionTime = model.DistractionTime.Add(timer.Interval);
+                    break;
+                case "system":
+                    model.SystemTime = model.SystemTime.Add(timer.Interval);
+                    break;
+            }
+        }
+        #endregion
+        #region helping functions
         /// <summary>
         /// To be used when the application is closing - to Unhook and not forget any last bits of data
         /// </summary>
@@ -98,47 +142,6 @@ namespace WPFHook.ViewModels.BackgroundLogic
             mainViewModel.manager.UnHook();
         }
 
-
-        public void Manager_ExceptionHappened(object sender, Exception e)
-        {
-            MessageBox.Show(e.ToString() + "\n \n " + e.Message, "Hook Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-            Task LogExceptionTask = App.LogExceptions(e, e.Message);
-            appClosing();
-            mainViewModel.SetUpHook();
-            LogExceptionTask.Wait();
-        }
-
-
-        public void Manager_WindowChanged(object sender, WindowChangedEventArgs e)
-        {
-           /* managerWindowChangedWorker.RunWorkerAsync();
-            var process = getForegroundProcess();
-            e.process = getForegroundProcess();
-            if (!previousActivity.FGProcessName.Equals(e.process.ProcessName) || !previousActivity.FGWindowName.Equals(e.process.MainWindowTitle))
-            {
-                try
-                {
-                    UpdatePreviousActivity(e);
-                    // send the current window title to the app.
-                    mainViewModel.Model.ActivityTitle = "process : " + e.process.ProcessName + " || window title : " + e.process.MainWindowTitle + " || " + previousActivity.Tag;
-                    counter = 0;
-                    isIdle = false;
-                }
-                catch (Exception ex)
-                {
-                    Manager_ExceptionHappened(this, ex);
-                }
-            }
-
-            if (isIdle)
-            {
-                ActivityLine activity = mainViewModel.LoadSecondToLastActivity();
-                UpdatePreviousActivity(activity);
-                mainViewModel.Model.ActivityTitle = activity.ToString();
-            }
-            counter = 0;
-            isIdle = false;*/
-        }
         /// <summary>
         /// code i found in the internet
         /// returns the foreground process by using processID.
@@ -196,46 +199,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             previousActivity.SetDateAndTime(DateTime.Now);
             mainViewModel.currentTag = previousActivity.Tag;
         }
-        public void Timer_Tick(object sender, EventArgs e)
-        {
-            // check for idle first, then update the timers.
-            var model = mainViewModel.Model;
-            var timer = mainViewModel.timer;
-            counter += (int)timer.Interval.TotalMilliseconds;
-            if (counter > idleTimeInMilliseconds && !isIdle)
-            {
-                isIdle = true;
-                UpdatePreviousActivity("", "Idle");
-                model.ActivityTitle = previousActivity.ToString();
-            }
-            // -----NOTE FOR THE FUTURE ----
-            // I should make a tag string array in the same length as the timers, maybe timers.length=tags.length+1 because i want also the global timer to be timers[0].
-            // I should than do a for loop in the following manner:
 
-            /*
-            timeSpans[0] = timeSpans[0].Add(timer.Interval);
-            for (int i = 1; i < timeSpans.Length;i++)
-            {
-                if (currentTag.Equals(tags[i-1]))
-                    timeSpans[i] = timeSpans[i].Add(timer.Interval);
-            }
-            */
-
-            // ----- END NOTE FOR THE FUTURE ----
-            model.TotalTime = model.TotalTime.Add(timer.Interval);
-            switch (mainViewModel.currentTag)
-            {
-                case "work":
-                    model.WorkTime = model.WorkTime.Add(timer.Interval);
-                    break;
-                case "distraction":
-                    model.DistractionTime = model.DistractionTime.Add(timer.Interval);
-                    break;
-                case "system":
-                    model.SystemTime = model.SystemTime.Add(timer.Interval);
-                    break;
-            }
-        }
         public List<ActivityLine> LoadActivities()
         {
             return dataAccess.LoadActivities();
@@ -244,5 +208,6 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             return dataAccess.LoadSecondToLastActivity();
         }
+        #endregion
     }
 }
