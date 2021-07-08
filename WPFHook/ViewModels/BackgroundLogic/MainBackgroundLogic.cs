@@ -127,6 +127,14 @@ namespace WPFHook.ViewModels.BackgroundLogic
                     break;
             }
         }
+        public void ShowDilyVisual(DateTime date)
+        {
+            string parameter = "Date";
+            string value = date.ToString("dd/MM/yyyy");
+            List<ActivityLine> dailyList = dataAccess.LoadActivities(parameter, value);
+            TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
+            timeLineViewModel.view.Show();
+        }
         #endregion
         #region helping functions
         /// <summary>

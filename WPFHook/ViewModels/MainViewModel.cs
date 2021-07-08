@@ -148,8 +148,10 @@ namespace WPFHook.ViewModels
         }
         private void OpenTestWindow(object obj)
         {
-            TimeLineViewModel timeLineViewModel = new TimeLineViewModel();
-            timeLineViewModel.view.Show();
+            //TimeLineViewModel timeLineViewModel = new TimeLineViewModel();
+            // timeLineViewModel.view.Show();
+            DateTime date = (DateTime)view.dailyReportDayPicker.SelectedDate;
+            backgroundLogic.ShowDilyVisual(date);
         }
         #endregion
     }

@@ -24,7 +24,7 @@
                         
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Rectangle Grid.Column="1" Fill="Green" VerticalAlignment="Stretch" HorizontalAlignment="Left" ToolTip="{Binding Path=TextData}">
+                                <Rectangle Grid.Column="1" Stroke="Red" Fill="Green" VerticalAlignment="Stretch" HorizontalAlignment="Left" ToolTip="{Binding Path=TextData}" >
                                     
                                     <Rectangle.Margin>
                                         <MultiBinding Converter="{StaticResource mEventLengthConverter}">

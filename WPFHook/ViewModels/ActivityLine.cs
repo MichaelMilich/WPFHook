@@ -15,6 +15,7 @@ namespace WPFHook.ViewModels
         public int id;
         public string Date => dateAndTime.ToString("dd/MM/yyyy");
         public string Time => dateAndTime.ToString("HH:mm:ss");
+        public TimeSpan StartTime => dateAndTime.TimeOfDay;
         public string FGWindowName { get; set; }
         public string FGProcessName { get; set; }
         public TimeSpan inAppTime { get; set; }
