@@ -6,49 +6,8 @@
         xmlns:local="clr-namespace:WPFHook.Views" xmlns:local1="clr-namespace:WPFHook.Commands"
         mc:Ignorable="d"
         Title="TimeLineWindow" Height="450" Width="800">
-    <Window.Resources>
-        <local1:EventLengthConverter x:Key="mEventLengthConverter"/>
-    </Window.Resources>
+
     <Grid>
-        <ItemsControl ItemsSource="{Binding Path=TimeLines}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    
-                    <ItemsControl x:Name="TimeLine" ItemsSource="{Binding Path=Events}">
-                        
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Grid x:Name="EventContainer" Height="20" Margin="5" Background="Gainsboro"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Rectangle Grid.Column="1" Fill="{Binding Path=Color}" VerticalAlignment="Stretch" HorizontalAlignment="Left" ToolTip="{Binding Path=TextData}" >
-                                    
-                                    <Rectangle.Margin>
-                                        <MultiBinding Converter="{StaticResource mEventLengthConverter}">
-                                            <Binding ElementName="TimeLine" Path="DataContext.Duration"/>
-                                            <Binding Path="Start"/>
-                                            <Binding ElementName="EventContainer" Path="ActualWidth"/>
-                                        </MultiBinding>
-                                    </Rectangle.Margin>
-                                    
-                                    <Rectangle.Width>
-                                        <MultiBinding Converter="{StaticResource mEventLengthConverter}">
-                                            <Binding ElementName="TimeLine" Path="DataContext.Duration"/>
-                                            <Binding Path="Duration"/>
-                                            <Binding ElementName="EventContainer" Path="ActualWidth"/>
-                                        </MultiBinding>
-                                    </Rectangle.Width>
-                                </Rectangle>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        
-                    </ItemsControl>
-                    
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <local:TimeLineView x:Name="TimeLineVisual" />
     </Grid>
 </Window>

@@ -39,7 +39,7 @@ namespace WPFHook.ViewModels
             this.TimeLines.Add(second);
 
             view = new TimeLineWindow();
-            view.DataContext = this;
+            view.TimeLineVisual.DataContext = this;
         }
         public TimeLineViewModel(List<ActivityLine> dailyList)
         {
@@ -84,7 +84,7 @@ namespace WPFHook.ViewModels
             this.TimeLines.Add(day);
 
             view = new TimeLineWindow();
-            view.DataContext = this;
+            view.TimeLineVisual.DataContext = this;
         }
     }
 }
