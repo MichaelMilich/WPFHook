@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Windows.Media;
 
 namespace WPFHook.ViewModels
 {
@@ -22,21 +23,30 @@ namespace WPFHook.ViewModels
         /// <param name="windowName"></param>
         /// <param name="processName"></param>
         /// <returns></returns>
-        public static string getTag(string windowName, string processName)
+        public static (string, Brush) getTag(string windowName, string processName)
         {
             if (windowName.Equals(""))
-                return "system";
+                return ("system",Brushes.Blue);
             else
             {
                 foreach(string word in distractionWords)
                 {
                     if(Contains(word,windowName) || Contains(word, processName))
                     {
-                        return "distraction";
+                        return ("distraction", Brushes.Red);
                     }
                 }
-                return "work";
+                return ("work", Brushes.Green);
             }
+        }
+        public static Brush UpdateTagColor(string tag)
+        {
+            if (tag.Equals("distraction"))
+                return Brushes.Red;
+            else if (tag.Equals("work"))
+                return Brushes.Green;
+            else
+                return Brushes.Blue;
         }
         /// <summary>
         /// checks if a substring is contained in the string (in my case - window title or process name)

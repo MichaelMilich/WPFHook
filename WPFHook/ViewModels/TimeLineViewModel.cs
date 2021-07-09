@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Windows.Media;
 using WPFHook.Models;
 using WPFHook.Views;
 
@@ -54,6 +55,7 @@ namespace WPFHook.ViewModels
             runningEvent.Start = dailyList[0].StartTime.Subtract(start);
             runningEvent.Duration = dailyList[0].inAppTime;
             runningEvent.TextData = dailyList[0].ToString() + "\n";
+            runningEvent.Color = dailyList[0].TagColor;
 
             for (int i=1; i<dailyList.Count;i++)
             {
@@ -61,7 +63,7 @@ namespace WPFHook.ViewModels
                 if (currentTag.Equals(dailyList[i].Tag))
                 {
                     runningEvent.Duration = runningEvent.Duration.Add(dailyList[i].inAppTime);
-                    runningEvent.TextData += dailyList[0].ToString() + "\n";
+                    runningEvent.TextData += dailyList[i].ToString() + "\n";
                 }
                 else
                 {
@@ -71,6 +73,7 @@ namespace WPFHook.ViewModels
                     runningEvent.Start = dailyList[i].StartTime.Subtract(start);
                     runningEvent.Duration = dailyList[i].inAppTime;
                     runningEvent.TextData = dailyList[i].ToString() + "\n";
+                    runningEvent.Color = dailyList[i].TagColor;
                 }
             }
             day.Events.Add(runningEvent);

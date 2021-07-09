@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Media;
 
 namespace WPFHook.Models
 {
@@ -32,6 +33,12 @@ namespace WPFHook.Models
         public TimeLineEvent()
         {
 
+        }
+        private Brush color;
+        public Brush Color
+        {
+            get { return color; }
+            set { color = value; }
         }
     }
 }

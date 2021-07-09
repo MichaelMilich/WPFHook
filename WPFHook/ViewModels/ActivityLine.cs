@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Windows.Media;
 
 namespace WPFHook.ViewModels
 {
@@ -21,9 +22,10 @@ namespace WPFHook.ViewModels
         public TimeSpan inAppTime { get; set; }
         public string InAppTime => string.Format("{0}:{1}:{2}", inAppTime.Hours, inAppTime.Minutes, inAppTime.Seconds);
         public string Tag { get; private set; }
+        public Brush TagColor;
         public void updateTag()
         {
-            Tag = Tagger.getTag(FGWindowName, FGProcessName);
+            (Tag, TagColor) = Tagger.getTag(FGWindowName, FGProcessName);
         }
         public ActivityLine(Int64 id, string Date, string Time, string FGWindowName, string FGProcessName, string InAppTime, string Tag)
         {
@@ -33,6 +35,7 @@ namespace WPFHook.ViewModels
             this.FGProcessName = FGProcessName;
             this.inAppTime = ParseTimeSpan(InAppTime);
             this.Tag = Tag;
+            TagColor = Tagger.UpdateTagColor(Tag);
         }
         public ActivityLine(DateTime dateAndTime, string windowName,string processName, string tag)
         {
@@ -40,6 +43,7 @@ namespace WPFHook.ViewModels
             this.FGWindowName = windowName;
             this.FGProcessName = processName;
             this.Tag = tag;
+            TagColor = Tagger.UpdateTagColor(Tag);
         }
         public ActivityLine(DateTime dateAndTime, string windowName, string processName)
         {
