@@ -118,6 +118,11 @@ namespace WPFHook.ViewModels
             if (date == null)
                 date = DateTime.Now;
             DayReportViewModel reportWindowViewModel = new DayReportViewModel(getDailyReport(date));
+            string parameter = "Date";
+            string value = date.ToString("dd/MM/yyyy");
+            List<ActivityLine> dailyList = backgroundLogic.dataAccess.LoadActivities(parameter, value);
+            TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList, reportWindowViewModel.View);
+
             reportWindowViewModel.Show();
         }
         private DayReportModel getDailyReport(DateTime date)

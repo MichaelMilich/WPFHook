@@ -6,12 +6,15 @@
         xmlns:local="clr-namespace:WPFHook"
         xmlns:uc="clr-namespace:WPFHook.Views"
         mc:Ignorable="d"
-        Title="ReportWindow" SizeToContent="WidthAndHeight">
+        Title="ReportWindow" Width="300" SizeToContent="Height">
     <Grid>
         <TabControl>
             <TabItem Header="Summery">
                 <Grid>
-                    <uc:DayReport x:Name="Report" />
+                    <StackPanel>
+                        <uc:DayReport x:Name="Report" />
+                        <uc:TimeLineView x:Name="TimeLineVisual" />
+                    </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Details">
