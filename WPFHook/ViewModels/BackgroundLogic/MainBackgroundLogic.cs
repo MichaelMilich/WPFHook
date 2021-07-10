@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using WPFHook.Views;
 
 namespace WPFHook.ViewModels.BackgroundLogic
 {
@@ -126,14 +127,6 @@ namespace WPFHook.ViewModels.BackgroundLogic
                     model.SystemTime = model.SystemTime.Add(timer.Interval);
                     break;
             }
-        }
-        public void ShowDilyVisual(DateTime date)
-        {
-            string parameter = "Date";
-            string value = date.ToString("dd/MM/yyyy");
-            List<ActivityLine> dailyList = dataAccess.LoadActivities(parameter, value);
-            TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
-            timeLineViewModel.view.Show();
         }
         #endregion
         #region helping functions

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using WPFHook.ViewModels.BackgroundLogic;
 
 namespace WPFHook.ViewModels
 {

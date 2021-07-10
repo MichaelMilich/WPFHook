@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 
-namespace WPFHook.ViewModels
+namespace WPFHook.ViewModels.BackgroundLogic
 {
     public static class Tagger
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using WPFHook.ViewModels.BackgroundLogic;
 
 namespace WPFHook.ViewModels
 {

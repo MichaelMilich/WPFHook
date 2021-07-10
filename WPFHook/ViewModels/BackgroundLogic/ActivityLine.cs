@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Media;
 
-namespace WPFHook.ViewModels
+namespace WPFHook.ViewModels.BackgroundLogic
 {
     public class ActivityLine
     {

@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WPFHook.ViewModels;
+using WPFHook.ViewModels.BackgroundLogic;
 
 namespace WPFHook.Views
 {

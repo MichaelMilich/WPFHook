@@ -13,40 +13,48 @@
         <ItemsControl ItemsSource="{Binding Path=TimeLines}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <ItemsControl x:Name="TimeLine" ItemsSource="{Binding Path=Events}">
+                        <TextBlock Grid.Column="0" Text="{Binding Path=Start}"/>
+                        <ItemsControl Grid.Column="1" x:Name="TimeLine" ItemsSource="{Binding Path=Events}">
 
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Grid x:Name="EventContainer" Height="20" Margin="5" Background="Gainsboro"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Grid x:Name="EventContainer" Height="20" Margin="5" Background="Gainsboro"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
 
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Rectangle Grid.Column="1" Fill="{Binding Path=Color}" VerticalAlignment="Stretch" HorizontalAlignment="Left" ToolTip="{Binding Path=TextData}" >
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Rectangle Grid.Column="1" Fill="{Binding Path=Color}" VerticalAlignment="Stretch" HorizontalAlignment="Left" ToolTip="{Binding Path=TextData}" >
 
-                                    <Rectangle.Margin>
-                                        <MultiBinding Converter="{StaticResource mEventLengthConverter}">
-                                            <Binding ElementName="TimeLine" Path="DataContext.Duration"/>
-                                            <Binding Path="Start"/>
-                                            <Binding ElementName="EventContainer" Path="ActualWidth"/>
-                                        </MultiBinding>
-                                    </Rectangle.Margin>
+                                        <Rectangle.Margin>
+                                            <MultiBinding Converter="{StaticResource mEventLengthConverter}">
+                                                <Binding ElementName="TimeLine" Path="DataContext.Duration"/>
+                                                <Binding Path="Start"/>
+                                                <Binding ElementName="EventContainer" Path="ActualWidth"/>
+                                             </MultiBinding>
+                                        </Rectangle.Margin>
 
-                                    <Rectangle.Width>
-                                        <MultiBinding Converter="{StaticResource mEventLengthConverter}">
-                                            <Binding ElementName="TimeLine" Path="DataContext.Duration"/>
-                                            <Binding Path="Duration"/>
-                                            <Binding ElementName="EventContainer" Path="ActualWidth"/>
-                                        </MultiBinding>
-                                    </Rectangle.Width>
-                                </Rectangle>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
+                                        <Rectangle.Width>
+                                            <MultiBinding Converter="{StaticResource mEventLengthConverter}">
+                                                <Binding ElementName="TimeLine" Path="DataContext.Duration"/>
+                                                <Binding Path="Duration"/>
+                                                <Binding ElementName="EventContainer" Path="ActualWidth"/>
+                                            </MultiBinding>
+                                        </Rectangle.Width>
+                                    </Rectangle>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
 
-                    </ItemsControl>
-
+                        </ItemsControl>
+                        <TextBlock Grid.Column="2" Text="{Binding Path=End}"/>
+                    </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

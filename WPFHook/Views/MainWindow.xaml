@@ -12,7 +12,6 @@
         <Menu DockPanel.Dock="Top" Background="LightGray">
             <MenuItem Header="_File" >
                 <MenuItem Header="_Show Activity List" Command="{Binding ShowActivityListCommand}"/>
-                <MenuItem Header="_Show second to last activity" Command="{Binding LoadSecondToLastActivityCommand}"/>
                 <MenuItem Header="_Run on Startup" Command="{Binding RunOnStartupCommand}"/>
                 <MenuItem Header="_Open Test Window" Command="{Binding OpenTestWindowCommand}"/>
                 <Separator />

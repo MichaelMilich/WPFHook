@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using WPFHook.ViewModels;
+using WPFHook.ViewModels.BackgroundLogic;
 
 namespace WPFHook.Models
 {

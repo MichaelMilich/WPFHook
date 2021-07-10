@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
 using WPFHook.ViewModels;
+using WPFHook.ViewModels.BackgroundLogic;
 using WPFHook.Views;
 
 namespace WPFHook

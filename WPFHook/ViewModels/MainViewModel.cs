@@ -90,7 +90,6 @@ namespace WPFHook.ViewModels
 
         #region ViewModelsCommands
         public ICommand ShowActivityListCommand { get { return new RelayCommand(e => true, this.ShowActivityList); } }
-        public ICommand LoadSecondToLastActivityCommand { get { return new RelayCommand(e => true, this.LoadSecondToLastActivity); } }
         public ICommand RunOnStartupCommand { get { return new RelayCommand(e => true, this.RunOnStartup); } }
         public ICommand DailyReportCommand { get { return new RelayCommand(e => true, this.DailyReport); } }
         public ICommand OpenTestWindowCommand { get { return new RelayCommand(e => true, this.OpenTestWindow); } }
@@ -99,10 +98,6 @@ namespace WPFHook.ViewModels
             ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();
             subWindow.Show();
             subWindow.ShowDataBase(backgroundLogic.LoadActivities());
-        }
-        private void LoadSecondToLastActivity(object obj)
-        {
-            MessageBox.Show(backgroundLogic.LoadSecondToLastActivity().ToString());
         }
         private void RunOnStartup(object obj)
         {
@@ -118,11 +113,12 @@ namespace WPFHook.ViewModels
             if (date == null)
                 date = DateTime.Now;
             DayReportViewModel reportWindowViewModel = new DayReportViewModel(getDailyReport(date));
+
             string parameter = "Date";
             string value = date.ToString("dd/MM/yyyy");
             List<ActivityLine> dailyList = backgroundLogic.dataAccess.LoadActivities(parameter, value);
-            TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList, reportWindowViewModel.View);
-
+            TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
+            reportWindowViewModel.View.TimeLineVisual.DataContext = timeLineViewModel;
             reportWindowViewModel.Show();
         }
         private DayReportModel getDailyReport(DateTime date)
@@ -153,10 +149,14 @@ namespace WPFHook.ViewModels
         }
         private void OpenTestWindow(object obj)
         {
-            //TimeLineViewModel timeLineViewModel = new TimeLineViewModel();
-            // timeLineViewModel.view.Show();
             DateTime date = (DateTime)view.dailyReportDayPicker.SelectedDate;
-            backgroundLogic.ShowDilyVisual(date);
+            string parameter = "Date";
+            string value = date.ToString("dd/MM/yyyy");
+            List<ActivityLine> dailyList = backgroundLogic.dataAccess.LoadActivities(parameter, value);
+            TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
+            TimeLineWindow timeLineWindow = new TimeLineWindow();
+            timeLineWindow.TimeLineVisual.DataContext = timeLineViewModel;
+            timeLineWindow.Show();
         }
         #endregion
     }

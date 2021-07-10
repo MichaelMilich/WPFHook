@@ -19,7 +19,18 @@ namespace WPFHook.Models
                  _duration = value;
             }
         }
-
+        private TimeSpan _start;
+        public TimeSpan Start
+        {
+            get { return _start; }
+            set { _start = value; }
+        }
+        private TimeSpan _end;
+        public TimeSpan End
+        {
+            get { return _end; }
+            set { _end = value; }
+        }
 
         private ObservableCollection<TimeLineEvent> _events = new ObservableCollection<TimeLineEvent>();
         public ObservableCollection<TimeLineEvent> Events
