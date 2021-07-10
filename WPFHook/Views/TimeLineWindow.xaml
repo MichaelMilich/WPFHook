@@ -1,13 +1,13 @@
-﻿<Window x:Class="WPFHook.ReportWindow"
+﻿<Window x:Class="WPFHook.Views.TimeLineWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPFHook"
-        xmlns:uc="clr-namespace:WPFHook"
+        xmlns:local="clr-namespace:WPFHook.Views" xmlns:local1="clr-namespace:WPFHook.Commands"
         mc:Ignorable="d"
-        Title="ReportWindow" SizeToContent="WidthAndHeight">
+        Title="TimeLineWindow" Height="450" Width="800">
+
     <Grid>
-        <uc:DayReport x:Name="Report" />
+        <local:TimeLineView x:Name="TimeLineVisual" />
     </Grid>
 </Window>

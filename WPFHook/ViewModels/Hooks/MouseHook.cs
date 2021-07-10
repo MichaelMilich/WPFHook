@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using WPFHook.ViewModels.BackgroundLogic;
 
-namespace WPFHook
+namespace WPFHook.ViewModels
 {
     /// <summary>
     /// one of the hook objects. handles mouse moves.
@@ -12,11 +13,10 @@ namespace WPFHook
     /// basicly code i found in the internet. it does the job overall.
     ///  NEED TO WORK ON EXCEPTION HANDELING.
     /// </summary>
-    public class MouseHook
+    public class MouseHook : IHook
     {
         #region public 
         public event EventHandler<WindowChangedEventArgs> WindowChanged;
-        public event EventHandler MouseMessaged;
         /// <summary>
         /// sets up the hook for mouse moves
         /// </summary>
@@ -24,10 +24,9 @@ namespace WPFHook
         {
             _proc = HookCallback;
             _hookID = IntPtr.Zero;
-            Start();
         } 
         public void Start() => _hookID = SetHook(_proc);
-        public  void Stop() => UnhookWindowsHookEx(_hookID);
+        public  void UnHook() => UnhookWindowsHookEx(_hookID);
 
         #endregion
 
@@ -62,12 +61,7 @@ namespace WPFHook
         /// <returns></returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if(nCode >= 0)
-                MouseMessaged?.Invoke(this, EventArgs.Empty);
-            if (nCode >= 0 && MouseMessages.WM_MOUSEMOVE == (MouseMessages)wParam)
-            {
-                OnWindowChanged();
-            }
+            OnWindowChanged();
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
         /// <summary>

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-namespace WPFHook
+namespace WPFHook.ViewModels.BackgroundLogic
 {
     /// <summary>
     /// The connection to the data base.
@@ -16,7 +16,7 @@ namespace WPFHook
     /// uses dapper and SQLite.core.
     /// ow can only write to the database and read all of the database.
     /// </summary>
-    class SqliteDataAccess
+    public class SqliteDataAccess
     {
         private string connectionString;
         public SqliteDataAccess()
