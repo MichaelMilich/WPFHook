@@ -149,14 +149,8 @@ namespace WPFHook.ViewModels
         }
         private void OpenTestWindow(object obj)
         {
-            DateTime date = (DateTime)view.dailyReportDayPicker.SelectedDate;
-            string parameter = "Date";
-            string value = date.ToString("dd/MM/yyyy");
-            List<ActivityLine> dailyList = backgroundLogic.dataAccess.LoadActivities(parameter, value);
-            TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
-            TimeLineWindow timeLineWindow = new TimeLineWindow();
-            timeLineWindow.TimeLineVisual.DataContext = timeLineViewModel;
-            timeLineWindow.Show();
+            TagViewModel tagViewModel = new TagViewModel();
+
         }
         #endregion
     }

@@ -13,9 +13,9 @@
             <MenuItem Header="_File" >
                 <MenuItem Header="_Show Activity List" Command="{Binding ShowActivityListCommand}"/>
                 <MenuItem Header="_Run on Startup" Command="{Binding RunOnStartupCommand}"/>
-                <!--
+                
                 <MenuItem Header="_Open Test Window" Command="{Binding OpenTestWindowCommand}"/>
-                -->
+                
                 <Separator />
                 <MenuItem x:Name="ExitHeader" Header="_Exit" />
             </MenuItem>
