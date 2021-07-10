@@ -44,9 +44,12 @@ namespace WPFHook.ViewModels
         {
             _totalTime = new TimeSpan(1, 0, 0);
             _tags.Add(new TagModel() { TagColor = Brushes.Blue, TagName = "test1", TagTime = new TimeSpan(0, 15, 0) });
-            //_tags.Add(new TagModel() { TagColor = Brushes.Red, TagName = "test2", TagTime = new TimeSpan(0, 20, 0) });
-           // _tags.Add(new TagModel() { TagColor = Brushes.Green, TagName = "My name Is Misha", TagTime = new TimeSpan(0, 5, 0) });
-           // _tags.Add(new TagModel() { TagColor = Brushes.Violet, TagName = "Miki", TagTime = new TimeSpan(0, 20, 0) });
+            _tags.Add(new TagModel() { TagColor = Brushes.Red, TagName = "test2", TagTime = new TimeSpan(0, 20, 0) });
+            _tags.Add(new TagModel() { TagColor = Brushes.Green, TagName = "My name Is Misha", TagTime = new TimeSpan(0, 5, 0) });
+            _tags.Add(new TagModel() { TagColor = Brushes.Violet, TagName = "Miki", TagTime = new TimeSpan(0, 20, 0) });
+            _tags.Add(new TagModel() { TagColor = Brushes.Purple, TagName = "sdfsdf", TagTime = new TimeSpan(0, 20, 0) });
+            _tags.Add(new TagModel() { TagColor = Brushes.Tan, TagName = "sdfsdf", TagTime = new TimeSpan(0, 23, 0) });
+            _tags.Add(new TagModel() { TagColor = Brushes.Firebrick, TagName = "fghrrnr", TagTime = new TimeSpan(0, 45, 0) });
             TestWindow window = new TestWindow();
             window.Report.DataContext = this;
             window.Show();

@@ -13,6 +13,7 @@
     <None Remove="DistractionWords.txt" />
     <None Remove="ExceptionLog.txt" />
     <None Remove="Letter_M_red_con.ico" />
+    <None Remove="TagDB.db" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +24,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="ExceptionLog.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TagDB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

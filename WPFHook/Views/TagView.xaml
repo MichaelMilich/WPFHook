@@ -13,30 +13,24 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBox Text="Computer Time" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Column="0"  Background="LightGray" />
             <TextBox  Text="{Binding Path=TotalTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Column="1" />
         </Grid>
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Tags}" >
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid x:Name="EventContainer" Height="20" Margin="5" Background="Gainsboro"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Rectangle Grid.Column="0" Fill="{Binding Path=TagColor}" />
-                        <TextBlock Grid.Column="1" Text="{Binding Path=TagName}" />
-                        <TextBlock Grid.Column="2" Text="{Binding TagTime, StringFormat=hh\\:mm\\:ss}" />
+                        <Rectangle Grid.Column="0" Fill="{Binding Path=TagColor}" Width="20" />
+                        <TextBox Grid.Column="1" Text="{Binding Path=TagName}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center" />
+                        <TextBox Grid.Column="2" Text="{Binding TagTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
