@@ -14,7 +14,11 @@ namespace WPFHook.Commands
             TimeSpan timelineDuration = (TimeSpan)values[0];
             TimeSpan relativeTime = (TimeSpan)values[1];
             double containerWidth = (double)values[2];
-            double factor = relativeTime.TotalSeconds / timelineDuration.TotalSeconds;
+            double factor = 0;
+            if (timelineDuration.TotalMilliseconds < relativeTime.TotalMilliseconds)
+                 factor = 10;
+            else
+                factor = relativeTime.TotalMilliseconds / timelineDuration.TotalMilliseconds;
             double rval = factor * containerWidth;
 
             if (targetType == typeof(Thickness))

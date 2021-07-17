@@ -20,8 +20,8 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="{Binding Path=Start}"/>
-                        <ItemsControl Grid.Column="1" x:Name="TimeLine" ItemsSource="{Binding Path=Events}">
+                        <TextBox Grid.Column="0" Text="{Binding Path=Start , UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center" />
+                        <ItemsControl Grid.Column="1" x:Name="TimeLine" ItemsSource="{Binding Path=Events}" ClipToBounds="True">
 
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -31,7 +31,7 @@
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Rectangle Grid.Column="1" Fill="{Binding Path=Color}" VerticalAlignment="Stretch" HorizontalAlignment="Left" ToolTip="{Binding Path=TextData}" >
+                                    <Rectangle Grid.Column="1" Fill="{Binding Path=Color}" VerticalAlignment="Stretch" HorizontalAlignment="Left" ToolTip="{Binding Path=TextData}">
 
                                         <Rectangle.Margin>
                                             <MultiBinding Converter="{StaticResource mEventLengthConverter}">
@@ -53,7 +53,7 @@
                             </ItemsControl.ItemTemplate>
 
                         </ItemsControl>
-                        <TextBlock Grid.Column="2" Text="{Binding Path=End}"/>
+                        <TextBox Grid.Column="2" Text="{Binding Path=End , UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

@@ -26,7 +26,6 @@ namespace WPFHook.ViewModels
         public TimeLineViewModel(List<ActivityLine> dailyList)
         {
             TimeLine day = new TimeLine();
-            TimeLineEvent runningEvent = new TimeLineEvent();
             TimeSpan dayDuration = new TimeSpan();
             TimeSpan start;
             string currentTag;
@@ -34,7 +33,8 @@ namespace WPFHook.ViewModels
             currentTag = dailyList[0].Tag;
 
             start = dailyList[0].StartTime;
-            runningEvent.Start = dailyList[0].StartTime.Subtract(start);
+            TimeLineEvent runningEvent = new TimeLineEvent(dailyList[0].StartTime);
+            runningEvent.Start = dailyList[0].StartTime;
             runningEvent.Duration = dailyList[0].inAppTime;
             runningEvent.TextData = dailyList[0].ToString() + "\n";
             runningEvent.Color = dailyList[0].TagColor;
@@ -50,9 +50,9 @@ namespace WPFHook.ViewModels
                 else
                 {
                     day.Events.Add(runningEvent);
-                    runningEvent = new TimeLineEvent();
+                    runningEvent = new TimeLineEvent(dailyList[i].StartTime);
                     currentTag = dailyList[i].Tag;
-                    runningEvent.Start = dailyList[i].StartTime.Subtract(start);
+                    runningEvent.Start = dailyList[i].StartTime;
                     runningEvent.Duration = dailyList[i].inAppTime;
                     runningEvent.TextData = dailyList[i].ToString() + "\n";
                     runningEvent.Color = dailyList[i].TagColor;
