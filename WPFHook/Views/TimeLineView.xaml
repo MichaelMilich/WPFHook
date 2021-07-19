@@ -20,12 +20,18 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBox Grid.Column="0" Text="{Binding Path=Start , UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center" />
+                        <TextBox Grid.Column="0" Text="{Binding Path=Start ,StringFormat=hh\\:mm\\:ss, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center" />
+
                         <ItemsControl Grid.Column="1" x:Name="TimeLine" ItemsSource="{Binding Path=Events}" ClipToBounds="True">
 
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <Grid x:Name="EventContainer" Height="20" Margin="5" Background="Gainsboro"/>
+                                    <Grid x:Name="EventContainer" Height="20" Margin="5" Background="Gainsboro">
+                                        <Grid.InputBindings>
+                                            <MouseBinding Gesture="{local:MouseWheel Direction=Down, Keys=Control}" Command="{Binding OnMouseWheelUpdateVisualDown}" />
+                                            <MouseBinding Gesture="{local:MouseWheel Direction=Up, Keys=Control}" Command="{Binding OnMouseWheelUpdateVisualUP}" />
+                                        </Grid.InputBindings>
+                                    </Grid>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
 
@@ -53,7 +59,7 @@
                             </ItemsControl.ItemTemplate>
 
                         </ItemsControl>
-                        <TextBox Grid.Column="2" Text="{Binding Path=End , UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center" />
+                        <TextBox Grid.Column="2" Text="{Binding Path=End ,StringFormat=hh\\:mm\\:ss, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

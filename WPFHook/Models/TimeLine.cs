@@ -4,6 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Windows;
+using System.Windows.Input;
+using WPFHook.Commands;
 
 namespace WPFHook.Models
 {
@@ -72,6 +75,23 @@ namespace WPFHook.Models
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
+
+        #region Commands
+        public ICommand OnMouseWheelUpdateVisualDown { get { return new RelayCommand(e => true, this.MouseWheelUpdateVisualDown); } }
+        public ICommand OnMouseWheelUpdateVisualUP { get { return new RelayCommand(e => true, this.MouseWheelUpdateVisualUP); } }
+        public void MouseWheelUpdateVisualDown(object obj)
+        {
+            var delta = this.Duration.Divide(100);
+            this.Start = this.Start.Subtract(delta);
+            this.End = this.End.Add(delta);
+        }
+        public void MouseWheelUpdateVisualUP(object obj)
+        {
+            var delta = this.Duration.Divide(100);
+            this.Start = this.Start.Add(delta);
+            this.End = this.End.Subtract(delta);
         }
         #endregion
     }

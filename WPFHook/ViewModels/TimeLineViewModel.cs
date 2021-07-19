@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Windows.Input;
 using System.Windows.Media;
+using WPFHook.Commands;
 using WPFHook.Models;
 using WPFHook.ViewModels.BackgroundLogic;
 using WPFHook.Views;
