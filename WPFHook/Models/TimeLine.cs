@@ -55,6 +55,14 @@ namespace WPFHook.Models
                 OnPropertyChanged("Duration");
             }
         }
+        private TimeSpan _constantStart;
+        private TimeSpan _constantEnd;
+
+        public void SetConstantTimes(TimeSpan start,TimeSpan end)
+        {
+            _constantStart = start;
+            _constantEnd = end;
+        }
 
         private ObservableCollection<TimeLineEvent> _events = new ObservableCollection<TimeLineEvent>();
         public ObservableCollection<TimeLineEvent> Events
@@ -81,6 +89,8 @@ namespace WPFHook.Models
         #region Commands
         public ICommand OnMouseWheelUpdateVisualDown { get { return new RelayCommand(e => true, this.MouseWheelUpdateVisualDown); } }
         public ICommand OnMouseWheelUpdateVisualUP { get { return new RelayCommand(e => true, this.MouseWheelUpdateVisualUP); } }
+        public ICommand OnReturnToConstant { get { return new RelayCommand(e => true, this.ReturnToConstant); } }
+        public ICommand OnMouseMove { get { return new RelayCommand(e => true, this.MouseMove); } }
         public void MouseWheelUpdateVisualDown(object obj)
         {
             var delta = this.Duration.Divide(100);
@@ -92,6 +102,23 @@ namespace WPFHook.Models
             var delta = this.Duration.Divide(100);
             this.Start = this.Start.Add(delta);
             this.End = this.End.Subtract(delta);
+        }
+        public void ReturnToConstant(object obj)
+        {
+            this.Start = this._constantStart;
+            this.End = this._constantEnd;
+        }
+        public void MouseMove(object obj)
+        {
+            if (obj is MouseEventArgs)
+            {
+                var e = obj as MouseEventArgs;
+                if (System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left)
+                {
+
+                }
+                
+            }
         }
         #endregion
     }

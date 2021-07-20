@@ -65,7 +65,7 @@ namespace WPFHook.ViewModels
             day.Duration = dayDuration;
             day.Start = start;
             day.End = dailyList[dailyList.Count - 1].StartTime;
-
+            day.SetConstantTimes(day.Start, day.End);
             this.TimeLines.Add(day);
         }
 
