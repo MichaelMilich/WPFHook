@@ -76,6 +76,9 @@ namespace WPFHook.Models
                 _events = value;
             }
         }
+        private Point previousPoint;
+        private Point currentPoint;
+        private bool isFirstMove =true;
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
         // Create the OnPropertyChanged method to raise the event
@@ -115,7 +118,31 @@ namespace WPFHook.Models
                 var e = obj as MouseEventArgs;
                 if (System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left)
                 {
-
+                    if(e.Source is System.Windows.Controls.Grid)
+                    {
+                        var grid = e.Source as System.Windows.Controls.Grid;
+                        var delta = this.Duration.Divide(100);
+                        currentPoint = e.GetPosition(grid);
+                        if (isFirstMove)
+                        {
+                            isFirstMove = false;
+                            previousPoint = currentPoint;
+                        }
+                        else
+                        {
+                            if(currentPoint.X > previousPoint.X)
+                            {
+                                Start = Start.Subtract(delta);
+                                End = End.Subtract(delta);
+                            }
+                            else
+                            {
+                                Start = Start.Add(delta);
+                                End = End.Add(delta);
+                            }
+                            previousPoint = currentPoint;
+                        }
+                    }
                 }
                 
             }
