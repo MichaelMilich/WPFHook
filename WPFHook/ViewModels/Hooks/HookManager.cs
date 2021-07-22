@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using WPFHook.ViewModels.BackgroundLogic;
+using WPFHook.ViewModels.Hooks;
 
 namespace WPFHook.ViewModels
 {
@@ -58,6 +59,7 @@ namespace WPFHook.ViewModels
         {
             hooks.Add(new MouseHook() as IHook);
             hooks.Add(new WindowHook() as IHook);
+            hooks.Add(new KeysHook() as IHook);
         }
         private void Subscribe()
         {

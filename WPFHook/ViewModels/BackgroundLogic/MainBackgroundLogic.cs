@@ -17,7 +17,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         public SqliteDataAccess dataAccess;
         public int counter;
         public static bool isIdle = false;
-        public static readonly int idleTimeInMilliseconds = 30000; // 300,000 miliseconds = 5 minutes
+        public static readonly int idleTimeInSeconds = 10; // 300 seconds = 5 minutes
         public MainViewModel mainViewModel;
         public BackgroundWorker managerWindowChangedWorker;
 
@@ -51,8 +51,12 @@ namespace WPFHook.ViewModels.BackgroundLogic
                     LogExceptionTask.Wait();
                     break;
                 case 1: // case 1 - the computer came of being idle.
+                    isIdle = false;
                     ActivityLine activity = e.UserState as ActivityLine;
                     mainViewModel.Model.ActivityTitle = activity.ToTitle();
+                    break;
+                case 2: // case 2 - there was a hook messege but no change in database.
+                    isIdle = false;
                     break;
             }
         }
@@ -80,8 +84,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
                     managerWindowChangedWorker.ReportProgress(0, ex); // the number will be code for what situation it is 0 =exception
                 }
             }
-
-            if (isIdle)
+            else if (isIdle)
             {
                 ActivityLine activity = LoadSecondToLastActivity();
                 UpdatePreviousActivity(activity);
@@ -93,8 +96,8 @@ namespace WPFHook.ViewModels.BackgroundLogic
             // check for idle first, then update the timers.
             var model = mainViewModel.Model;
             var timer = mainViewModel.timer;
-            counter += (int)timer.Interval.TotalMilliseconds;
-            if (counter > idleTimeInMilliseconds && !isIdle)
+            counter += (int)timer.Interval.TotalSeconds;
+            if (counter > idleTimeInSeconds && !isIdle)
             {
                 isIdle = true;
                 UpdatePreviousActivity("", "Idle");
