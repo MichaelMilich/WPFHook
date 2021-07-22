@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using WPFHook.Commands;
 
 namespace WPFHook.Models
@@ -116,37 +117,47 @@ namespace WPFHook.Models
             if (obj is MouseEventArgs)
             {
                 var e = obj as MouseEventArgs;
-                if (System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left)
+                var element = e.Source;
+                if (Mouse.LeftButton == MouseButtonState.Pressed)
                 {
-                    if(e.Source is System.Windows.Controls.Grid)
+                    if ((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
                     {
-                        var grid = e.Source as System.Windows.Controls.Grid;
-                        var delta = this.Duration.Divide(100);
-                        currentPoint = e.GetPosition(grid);
-                        if (isFirstMove)
+                        if (element is System.Windows.Shapes.Rectangle)
                         {
-                            isFirstMove = false;
-                            previousPoint = currentPoint;
+                            var rectangle = element as System.Windows.Shapes.Rectangle;
+                            element = HelperStaticFunctions.FindParentOfType<System.Windows.Controls.Grid>(rectangle);
                         }
-                        else
+                        if (element is System.Windows.Controls.Grid)
                         {
-                            if(currentPoint.X > previousPoint.X)
+                            var grid = element as System.Windows.Controls.Grid;
+                            var delta = this.Duration.Divide(100);
+                            currentPoint = e.GetPosition(grid);
+                            if (isFirstMove)
                             {
-                                Start = Start.Subtract(delta);
-                                End = End.Subtract(delta);
+                                isFirstMove = false;
+                                previousPoint = currentPoint;
                             }
                             else
                             {
-                                Start = Start.Add(delta);
-                                End = End.Add(delta);
+                                if (currentPoint.X > previousPoint.X)
+                                {
+                                    Start = Start.Subtract(delta);
+                                    End = End.Subtract(delta);
+                                }
+                                else
+                                {
+                                    Start = Start.Add(delta);
+                                    End = End.Add(delta);
+                                }
+                                previousPoint = currentPoint;
                             }
-                            previousPoint = currentPoint;
                         }
                     }
                 }
                 
             }
         }
+
         #endregion
     }
 }
