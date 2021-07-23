@@ -17,11 +17,13 @@
                     <DataGridTextColumn Header="Time in Application" Binding="{Binding inAppTime}" />
                     <DataGridTextColumn Header="Tag" Binding="{Binding Tag}" />
                 </DataGrid.Columns>
+                <!--
                 <DataGrid.RowDetailsTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Details}" Margin="10" />
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
+                -->
             </DataGrid>
         </Grid>
     </Grid>

@@ -22,15 +22,15 @@
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Tags}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate >
-                    <Grid VerticalAlignment="Stretch">
+                    <Grid VerticalAlignment="Stretch" Height="50">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="3*" />
                             <ColumnDefinition Width="6*" />
                         </Grid.ColumnDefinitions>
                         <Rectangle Grid.Column="0" Fill="{Binding Path=TagColor}" />
-                        <TextBox Grid.Column="1" Text="{Binding Path=TagName}" HorizontalContentAlignment="Center"  TextAlignment="Center" />
-                        <TextBox Grid.Column="2" Text="{Binding TagTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center"  TextAlignment="Center"  />
+                        <TextBox Grid.Column="1" Text="{Binding Path=TagName}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" FontSize="20"/>
+                        <TextBox Grid.Column="2" Text="{Binding TagTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" FontSize="20" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
