@@ -3,26 +3,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:WPFHook.Views"
+             xmlns:local="clr-namespace:WPFHook.Views" xmlns:local1="clr-namespace:WPFHook.Commands" xmlns:viewmodels="clr-namespace:WPFHook.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:TagViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+             d:DesignHeight="450" d:DesignWidth="800" >
+    <UserControl.Resources>
+        <local1:TagsSizeConverter x:Key="mTagsSizeConverter"/>
+    </UserControl.Resources>
+    <Grid x:Name="TagsControl">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*" />
                 <ColumnDefinition Width="6*" />
             </Grid.ColumnDefinitions>
+            <Grid.Height>
+                <MultiBinding Converter="{StaticResource mTagsSizeConverter}">
+                    <Binding ElementName="TagsControl" Path="ActualHeight"/>
+                    <Binding Path="Tags.Count"/>
+                </MultiBinding>
+            </Grid.Height>
             <TextBox Text="Computer Time" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Column="0"  Background="LightGray" />
             <TextBox  Text="{Binding Path=TotalTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Column="1" />
         </Grid>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Tags}">
+        
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Tags}" x:Name="test" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate >
-                    <Grid VerticalAlignment="Stretch" Height="50">
+                    <Grid>
+                        <Grid.Height>
+                            <MultiBinding Converter="{StaticResource mTagsSizeConverter}">
+                                <Binding ElementName="TagsControl" Path="ActualHeight"/>
+                                <Binding ElementName="test" Path="ItemsSource.Count"/>
+                            </MultiBinding>
+                        </Grid.Height>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="3*" />
