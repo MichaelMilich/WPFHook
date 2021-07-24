@@ -7,8 +7,13 @@
         xmlns:uc="clr-namespace:WPFHook.Views"
         mc:Ignorable="d"
         Title="TestWindow" Height="600" Width="800">
-    <Grid>
-        <uc:TagView x:Name="Report" />
-        <!--Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=ActualHeight}"-->
-    </Grid>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Background="LightGray">
+            <MenuItem Header="_Add Tag " Command="{Binding ShowAddTagCommand}"/>
+        </Menu>
+            
+        <Grid>
+            <uc:TagView x:Name="Report" />
+        </Grid>
+    </DockPanel>
 </Window>

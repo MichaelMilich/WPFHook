@@ -6,7 +6,7 @@ using System.Windows.Data;
 
 namespace WPFHook.Commands
 {
-    class TagsSizeConverter : IMultiValueConverter
+    class FontSizeConverter : IMultiValueConverter
     {
 
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -16,7 +16,7 @@ namespace WPFHook.Commands
                 double actualHeight = (double)values[0];
                 if (values[1] is int)
                 {
-                    int count = (int)values[1] + 1;
+                    int count = 2*((int)values[1] + 1);
                     double rval = actualHeight / count;
 
                     if (targetType == typeof(Thickness))

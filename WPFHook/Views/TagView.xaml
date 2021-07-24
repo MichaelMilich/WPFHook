@@ -8,6 +8,27 @@
              d:DesignHeight="450" d:DesignWidth="800" >
     <UserControl.Resources>
         <local1:TagsSizeConverter x:Key="mTagsSizeConverter"/>
+        <local1:FontSizeConverter x:Key="mFontsSizeConverter"/>
+        <Style x:Key="FontConvertorDataContext" TargetType="{x:Type TextBox}">
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource mFontsSizeConverter}" >
+                        <Binding ElementName="TagsControl" Path="ActualHeight"/>
+                        <Binding Path="Tags.Count"/>
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TagsLabelFontSizeConvertor" TargetType="{x:Type TextBox}">
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource mFontsSizeConverter}" >
+                        <Binding ElementName="TagsControl" Path="ActualHeight"/>
+                        <Binding ElementName="test" Path="ItemsSource.Count"/>
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid x:Name="TagsControl">
         <Grid.RowDefinitions>
@@ -26,8 +47,8 @@
                     <Binding Path="Tags.Count"/>
                 </MultiBinding>
             </Grid.Height>
-            <TextBox Text="Computer Time" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Column="0"  Background="LightGray" />
-            <TextBox  Text="{Binding Path=TotalTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Column="1" />
+            <TextBox Text="Computer Time" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Column="0"  Background="LightGray" Style="{StaticResource FontConvertorDataContext}"/>
+            <TextBox  Text="{Binding Path=TotalTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Column="1" Style="{StaticResource FontConvertorDataContext}"/>
         </Grid>
         
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Tags}" x:Name="test" >
@@ -46,8 +67,8 @@
                             <ColumnDefinition Width="6*" />
                         </Grid.ColumnDefinitions>
                         <Rectangle Grid.Column="0" Fill="{Binding Path=TagColor}" />
-                        <TextBox Grid.Column="1" Text="{Binding Path=TagName}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" FontSize="20"/>
-                        <TextBox Grid.Column="2" Text="{Binding TagTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" FontSize="20" />
+                        <TextBox Grid.Column="1" Text="{Binding Path=TagName}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" Style="{StaticResource TagsLabelFontSizeConvertor}"/>
+                        <TextBox Grid.Column="2" Text="{Binding TagTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" Style="{StaticResource TagsLabelFontSizeConvertor}" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
