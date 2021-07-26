@@ -16,6 +16,8 @@ namespace WPFHook.ViewModels.BackgroundLogic
         public ActivityLine previousActivity;
         public SqliteDataAccess dataAccess;
         public int counter;
+        public int dayCounter; // every hour it will check the date, if there is a new date than update the timer and dates.
+        public DateTime currentDate;
         public static bool isIdle = false;
         public static readonly int idleTimeInSeconds = 10; // 300 seconds = 5 minutes
         public MainViewModel mainViewModel;
@@ -28,6 +30,8 @@ namespace WPFHook.ViewModels.BackgroundLogic
             dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
             model.ActivityTitle = previousActivity.ToTitle();
+            currentDate = DateTime.Today;
+            dayCounter = 0;
             counter = 0;
             managerWindowChangedWorker = new BackgroundWorker(); // so i want to send off a notification from my main thread (where the hooks are) to the background thread.
                                                                  // The background thread will make all the checks and database connections and will send back the results
@@ -97,6 +101,21 @@ namespace WPFHook.ViewModels.BackgroundLogic
             var model = mainViewModel.Model;
             var timer = mainViewModel.timer;
             counter += (int)timer.Interval.TotalSeconds;
+            dayCounter+= (int)timer.Interval.TotalSeconds;
+            if(dayCounter> 3600) // if it has been more than an hour (3600 seconds)
+            {
+                if(!currentDate.Equals(DateTime.Today))
+                {
+                    currentDate = DateTime.Today;
+                    mainViewModel.View.dailyReportDayPicker.SelectedDate = DateTime.Today;
+                    mainViewModel.Model.TotalTime = new TimeSpan(0, 0, 0);
+                    mainViewModel.Model.WorkTime = new TimeSpan(0, 0, 0);
+                    mainViewModel.Model.DistractionTime = new TimeSpan(0, 0, 0);
+                    mainViewModel.Model.SystemTime = new TimeSpan(0, 0, 0);
+                }
+                dayCounter = 0;
+            }
+
             if (counter > idleTimeInSeconds && !isIdle)
             {
                 isIdle = true;

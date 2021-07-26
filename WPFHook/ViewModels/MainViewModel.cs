@@ -82,6 +82,10 @@ namespace WPFHook.ViewModels
         {
             get { return model; }
         }
+        public MainWindow View
+        {
+            get { return view; }
+        }
         public DispatcherTimer timer;
         public TimeSpan[] timeSpans;
         public string currentTag;
