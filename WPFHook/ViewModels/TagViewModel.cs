@@ -27,14 +27,14 @@ namespace WPFHook.ViewModels
                 _tags = value;
             }
         }
-        private TimeSpan _totalTime;
-        public TimeSpan TotalTime
+        private string activityTitle;
+        public string ActivityTitle
         {
-            get { return _totalTime; }
+            get { return activityTitle; }
             set
             {
-                _totalTime = value;
-                OnPropertyChanged("TotalTime");
+                activityTitle = value;
+                OnPropertyChanged("ActivityTitle");
             }
         }
         /*
@@ -46,7 +46,7 @@ namespace WPFHook.ViewModels
         private AddTagView addTagView;
         public TagViewModel()
         {
-            _totalTime = new TimeSpan(1, 0, 0);
+           // _totalTime = new TimeSpan(1, 0, 0);
             _tags.Add(new TagModel() { TagColor = Brushes.Blue, TagName = "test1", TagTime = new TimeSpan(0, 15, 0) });
             _tags.Add(new TagModel() { TagColor = Brushes.Red, TagName = "test2", TagTime = new TimeSpan(0, 20, 0) });
             //_tags.Add(new TagModel() { TagColor = Brushes.Green, TagName = "My name Is Misha", TagTime = new TimeSpan(0, 5, 0) });
@@ -60,7 +60,20 @@ namespace WPFHook.ViewModels
             window.Show();
 
         }
+        public TagViewModel(MainWindowModel mainWindowModel)
+        {
+            activityTitle = mainWindowModel.ActivityTitle;
+            _tags.Add(mainWindowModel.ComputerTimeTag);
+            _tags.Add(mainWindowModel.WorkTimeTag);
+            _tags.Add(mainWindowModel.DistractionTimeTag);
+            _tags.Add(mainWindowModel.SystemTimeTag);
 
+            TestWindow window = new TestWindow();
+            window.Report.DataContext = this;
+            window.DataContext = this;
+            window.Show();
+
+        }
 
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;

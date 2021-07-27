@@ -108,10 +108,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 {
                     currentDate = DateTime.Today;
                     mainViewModel.View.dailyReportDayPicker.SelectedDate = DateTime.Today;
-                    mainViewModel.Model.TotalTime = new TimeSpan(0, 0, 0);
-                    mainViewModel.Model.WorkTime = new TimeSpan(0, 0, 0);
-                    mainViewModel.Model.DistractionTime = new TimeSpan(0, 0, 0);
-                    mainViewModel.Model.SystemTime = new TimeSpan(0, 0, 0);
+                    model.ComputerTimeTag.TagTime = new TimeSpan(0, 0, 0);
+                    model.WorkTimeTag.TagTime = new TimeSpan(0, 0, 0);
+                    model.DistractionTimeTag.TagTime = new TimeSpan(0, 0, 0);
+                    model.SystemTimeTag.TagTime = new TimeSpan(0, 0, 0);
                 }
                 dayCounter = 0;
             }
@@ -136,17 +136,17 @@ namespace WPFHook.ViewModels.BackgroundLogic
             */
 
             // ----- END NOTE FOR THE FUTURE ----
-            model.TotalTime = model.TotalTime.Add(timer.Interval);
+            model.ComputerTimeTag.TagTime = model.ComputerTimeTag.TagTime.Add(timer.Interval); 
             switch (mainViewModel.currentTag)
             {
                 case "work":
-                    model.WorkTime = model.WorkTime.Add(timer.Interval);
+                    model.WorkTimeTag.TagTime = model.WorkTimeTag.TagTime.Add(timer.Interval);
                     break;
                 case "distraction":
-                    model.DistractionTime = model.DistractionTime.Add(timer.Interval);
+                    model.DistractionTimeTag.TagTime = model.DistractionTimeTag.TagTime.Add(timer.Interval);
                     break;
                 case "system":
-                    model.SystemTime = model.SystemTime.Add(timer.Interval);
+                    model.SystemTimeTag.TagTime = model.SystemTimeTag.TagTime.Add(timer.Interval);
                     break;
             }
         }

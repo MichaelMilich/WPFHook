@@ -5,15 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFHook.Views"
         xmlns:uc="clr-namespace:WPFHook.Views"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="TestWindow" Height="600" Width="800">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="LightGray">
             <MenuItem Header="_Add Tag " Command="{Binding ShowAddTagCommand}"/>
         </Menu>
-            
+
         <Grid>
-            <uc:TagView x:Name="Report" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <uc:TagView Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0" x:Name="Report" />
+            <DatePicker x:Name="dailyReportDayPicker" Grid.Row="1" Grid.Column="1" SelectedDate="{x:Static sys:DateTime.Now}" ></DatePicker>
+            <Button x:Name="ReportButton" Grid.Row="1" Margin="2,2,2,2"  Grid.Column="0" Background="AliceBlue">Daily Report</Button>
         </Grid>
     </DockPanel>
 </Window>

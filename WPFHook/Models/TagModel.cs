@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace WPFHook.Models
 {
-    class TagModel : INotifyPropertyChanged
+    public class TagModel : INotifyPropertyChanged
     {
         private string tagName;
         public string TagName

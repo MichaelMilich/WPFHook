@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPFHook.Views" xmlns:local1="clr-namespace:WPFHook.Commands" xmlns:viewmodels="clr-namespace:WPFHook.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:TagViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" >
+             d:DesignHeight="450" d:DesignWidth="800" MinWidth="200" MinHeight="200">
     <UserControl.Resources>
         <local1:TagsSizeConverter x:Key="mTagsSizeConverter"/>
         <local1:FontSizeConverter x:Key="mFontsSizeConverter"/>
@@ -47,8 +47,8 @@
                     <Binding Path="Tags.Count"/>
                 </MultiBinding>
             </Grid.Height>
-            <TextBox Text="Computer Time" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Column="0"  Background="LightGray" Style="{StaticResource FontConvertorDataContext}"/>
-            <TextBox  Text="{Binding Path=TotalTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Column="1" Style="{StaticResource FontConvertorDataContext}"/>
+            <TextBox Text="Current App:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Column="0"  Background="LightGray" Style="{StaticResource FontConvertorDataContext}"/>
+            <TextBox Text="{Binding Path=ActivityTitle}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Column="1" Style="{StaticResource FontConvertorDataContext}"/>
         </Grid>
         
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Tags}" x:Name="test" >

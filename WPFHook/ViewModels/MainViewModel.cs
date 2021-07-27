@@ -44,11 +44,6 @@ namespace WPFHook.ViewModels
             // setting the timers
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
-            timeSpans = new TimeSpan[4];
-            for(int i =0; i<4; i++)
-            {
-                timeSpans[i] = new TimeSpan(); // case 0 = global time, case 1 = work time, case 2= distraction time, case 3 = system time
-            }
             timer.Start();
             timer.Tick += backgroundLogic.Timer_Tick;
             // ------ background logic code---------
@@ -87,7 +82,6 @@ namespace WPFHook.ViewModels
             get { return view; }
         }
         public DispatcherTimer timer;
-        public TimeSpan[] timeSpans;
         public string currentTag;
         #endregion
 
@@ -153,7 +147,7 @@ namespace WPFHook.ViewModels
         }
         private void OpenTestWindow(object obj)
         {
-            TagViewModel tagViewModel = new TagViewModel();
+            TagViewModel tagViewModel = new TagViewModel(Model);
 
         }
         #endregion
