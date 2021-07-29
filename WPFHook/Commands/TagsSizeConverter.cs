@@ -29,7 +29,7 @@ namespace WPFHook.Commands
                     }
                 }
                 else
-                    return actualHeight / 10;
+                    return actualHeight / 20;
             }
             else
                 return null;

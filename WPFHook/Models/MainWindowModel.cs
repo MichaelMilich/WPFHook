@@ -9,20 +9,11 @@ namespace WPFHook.Models
 {
     public class MainWindowModel : INotifyPropertyChanged
     {
-        private string activityTitle; 
         private TagModel computerTimeTag;
         private TagModel workTimeTag;
         private TagModel distractionTimeTag;
         private TagModel systemTimeTag;
-        public string ActivityTitle
-        {
-            get { return activityTitle; }
-            set
-            {
-                activityTitle = value;
-                OnPropertyChanged("ActivityTitle");
-            }
-        }
+
         public TagModel ComputerTimeTag
         {
             get { return computerTimeTag; }
@@ -66,10 +57,6 @@ namespace WPFHook.Models
             workTimeTag = new TagModel() { TagName = "work time", TagTime = new TimeSpan(0, 0, 0), TagColor = Brushes.Green };
             distractionTimeTag = new TagModel() { TagName = "distraction time", TagTime = new TimeSpan(0, 0, 0), TagColor = Brushes.Red };
             systemTimeTag = new TagModel() { TagName = "system time", TagTime = new TimeSpan(0, 0, 0), TagColor = Brushes.Blue };
-        }
-        public MainWindowModel(string activityTitle)
-        {
-            this.activityTitle = activityTitle;
         }
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;

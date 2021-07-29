@@ -13,7 +13,7 @@ using WPFHook.Views;
 
 namespace WPFHook.ViewModels
 {
-    class TagViewModel : INotifyPropertyChanged
+    public class TagViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<TagModel> _tags = new ObservableCollection<TagModel>();
         public ObservableCollection<TagModel> Tags
@@ -43,7 +43,7 @@ namespace WPFHook.ViewModels
         {
             get { return _view; }
         }*/
-        private AddTagView addTagView;
+        public AddTagView addTagView;
         public TagViewModel()
         {
            // _totalTime = new TimeSpan(1, 0, 0);
@@ -62,17 +62,11 @@ namespace WPFHook.ViewModels
         }
         public TagViewModel(MainWindowModel mainWindowModel)
         {
-            activityTitle = mainWindowModel.ActivityTitle;
+           // activityTitle = mainWindowModel.ActivityTitle;
             _tags.Add(mainWindowModel.ComputerTimeTag);
             _tags.Add(mainWindowModel.WorkTimeTag);
             _tags.Add(mainWindowModel.DistractionTimeTag);
             _tags.Add(mainWindowModel.SystemTimeTag);
-
-            TestWindow window = new TestWindow();
-            window.Report.DataContext = this;
-            window.DataContext = this;
-            window.Show();
-
         }
 
         #region INotifyPropertyChanged Members

@@ -92,10 +92,10 @@ namespace WPFHook
         /// <param name="e"></param>
         protected override void OnStartup(StartupEventArgs e)
         {
+            Tagger.StartUp();
             base.OnStartup(e);
             SetUpView();
             SetUpViewModel();
-            Tagger.StartUp();
         }
         private void SetUpView()
         {

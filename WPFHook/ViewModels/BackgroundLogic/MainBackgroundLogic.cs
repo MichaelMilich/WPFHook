@@ -27,9 +27,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             this.mainViewModel = mainViewModel;
             var model = mainViewModel.Model;
+            var tagModel = mainViewModel.TagViewModel;
             dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
-            model.ActivityTitle = previousActivity.ToTitle();
+            tagModel.ActivityTitle = previousActivity.ToTitle();
             currentDate = DateTime.Today;
             dayCounter = 0;
             counter = 0;
@@ -57,7 +58,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 case 1: // case 1 - the computer came of being idle.
                     isIdle = false;
                     ActivityLine activity = e.UserState as ActivityLine;
-                    mainViewModel.Model.ActivityTitle = activity.ToTitle();
+                    mainViewModel.TagViewModel.ActivityTitle = activity.ToTitle();
                     break;
                 case 2: // case 2 - there was a hook messege but no change in database.
                     isIdle = false;
@@ -70,7 +71,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             counter = 0;
             isIdle = false;
             mainViewModel.currentTag = previousActivity.Tag;
-            mainViewModel.Model.ActivityTitle = previousActivity.ToTitle();
+            mainViewModel.TagViewModel.ActivityTitle = previousActivity.ToTitle();
 
         }
 
@@ -99,6 +100,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             // check for idle first, then update the timers.
             var model = mainViewModel.Model;
+            var tagmodel = mainViewModel.TagViewModel;
             var timer = mainViewModel.timer;
             counter += (int)timer.Interval.TotalSeconds;
             dayCounter+= (int)timer.Interval.TotalSeconds;
@@ -120,7 +122,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             {
                 isIdle = true;
                 UpdatePreviousActivity("", "Idle");
-                model.ActivityTitle = previousActivity.ToTitle();
+                tagmodel.ActivityTitle = previousActivity.ToTitle();
             }
             // -----NOTE FOR THE FUTURE ----
             // I should make a tag string array in the same length as the timers, maybe timers.length=tags.length+1 because i want also the global timer to be timers[0].

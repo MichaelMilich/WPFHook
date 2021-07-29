@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WPFHook.Views" xmlns:local1="clr-namespace:WPFHook.Commands" xmlns:viewmodels="clr-namespace:WPFHook.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:TagViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" MinWidth="200" MinHeight="200">
+             d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <local1:TagsSizeConverter x:Key="mTagsSizeConverter"/>
         <local1:FontSizeConverter x:Key="mFontsSizeConverter"/>
@@ -67,8 +67,8 @@
                             <ColumnDefinition Width="6*" />
                         </Grid.ColumnDefinitions>
                         <Rectangle Grid.Column="0" Fill="{Binding Path=TagColor}" />
-                        <TextBox Grid.Column="1" Text="{Binding Path=TagName}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" Style="{StaticResource TagsLabelFontSizeConvertor}"/>
-                        <TextBox Grid.Column="2" Text="{Binding TagTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" Style="{StaticResource TagsLabelFontSizeConvertor}" />
+                        <TextBox Grid.Column="1" Text="{Binding Path=TagName}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" Style="{StaticResource TagsLabelFontSizeConvertor}" Background="LightGray" IsReadOnly="True"/>
+                        <TextBox Grid.Column="2" Text="{Binding TagTime, StringFormat=hh\\:mm\\:ss}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  TextAlignment="Center" Style="{StaticResource TagsLabelFontSizeConvertor}" IsReadOnly="True"/>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

@@ -14,6 +14,7 @@ namespace WPFHook.Commands
             if (values[0] is double)
             {
                 double actualHeight = (double)values[0];
+                if (actualHeight == 0) { actualHeight = 1; }
                 if (values[1] is int)
                 {
                     int count = 2*((int)values[1] + 1);
@@ -29,7 +30,7 @@ namespace WPFHook.Commands
                     }
                 }
                 else
-                    return actualHeight / 10;
+                    return actualHeight / 30;
             }
             else
                 return null;

@@ -13,6 +13,7 @@ using WPFHook.Models;
 using WPFHook.ViewModels;
 using WPFHook.Views;
 using WPFHook.ViewModels.BackgroundLogic;
+using System.Windows.Media;
 
 namespace WPFHook.ViewModels
 {
@@ -36,6 +37,8 @@ namespace WPFHook.ViewModels
             // ------ viewmodel code---------
             view = mainWindow;
             model = new MainWindowModel();
+            tagViewModel = new TagViewModel(model);
+            view.TagView.DataContext = tagViewModel;
             // ------ viewmodel code---------
             // ------ background logic code---------
             SetUpHook();
@@ -73,6 +76,11 @@ namespace WPFHook.ViewModels
         #region ViewModel region
         private MainWindow view;
         private MainWindowModel model;
+        private TagViewModel tagViewModel;
+        public TagViewModel TagViewModel
+        {
+            get { return tagViewModel; }
+        }
         public MainWindowModel Model
         {
             get { return model; }
@@ -91,6 +99,8 @@ namespace WPFHook.ViewModels
         public ICommand RunOnStartupCommand { get { return new RelayCommand(e => true, this.RunOnStartup); } }
         public ICommand DailyReportCommand { get { return new RelayCommand(e => true, this.DailyReport); } }
         public ICommand OpenTestWindowCommand { get { return new RelayCommand(e => true, this.OpenTestWindow); } }
+        public ICommand ShowAddTagCommand { get { return new RelayCommand(e => true, this.AddTagWindow); } }
+        public ICommand AddTagCommand { get { return new RelayCommand(e => true, this.AddTag); } }
         public void ShowActivityList(object obj)
         {
             ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();
@@ -149,6 +159,23 @@ namespace WPFHook.ViewModels
         {
             TagViewModel tagViewModel = new TagViewModel(Model);
 
+        }
+        public void AddTagWindow(object obj)
+        {
+           tagViewModel.addTagView = new AddTagView();
+            tagViewModel.addTagView.DataContext = tagViewModel;
+            tagViewModel.addTagView.Show();
+        }
+        public void AddTag(object obj)
+        {
+            if (tagViewModel.addTagView.NewTagNameTextBox.Text.Length > 0 && tagViewModel.addTagView.NewTagColorPicker.SelectedColorText.Length > 0)
+            {
+                SolidColorBrush brush = new SolidColorBrush((Color)tagViewModel.addTagView.NewTagColorPicker.SelectedColor);
+                tagViewModel.Tags.Add(new TagModel() { TagColor = brush, TagName = tagViewModel.addTagView.NewTagNameTextBox.Text, TagTime = new TimeSpan(0, 20, 0) });
+                tagViewModel.addTagView.Close();
+            }
+            else
+                MessageBox.Show("Please insert tag name and tag color", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         #endregion
     }
