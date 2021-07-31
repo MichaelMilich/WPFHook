@@ -37,28 +37,17 @@ namespace WPFHook.ViewModels
                 OnPropertyChanged("ActivityTitle");
             }
         }
-        /*
-        private TagView _view;
-        public TagView View
-        {
-            get { return _view; }
-        }*/
         public AddTagView addTagView;
         public TagViewModel()
         {
-           // _totalTime = new TimeSpan(1, 0, 0);
-            _tags.Add(new TagModel() { TagColor = Brushes.Blue, TagName = "test1", TagTime = new TimeSpan(0, 15, 0) });
-            _tags.Add(new TagModel() { TagColor = Brushes.Red, TagName = "test2", TagTime = new TimeSpan(0, 20, 0) });
-            //_tags.Add(new TagModel() { TagColor = Brushes.Green, TagName = "My name Is Misha", TagTime = new TimeSpan(0, 5, 0) });
-            _tags.Add(new TagModel() { TagColor = Brushes.Violet, TagName = "Miki", TagTime = new TimeSpan(0, 20, 0) });
-            //_tags.Add(new TagModel() { TagColor = Brushes.Purple, TagName = "sdfsdf", TagTime = new TimeSpan(0, 20, 0) });
-            //_tags.Add(new TagModel() { TagColor = Brushes.Tan, TagName = "sdfsdf", TagTime = new TimeSpan(0, 23, 0) });
-            //_tags.Add(new TagModel() { TagColor = Brushes.Firebrick, TagName = "fghrrnr", TagTime = new TimeSpan(0, 45, 0) });
-            TestWindow window = new TestWindow();
-            window.Report.DataContext = this;
-            window.DataContext = this;
-            window.Show();
 
+        }
+        public TagViewModel(List<TagModel> tags)
+        {
+            foreach(TagModel model in tags)
+            {
+                _tags.Add(model);
+            }
         }
         public TagViewModel(MainWindowModel mainWindowModel)
         {
@@ -76,28 +65,6 @@ namespace WPFHook.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
-        #region ViewModelsCommands
-        public ICommand ShowAddTagCommand { get { return new RelayCommand(e => true, this.AddTagWindow); } }
-        public ICommand AddTagCommand { get { return new RelayCommand(e => true, this.AddTag); } }
-        public void AddTagWindow(object obj)
-        {
-            addTagView = new AddTagView();
-            addTagView.DataContext = this;
-            addTagView.Show();
-        }
-        public void AddTag(object obj)
-        {
-            if (addTagView.NewTagNameTextBox.Text.Length > 0 && addTagView.NewTagColorPicker.SelectedColorText.Length > 0)
-                {
-                SolidColorBrush brush = new SolidColorBrush((Color)addTagView.NewTagColorPicker.SelectedColor);
-                _tags.Add(new TagModel() { TagColor = brush, TagName = addTagView.NewTagNameTextBox.Text, TagTime = new TimeSpan(0, 20, 0) });
-                addTagView.Close();
-            }
-            else
-                MessageBox.Show("Please insert tag name and tag color", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -57,6 +58,27 @@ namespace WPFHook.Models
             workTimeTag = new TagModel() { TagName = "work time", TagTime = new TimeSpan(0, 0, 0), TagColor = Brushes.Green };
             distractionTimeTag = new TagModel() { TagName = "distraction time", TagTime = new TimeSpan(0, 0, 0), TagColor = Brushes.Red };
             systemTimeTag = new TagModel() { TagName = "system time", TagTime = new TimeSpan(0, 0, 0), TagColor = Brushes.Blue };
+        }
+        public MainWindowModel(ObservableCollection<TagModel> Tags)
+        {
+            foreach(TagModel tagModel in Tags)
+            {
+                switch (tagModel.TagName)
+                {
+                    case "total time":
+                        computerTimeTag = tagModel;
+                        break;
+                    case "work time":
+                        workTimeTag = tagModel;
+                        break;
+                    case "distraction time":
+                        distractionTimeTag = tagModel;
+                        break;
+                    case "system time":
+                        systemTimeTag = tagModel;
+                        break;
+                }
+            }
         }
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;

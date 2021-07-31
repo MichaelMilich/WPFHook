@@ -92,6 +92,7 @@ namespace WPFHook
         /// <param name="e"></param>
         protected override void OnStartup(StartupEventArgs e)
         {
+            SqliteDataAccess.StartUp();
             Tagger.StartUp();
             base.OnStartup(e);
             SetUpView();

@@ -36,8 +36,8 @@ namespace WPFHook.ViewModels
         {
             // ------ viewmodel code---------
             view = mainWindow;
-            model = new MainWindowModel();
-            tagViewModel = new TagViewModel(model);
+            tagViewModel = new TagViewModel(SqliteDataAccess.LoadTags());
+            model = new MainWindowModel(tagViewModel.Tags);
             view.TagView.DataContext = tagViewModel;
             // ------ viewmodel code---------
             // ------ background logic code---------
@@ -105,7 +105,7 @@ namespace WPFHook.ViewModels
         {
             ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();
             subWindow.Show();
-            subWindow.ShowDataBase(backgroundLogic.LoadActivities());
+            subWindow.ShowDataBase(SqliteDataAccess.LoadActivities());
         }
         private void RunOnStartup(object obj)
         {
@@ -124,7 +124,7 @@ namespace WPFHook.ViewModels
 
             string parameter = "Date";
             string value = date.ToString("dd/MM/yyyy");
-            List<ActivityLine> dailyList = backgroundLogic.dataAccess.LoadActivities(parameter, value);
+            List<ActivityLine> dailyList = SqliteDataAccess.LoadActivities(parameter, value);
             TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
             reportWindowViewModel.View.TimeLineVisual.DataContext = timeLineViewModel;
             reportWindowViewModel.Show();
@@ -135,7 +135,7 @@ namespace WPFHook.ViewModels
             string value = date.ToString("dd/MM/yyyy");
             DayReportModel dayReportModel = new DayReportModel();
             dayReportModel.Date = date;
-            List<ActivityLine> dailyList = backgroundLogic.dataAccess.LoadActivities(parameter, value);
+            List<ActivityLine> dailyList = SqliteDataAccess.LoadActivities(parameter, value);
             foreach (ActivityLine line in dailyList)
             {
                 dayReportModel.TotalTime = dayReportModel.TotalTime.Add(line.inAppTime);
@@ -157,7 +157,17 @@ namespace WPFHook.ViewModels
         }
         private void OpenTestWindow(object obj)
         {
-            TagViewModel tagViewModel = new TagViewModel(Model);
+            /*
+            SqliteDataAccess.saveTag(model.ComputerTimeTag);
+            SqliteDataAccess.saveTag(model.WorkTimeTag);
+            SqliteDataAccess.saveTag(model.DistractionTimeTag);
+            SqliteDataAccess.saveTag(model.SystemTimeTag);
+            */
+            TagViewModel tagViewModel1 = new TagViewModel(SqliteDataAccess.LoadTags());
+            TestWindow window = new TestWindow();
+            window.DataContext = tagViewModel1;
+            window.Show();
+            
 
         }
         public void AddTagWindow(object obj)

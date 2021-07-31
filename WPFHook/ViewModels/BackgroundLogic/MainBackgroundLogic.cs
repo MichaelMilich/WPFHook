@@ -14,12 +14,11 @@ namespace WPFHook.ViewModels.BackgroundLogic
     public class MainBackgroundLogic
     {
         public ActivityLine previousActivity;
-        public SqliteDataAccess dataAccess;
         public int counter;
         public int dayCounter; // every hour it will check the date, if there is a new date than update the timer and dates.
         public DateTime currentDate;
         public static bool isIdle = false;
-        public static readonly int idleTimeInSeconds = 10; // 300 seconds = 5 minutes
+        public static readonly int idleTimeInSeconds = 300; // 300 seconds = 5 minutes
         public MainViewModel mainViewModel;
         public BackgroundWorker managerWindowChangedWorker;
 
@@ -28,7 +27,6 @@ namespace WPFHook.ViewModels.BackgroundLogic
             this.mainViewModel = mainViewModel;
             var model = mainViewModel.Model;
             var tagModel = mainViewModel.TagViewModel;
-            dataAccess = new SqliteDataAccess();
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
             tagModel.ActivityTitle = previousActivity.ToTitle();
             currentDate = DateTime.Today;
@@ -91,7 +89,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             }
             else if (isIdle)
             {
-                ActivityLine activity = LoadSecondToLastActivity();
+                ActivityLine activity = SqliteDataAccess.LoadSecondToLastActivity();
                 UpdatePreviousActivity(activity);
                 managerWindowChangedWorker.ReportProgress(1, activity);
             }
@@ -161,7 +159,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             //save the current activity and than close the app.
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
-            dataAccess.saveActivityLine(previousActivity);
+            SqliteDataAccess.saveActivityLine(previousActivity);
             //all that is left is to close the app
             mainViewModel.manager.WindowChanged -= mainViewModel.Manager_WindowChanged;
             mainViewModel.manager.UnHook();
@@ -195,7 +193,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             //set the previous time span
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
-            dataAccess.saveActivityLine(previousActivity);
+            SqliteDataAccess.saveActivityLine(previousActivity);
             previousActivity = new ActivityLine(DateTime.Now, e.MainWindowTitle, e.ProcessName);
             mainViewModel.currentTag = previousActivity.Tag;
         }
@@ -207,7 +205,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             //set the previous time span
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
-            dataAccess.saveActivityLine(previousActivity);
+            SqliteDataAccess.saveActivityLine(previousActivity);
             previousActivity = new ActivityLine(DateTime.Now, MainWindowTitle, ProcessName);
             mainViewModel.currentTag = previousActivity.Tag;
         }
@@ -219,19 +217,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             //set the previous time span
             previousActivity.inAppTime = DateTime.Now.Subtract(previousActivity.DateAndTime);
-            dataAccess.saveActivityLine(previousActivity);
+            SqliteDataAccess.saveActivityLine(previousActivity);
             previousActivity = activity;
             previousActivity.SetDateAndTime(DateTime.Now);
             mainViewModel.currentTag = previousActivity.Tag;
-        }
-
-        public List<ActivityLine> LoadActivities()
-        {
-            return dataAccess.LoadActivities();
-        }
-        public ActivityLine LoadSecondToLastActivity()
-        {
-            return dataAccess.LoadSecondToLastActivity();
         }
         #endregion
     }

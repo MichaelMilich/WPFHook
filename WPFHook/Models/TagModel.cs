@@ -39,6 +39,10 @@ namespace WPFHook.Models
                 OnPropertyChanged("TagColor");
             }
         }
+        public string TagColorString
+        {
+            get { return tagcolor.ToString(); }
+        }
         public TagModel()
         {
 
@@ -47,6 +51,18 @@ namespace WPFHook.Models
         {
             tagName = tag;
             tagTime = time;
+        }
+        public TagModel(string tag, TimeSpan time, Brush brush)
+        {
+            tagName = tag;
+            tagTime = time;
+            tagcolor = brush;
+        }
+        public TagModel(string tag, string brush)
+        {
+            tagName = tag;
+            var color = (Color)ColorConverter.ConvertFromString(brush); // this assumes that the sting brush is in form of hex like "#FFDFD991"
+            tagcolor = new SolidColorBrush(color);
         }
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
