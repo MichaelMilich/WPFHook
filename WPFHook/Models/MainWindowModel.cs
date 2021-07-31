@@ -68,13 +68,13 @@ namespace WPFHook.Models
                     case "total time":
                         computerTimeTag = tagModel;
                         break;
-                    case "work time":
+                    case "work":
                         workTimeTag = tagModel;
                         break;
-                    case "distraction time":
+                    case "distraction":
                         distractionTimeTag = tagModel;
                         break;
-                    case "system time":
+                    case "system":
                         systemTimeTag = tagModel;
                         break;
                 }

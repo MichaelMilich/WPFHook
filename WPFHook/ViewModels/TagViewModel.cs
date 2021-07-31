@@ -49,14 +49,6 @@ namespace WPFHook.ViewModels
                 _tags.Add(model);
             }
         }
-        public TagViewModel(MainWindowModel mainWindowModel)
-        {
-           // activityTitle = mainWindowModel.ActivityTitle;
-            _tags.Add(mainWindowModel.ComputerTimeTag);
-            _tags.Add(mainWindowModel.WorkTimeTag);
-            _tags.Add(mainWindowModel.DistractionTimeTag);
-            _tags.Add(mainWindowModel.SystemTimeTag);
-        }
 
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;

@@ -37,7 +37,6 @@ namespace WPFHook.ViewModels
             // ------ viewmodel code---------
             view = mainWindow;
             tagViewModel = new TagViewModel(SqliteDataAccess.LoadTags());
-            model = new MainWindowModel(tagViewModel.Tags);
             view.TagView.DataContext = tagViewModel;
             // ------ viewmodel code---------
             // ------ background logic code---------
@@ -75,15 +74,10 @@ namespace WPFHook.ViewModels
 
         #region ViewModel region
         private MainWindow view;
-        private MainWindowModel model;
         private TagViewModel tagViewModel;
         public TagViewModel TagViewModel
         {
             get { return tagViewModel; }
-        }
-        public MainWindowModel Model
-        {
-            get { return model; }
         }
         public MainWindow View
         {

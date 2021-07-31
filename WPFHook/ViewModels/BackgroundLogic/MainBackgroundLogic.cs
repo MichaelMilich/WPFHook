@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using WPFHook.Models;
 using WPFHook.Views;
 
 namespace WPFHook.ViewModels.BackgroundLogic
@@ -25,7 +26,6 @@ namespace WPFHook.ViewModels.BackgroundLogic
         public MainBackgroundLogic(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
-            var model = mainViewModel.Model;
             var tagModel = mainViewModel.TagViewModel;
             previousActivity = new ActivityLine(Process.GetCurrentProcess().StartTime, Process.GetCurrentProcess().MainWindowTitle, Process.GetCurrentProcess().ProcessName);
             tagModel.ActivityTitle = previousActivity.ToTitle();
@@ -97,8 +97,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         public void Timer_Tick(object sender, EventArgs e)
         {
             // check for idle first, then update the timers.
-            var model = mainViewModel.Model;
-            var tagmodel = mainViewModel.TagViewModel;
+            var tagViewModel = mainViewModel.TagViewModel;
             var timer = mainViewModel.timer;
             counter += (int)timer.Interval.TotalSeconds;
             dayCounter+= (int)timer.Interval.TotalSeconds;
@@ -108,10 +107,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 {
                     currentDate = DateTime.Today;
                     mainViewModel.View.dailyReportDayPicker.SelectedDate = DateTime.Today;
-                    model.ComputerTimeTag.TagTime = new TimeSpan(0, 0, 0);
-                    model.WorkTimeTag.TagTime = new TimeSpan(0, 0, 0);
-                    model.DistractionTimeTag.TagTime = new TimeSpan(0, 0, 0);
-                    model.SystemTimeTag.TagTime = new TimeSpan(0, 0, 0);
+                    foreach (TagModel tagModel in tagViewModel.Tags)
+                    {
+                        tagModel.TagTime = new TimeSpan(0, 0, 0);
+                    }
                 }
                 dayCounter = 0;
             }
@@ -120,34 +119,14 @@ namespace WPFHook.ViewModels.BackgroundLogic
             {
                 isIdle = true;
                 UpdatePreviousActivity("", "Idle");
-                tagmodel.ActivityTitle = previousActivity.ToTitle();
+                tagViewModel.ActivityTitle = previousActivity.ToTitle();
             }
-            // -----NOTE FOR THE FUTURE ----
-            // I should make a tag string array in the same length as the timers, maybe timers.length=tags.length+1 because i want also the global timer to be timers[0].
-            // I should than do a for loop in the following manner:
 
-            /*
-            timeSpans[0] = timeSpans[0].Add(timer.Interval);
-            for (int i = 1; i < timeSpans.Length;i++)
+            tagViewModel.Tags[0].TagTime = tagViewModel.Tags[0].TagTime.Add(timer.Interval);
+            foreach(TagModel tagModel in tagViewModel.Tags)
             {
-                if (currentTag.Equals(tags[i-1]))
-                    timeSpans[i] = timeSpans[i].Add(timer.Interval);
-            }
-            */
-
-            // ----- END NOTE FOR THE FUTURE ----
-            model.ComputerTimeTag.TagTime = model.ComputerTimeTag.TagTime.Add(timer.Interval); 
-            switch (mainViewModel.currentTag)
-            {
-                case "work":
-                    model.WorkTimeTag.TagTime = model.WorkTimeTag.TagTime.Add(timer.Interval);
-                    break;
-                case "distraction":
-                    model.DistractionTimeTag.TagTime = model.DistractionTimeTag.TagTime.Add(timer.Interval);
-                    break;
-                case "system":
-                    model.SystemTimeTag.TagTime = model.SystemTimeTag.TagTime.Add(timer.Interval);
-                    break;
+                if (tagModel.TagName.Equals(mainViewModel.currentTag))
+                    tagModel.TagTime = tagModel.TagTime.Add(timer.Interval);
             }
         }
         #endregion
