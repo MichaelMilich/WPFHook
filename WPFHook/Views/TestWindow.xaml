@@ -8,23 +8,19 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="TestWindow" Height="300" Width="500" MinHeight="200" MinWidth="200">
-    <DockPanel>
-        <Menu DockPanel.Dock="Top" Background="LightGray">
-            <MenuItem Header="_Add Tag " Command="{Binding ShowAddTagCommand}"/>
-        </Menu>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
-            <uc:TagView Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="0" x:Name="Report" />
-            <DatePicker x:Name="dailyReportDayPicker" Grid.Row="1" Grid.Column="1" SelectedDate="{x:Static sys:DateTime.Now}" ></DatePicker>
-            <Button x:Name="ReportButton" Grid.Row="1" Margin="2,2,2,2"  Grid.Column="0" Background="AliceBlue">Daily Report</Button>
-        </Grid>
-    </DockPanel>
+    <Grid Margin="10">
+        <DataGrid Name="dgUsers" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Main Window Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Tag" Binding="{Binding Tag}" />
+            </DataGrid.Columns>
+            <!--
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Details}" Margin="10" />
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+                -->
+        </DataGrid>
+    </Grid>
 </Window>
