@@ -44,6 +44,9 @@ namespace WPFHook.ViewModels.BackgroundLogic
             // build a lambda function User->bool and compile it
             return Expression.Lambda<Func<T, bool>>(expr, paramUser).Compile();
         }
+        private static readonly MethodInfo StringContainExpressionMethodInfo = typeof(string).GetMethod("Contains", new Type[] {
+        typeof(string), typeof(StringComparison)});
+
         static Expression BuildExpr<T>(Rule r, ParameterExpression param)
         {
             var left = MemberExpression.Property(param, r.Parameter);
@@ -63,10 +66,23 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 var methods = tProp.GetMethods();
                 foreach(var m in methods)
                 {
-                    if(m.Name.Equals(r.Operation) && m.GetParameters().Length==1)
+                    if (m.Name.Equals(r.Operation))
                     {
-                        method = m;
-                        break;
+                        if (m.Name.Equals("Contains"))
+                        {
+                            if (m.Equals(StringContainExpressionMethodInfo))
+                            {
+                                var tParam2 = m.GetParameters()[0].ParameterType;
+                                var right2 = Expression.Constant(Convert.ChangeType(r.Constant, tParam2));
+                                var ignoreCase = Expression.Constant(StringComparison.CurrentCultureIgnoreCase);
+                                return Expression.Call(left, m, new Expression[] { right2, ignoreCase });
+                            }
+                        }
+                        else if (m.GetParameters().Length == 1)
+                        {
+                            method = m;
+                            break;
+                        }
                     }
 
                 }
@@ -77,4 +93,5 @@ namespace WPFHook.ViewModels.BackgroundLogic
             }
         }
     }
+
 }
