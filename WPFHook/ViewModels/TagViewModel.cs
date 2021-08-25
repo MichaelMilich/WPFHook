@@ -44,6 +44,7 @@ namespace WPFHook.ViewModels
         }
         public TagViewModel(List<TagModel> tags)
         {
+            _tags.Add(new TagModel() {TagName="Computer Time", TagColor=Brushes.Gray,TagTime=new TimeSpan(0,0,0) }); // adding the General Time Tag
             foreach(TagModel model in tags)
             {
                 _tags.Add(model);
