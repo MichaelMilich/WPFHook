@@ -93,6 +93,7 @@ namespace WPFHook
         protected override void OnStartup(StartupEventArgs e)
         {
             SqliteDataAccess.StartUp();
+            MainBackgroundLogic.CheckFirstTime();
             Tagger.StartUp();
             base.OnStartup(e);
             SetUpView();

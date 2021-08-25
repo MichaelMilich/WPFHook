@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using WPFHook.Models;
 using WPFHook.Views;
+using System.Windows.Media;
 
 namespace WPFHook.ViewModels.BackgroundLogic
 {
@@ -200,6 +201,35 @@ namespace WPFHook.ViewModels.BackgroundLogic
             previousActivity = activity;
             previousActivity.SetDateAndTime(DateTime.Now);
             mainViewModel.currentTag = previousActivity.Tag;
+        }
+
+        public static void CheckFirstTime()
+        {
+            var tagList = SqliteDataAccess.LoadTags();
+            if (tagList.Count==0)
+            {
+                TagModel tag = new TagModel() { TagName = "System", TagColor = Brushes.Blue };
+                SqliteDataAccess.saveTag(tag);
+                tag = new TagModel() { TagName = "Distraction", TagColor = Brushes.Red };
+                SqliteDataAccess.saveTag(tag);
+                tag = new TagModel() { TagName = "Work", TagColor = Brushes.Green };
+                SqliteDataAccess.saveTag(tag);
+            }
+            var ruleList = SqliteDataAccess.LoadRules();
+            if( ruleList.Count==0)
+            {
+                Rule rule = new Rule("FGWindowName", "Equals", "",1);
+                SqliteDataAccess.saveRule(rule);
+                rule = new Rule("FGWindowName", "Contains", "youtube",2);
+                SqliteDataAccess.saveRule(rule);
+                rule = new Rule("FGWindowName", "Contains", "facebook",2);
+                SqliteDataAccess.saveRule(rule);
+                rule = new Rule("FGWindowName", "Contains", "ragnarok",2);
+                SqliteDataAccess.saveRule(rule);
+                rule = new Rule(Rule.everythingElseRuleString, Rule.everythingElseRuleString, Rule.everythingElseRuleString, 3);
+                SqliteDataAccess.saveRule(rule);
+            }
+
         }
         #endregion
     }

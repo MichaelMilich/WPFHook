@@ -25,7 +25,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         public Brush TagColor;
         public void updateTag()
         {
-            (Tag, TagColor) = Tagger.getTag(FGWindowName, FGProcessName);
+            (Tag, TagColor) = Tagger.getTag(this);
         }
         public ActivityLine(Int64 id, string Date, string Time, string FGWindowName, string FGProcessName, string InAppTime, string Tag)
         {

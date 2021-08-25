@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
+using WPFHook.Models;
 
 namespace WPFHook.ViewModels.BackgroundLogic
 {
@@ -10,11 +12,21 @@ namespace WPFHook.ViewModels.BackgroundLogic
         /// all the key wods that the app looks foor to see if there is a distraction.
         /// </summary>
         public static string[] distractionWords;
+        private static List<TagModel> tagList;
+        private static List<Rule> ruleList;
+        private static List<Func<ActivityLine, bool>> ruleFunctions;
         public static void StartUp()
         {
             // get the key words to look for from the txt file at the beginning of the application.
             // from checking, AppDomain.CurrentDomain.BaseDirectory is the path! 
             distractionWords = System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "DistractionWords.txt");
+            tagList = SqliteDataAccess.LoadTags();
+            ruleList = SqliteDataAccess.LoadRules();
+            ruleFunctions = new List<Func<ActivityLine, bool>>();
+            foreach (Rule r in ruleList)
+            {
+                ruleFunctions.Add(Rule.CompileRule<ActivityLine>(r));
+            }
         }
         /// <summary>
         /// sets the tag of the activity. can be "work" , "system" or "distraction"
@@ -39,14 +51,23 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 return ("work", Brushes.Green);
             }
         }
+        public static (string, Brush) getTag(ActivityLine line)
+        {
+            for(int i=0;i<ruleFunctions.Count;i++)
+            {
+                if (ruleFunctions[i](line))
+                    return (tagList[ruleList[i].TagId].TagName, tagList[ruleList[i].TagId].TagColor);
+            }
+            return ("null", Brushes.Black);
+        }
         public static Brush UpdateTagColor(string tag)
         {
-            if (tag.Equals("distraction"))
-                return Brushes.Red;
-            else if (tag.Equals("work"))
-                return Brushes.Green;
-            else
-                return Brushes.Blue;
+            foreach(TagModel tagModel in tagList)
+            {
+                if (tagModel.TagName.Equals(tag))
+                    return tagModel.TagColor;
+            }
+            return Brushes.Black;
         }
         /// <summary>
         /// checks if a substring is contained in the string (in my case - window title or process name)

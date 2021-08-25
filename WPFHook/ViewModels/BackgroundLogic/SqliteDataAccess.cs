@@ -121,5 +121,34 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 cnn.Execute("insert into Tags (tagName,tagColor) values (@TagName,@TagColorString)", tagModel);
             }
         }
+
+        public static List<Rule> LoadRules()
+        {
+            // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
+            using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
+            {
+                var output = cnn.Query<(string, string, string,int)>("select Parameter,Operation,Constant,TagId from Rule", new DynamicParameters());
+                //output.ToList()
+                var list = output.ToList();
+                List<Rule> rulelist = new List<Rule>();
+                foreach ((string, string, string,int) p in list)
+                {
+                    int tagId;
+                    string parameter;
+                    string operation;
+                    string constant;
+                    ( parameter, operation, constant, tagId) = p;
+                    rulelist.Add(new Rule(parameter, operation, constant, tagId-1));
+                }
+                return rulelist;
+            }
+        }
+        public static void saveRule(Rule rule)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
+            {
+                cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", rule);
+            }
+        }
     }
 }

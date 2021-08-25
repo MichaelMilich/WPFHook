@@ -6,11 +6,13 @@ using System.Text;
 
 namespace WPFHook.ViewModels.BackgroundLogic
 {
-     class Rule
+    public class Rule
     {
         private string parameter;
         private string operation;
         private string constant;
+        private int tagId;
+        public static string everythingElseRuleString = "EveryTHingElse";
         public string Parameter
         {
             get { return parameter; }
@@ -26,23 +28,37 @@ namespace WPFHook.ViewModels.BackgroundLogic
             get { return constant; }
             set { constant = value; }
         }
+        public int TagId
+        {
+            get { return tagId; }
+            set { tagId = value; }
+        }
         public Rule()
         {
 
         }
-        public Rule(string parameter, string operation, string constant)
+        public Rule(string parameter, string operation, string constant,int tagId)
         {
             this.parameter = parameter;
             this.operation = operation;
             this.constant = constant;
+            this.tagId = tagId;
         }
 
         public static Func<T, bool> CompileRule<T>(Rule r)
         {
-            var paramUser = Expression.Parameter(typeof(T));
-            Expression expr = BuildExpr<T>(r, paramUser);
-            // build a lambda function User->bool and compile it
-            return Expression.Lambda<Func<T, bool>>(expr, paramUser).Compile();
+            if (r.Operation.Equals(Rule.everythingElseRuleString)) // if the function is everything else is the last tag than ,make a function that makes everything last tag
+            {
+               var exp= Expression.Lambda<Func<T, bool>>(Expression.Constant(true), Expression.Parameter(typeof(T), "_"));
+                return exp.Compile();
+            }
+            else
+            {
+                var paramUser = Expression.Parameter(typeof(T));
+                Expression expr = BuildExpr<T>(r, paramUser);
+                // build a lambda function User->bool and compile it
+                return Expression.Lambda<Func<T, bool>>(expr, paramUser).Compile();
+            }
         }
         private static readonly MethodInfo StringContainExpressionMethodInfo = typeof(string).GetMethod("Contains", new Type[] {
         typeof(string), typeof(StringComparison)});

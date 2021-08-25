@@ -151,7 +151,7 @@ namespace WPFHook.ViewModels
         }
         private void OpenTestWindow(object obj)
         {
-            Rule[] rules = new Rule[4];
+            /*Rule[] rules = new Rule[4];
             rules[0] = new Rule("FGWindowName", "Equals", "");
             rules[1] = new Rule("FGWindowName", "Contains", "ragnarok");
             rules[2] = new Rule("FGWindowName", "Contains", "facebook");
@@ -164,6 +164,7 @@ namespace WPFHook.ViewModels
             string value = date.ToString("dd/MM/yyyy");
             List<ActivityLine> dailyList = SqliteDataAccess.LoadActivities(parameter, value);
 
+            var ruleFunctions = new List<Func<ActivityLine, bool>>();
             var SystemRule =  Rule.CompileRule<ActivityLine>(rules[0]);
             var DistractionRule1= Rule.CompileRule<ActivityLine>(rules[1]);
             var DistractionRule2 = Rule.CompileRule<ActivityLine>(rules[2]);
@@ -189,7 +190,7 @@ namespace WPFHook.ViewModels
 
             TestWindow window = new TestWindow(test);
             window.Show();
-            
+            */
 
         }
         public void AddTagWindow(object obj)
