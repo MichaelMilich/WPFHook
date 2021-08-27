@@ -99,17 +99,17 @@ namespace WPFHook.ViewModels.BackgroundLogic
             // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
-                var output = cnn.Query<(string,string,string)>("select * from Tags", new DynamicParameters());
+                var output = cnn.Query<(int,string,string)>("select * from Tags", new DynamicParameters());
                 //output.ToList()
                 var list = output.ToList();
                 List<TagModel> taglist = new List<TagModel>();
-                foreach ((string, string, string) p in list)
+                foreach ((int, string, string) p in list)
                 {
-                    string num;
+                    int num;
                     string name;
                     string colorstring;
                     (num, name, colorstring) = p;
-                    taglist.Add(new TagModel(name, colorstring));
+                    taglist.Add(new TagModel(name, colorstring,num));
                 }
                 return taglist;
             }
@@ -128,7 +128,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
                 var output = cnn.Query<(string, string, string,int)>("select Parameter,Operation,Constant,TagId from Rule", new DynamicParameters());
-                //output.ToList()
+                //NOTE: there is no real reason for making a ruleId. i just made it for no reason, have to delete it in the future.
                 var list = output.ToList();
                 List<Rule> rulelist = new List<Rule>();
                 foreach ((string, string, string,int) p in list)
@@ -138,7 +138,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
                     string operation;
                     string constant;
                     ( parameter, operation, constant, tagId) = p;
-                    rulelist.Add(new Rule(parameter, operation, constant, tagId-1));
+                    rulelist.Add(new Rule(parameter, operation, constant, tagId));
                 }
                 return rulelist;
             }

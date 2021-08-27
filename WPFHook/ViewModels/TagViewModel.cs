@@ -51,6 +51,7 @@ namespace WPFHook.ViewModels
             }
         }
 
+
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
         // Create the OnPropertyChanged method to raise the event

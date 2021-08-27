@@ -206,7 +206,7 @@ namespace WPFHook.ViewModels
                 SolidColorBrush brush = new SolidColorBrush((Color)tagViewModel.addTagView.NewTagColorPicker.SelectedColor);
                 var tag = new TagModel() { TagColor = brush, TagName = tagViewModel.addTagView.NewTagNameTextBox.Text, TagTime = new TimeSpan(0, 20, 0) };
                 tagViewModel.Tags.Add(tag);
-                SqliteDataAccess.saveTag(tag);
+               // SqliteDataAccess.saveTag(tag);
                 tagViewModel.addTagView.Close();
                 
             }

@@ -43,6 +43,16 @@ namespace WPFHook.Models
         {
             get { return tagcolor.ToString(); }
         }
+        private int tagID;
+        public int TagID
+        {
+            get { return tagID; }
+            set
+            {
+                tagID = value;
+                OnPropertyChanged("TagId");
+            }
+        }
         public TagModel()
         {
 
@@ -64,6 +74,14 @@ namespace WPFHook.Models
             var color = (Color)ColorConverter.ConvertFromString(brush); // this assumes that the sting brush is in form of hex like "#FFDFD991"
             tagcolor = new SolidColorBrush(color);
         }
+        public TagModel(string tag, string brush,int tagId)
+        {
+            tagName = tag;
+            var color = (Color)ColorConverter.ConvertFromString(brush); // this assumes that the sting brush is in form of hex like "#FFDFD991"
+            tagcolor = new SolidColorBrush(color);
+            tagID = tagId;
+        }
+
         #region INotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
         // Create the OnPropertyChanged method to raise the event

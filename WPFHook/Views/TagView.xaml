@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:local="clr-namespace:WPFHook.Views" xmlns:local1="clr-namespace:WPFHook.Commands" xmlns:viewmodels="clr-namespace:WPFHook.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:TagViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -50,11 +51,11 @@
             <TextBox Text="Current App:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Column="0"  Background="LightGray" Style="{StaticResource FontConvertorDataContext}"/>
             <TextBox Text="{Binding Path=ActivityTitle}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Column="1" Style="{StaticResource FontConvertorDataContext}"/>
         </Grid>
-        
+
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Path=Tags}" x:Name="test" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate >
-                    <Grid>
+                    <Grid >
                         <Grid.Height>
                             <MultiBinding Converter="{StaticResource mTagsSizeConverter}">
                                 <Binding ElementName="TagsControl" Path="ActualHeight"/>

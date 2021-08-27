@@ -8,6 +8,22 @@ namespace WPFHook.ViewModels.BackgroundLogic
 {
     public static class Tagger
     {
+        ///<summary>
+        /// The Tagger is one of the most importnatn parts of this code!
+        /// The Tagger uses a list of TagsModels and a list of Rules that are connected to the database.
+        /// For each Rule there are the parameter, operation and constant along other properties. 
+        /// The rule that is compiled returns bool that determines if the activity is within the rule.
+        /// The rule also saves the corresponding TagId. if the rule returns true - than we use the TagID to make the Activity tag into the Tag with the same ID.
+        /// we use this by calling TagList[j] where j= rules[i].TagId and i simply loops through the rules.
+        /// Now the problem is that what happens when one tag gets deleted? all the associsated rules get deleted as well.
+        /// but then we run into a new problem. The tags Id autoincrement. mmeaning the next tag id will be higher, no matter if the previous tags are dleted.
+        /// It can be that the TagTAble will start from 6,7,8 because we deleted the rest of the tags. or something like 1,3,5,8 becasue we deleted the middle tags.
+        /// this creates a problem with the TagList size. 
+        /// Somehow i need to place each tag in its position according to its TagId.
+        /// 
+        /// </summary>
+
+
         /// <summary>
         /// all the key wods that the app looks foor to see if there is a distraction.
         /// </summary>
@@ -17,38 +33,12 @@ namespace WPFHook.ViewModels.BackgroundLogic
         private static List<Func<ActivityLine, bool>> ruleFunctions;
         public static void StartUp()
         {
-            // get the key words to look for from the txt file at the beginning of the application.
-            // from checking, AppDomain.CurrentDomain.BaseDirectory is the path! 
-            distractionWords = System.IO.File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "DistractionWords.txt");
-            tagList = SqliteDataAccess.LoadTags();
+            Tagger.BuildTagList(SqliteDataAccess.LoadTags());
             ruleList = SqliteDataAccess.LoadRules();
             ruleFunctions = new List<Func<ActivityLine, bool>>();
             foreach (Rule r in ruleList)
             {
                 ruleFunctions.Add(Rule.CompileRule<ActivityLine>(r));
-            }
-        }
-        /// <summary>
-        /// sets the tag of the activity. can be "work" , "system" or "distraction"
-        /// checks the key words that indicate "distraction" in the process name and the main window title.
-        /// </summary>
-        /// <param name="windowName"></param>
-        /// <param name="processName"></param>
-        /// <returns></returns>
-        public static (string, Brush) getTag(string windowName, string processName)
-        {
-            if (windowName.Equals(""))
-                return ("system",Brushes.Blue);
-            else
-            {
-                foreach(string word in distractionWords)
-                {
-                    if(Contains(word,windowName) || Contains(word, processName))
-                    {
-                        return ("distraction", Brushes.Red);
-                    }
-                }
-                return ("work", Brushes.Green);
             }
         }
         public static (string, Brush) getTag(ActivityLine line)
@@ -69,18 +59,32 @@ namespace WPFHook.ViewModels.BackgroundLogic
             }
             return Brushes.Black;
         }
-        /// <summary>
-        /// checks if a substring is contained in the string (in my case - window title or process name)
-        /// Used Regex to find if the exprassion contains the window title and so on.
-        /// checked if any of my distraction are inside the window title and vis versa
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="toCheck"></param>
-        /// <param name="comp"></param>
-        /// <returns></returns>
-        public static bool Contains(string source, string toCheck)
+        public static int getMaxTagId(List<TagModel> smalltagList)
         {
-            return Regex.IsMatch(source, Regex.Escape(toCheck), RegexOptions.IgnoreCase) || Regex.IsMatch(toCheck, Regex.Escape(source), RegexOptions.IgnoreCase);
+            int max = 0;
+            for (int i=0;i<smalltagList.Count;i++)
+            {
+                if (max < smalltagList[i].TagID)
+                    max = smalltagList[i].TagID;
+            }
+            return max;
+        }
+        private static void BuildTagList(List<TagModel> smalltagList)
+        {
+            var max = getMaxTagId(smalltagList);
+            int j = 0;
+            tagList = new List<TagModel>();
+            for (int i = 0; i <= max; i++)
+            {
+                while (i < smalltagList[j].TagID)
+                {
+                    tagList.Add(null);
+                    i++;
+                }
+                tagList.Add(smalltagList[j]);
+                j++;
+            }
+            // builds the tagList with nulls were there are no TagID
         }
     }
 }
