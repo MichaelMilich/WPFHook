@@ -17,7 +17,14 @@
                 <Separator />
                 <MenuItem x:Name="ExitHeader" Header="_Exit" />
             </MenuItem>
-            <MenuItem Header="_Add Tag " Command="{Binding ShowAddTagCommand}"/>
+            <MenuItem Header="Tags" >
+                <MenuItem Header="_Add Tag " Command="{Binding ShowAddTagCommand}"/>
+                <MenuItem Header="_Delete Tag" Command="{Binding ShowDeleteTagCommand}" />
+            </MenuItem>
+            <MenuItem Header="Rules" >
+                <MenuItem Header="_Add Rule " Command="{Binding ShowAddRuleCommand}"/>
+                <MenuItem Header="_Delete Rule" Command="{Binding ShowDeleteRuleCommand}" />
+            </MenuItem>
         </Menu>
         <Grid>
             <Grid.ColumnDefinitions>

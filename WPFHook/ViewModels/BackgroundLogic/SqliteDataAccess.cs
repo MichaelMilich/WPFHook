@@ -121,6 +121,16 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 cnn.Execute("insert into Tags (tagName,tagColor) values (@TagName,@TagColorString)", tagModel);
             }
         }
+        public static int saveTagAndGetId(TagModel tagModel)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
+            {
+                cnn.Execute("insert into Tags (tagName,tagColor) values (@TagName,@TagColorString)", tagModel);
+                var output = cnn.Query<int>("select Max(id) from Tags");
+                var list = output.ToList();
+                return list[0];
+            }
+        }
 
         public static List<Rule> LoadRules()
         {
@@ -148,6 +158,13 @@ namespace WPFHook.ViewModels.BackgroundLogic
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
                 cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", rule);
+            }
+        }
+        public static void DeleteTag(TagModel tag)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
+            {
+                cnn.Execute("DELETE FROM Tags where id = @TagID", tag);
             }
         }
     }

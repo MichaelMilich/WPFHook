@@ -94,7 +94,9 @@ namespace WPFHook.ViewModels
         public ICommand DailyReportCommand { get { return new RelayCommand(e => true, this.DailyReport); } }
         public ICommand OpenTestWindowCommand { get { return new RelayCommand(e => true, this.OpenTestWindow); } }
         public ICommand ShowAddTagCommand { get { return new RelayCommand(e => true, this.AddTagWindow); } }
-        public ICommand AddTagCommand { get { return new RelayCommand(e => true, this.AddTag); } }
+        public ICommand ShowDeleteTagCommand { get { return new RelayCommand(e => true, this.ShowDeleteTag); } }
+        public ICommand ShowAddRuleCommand { get { return new RelayCommand(e => true, this.AddRuleWindow); } }
+        public ICommand ShowDeleteRuleCommand { get { return new RelayCommand(e => true, this.ShowDeleteRule); } }
         public void ShowActivityList(object obj)
         {
             ActivityDatabaseWindow subWindow = new ActivityDatabaseWindow();
@@ -196,22 +198,22 @@ namespace WPFHook.ViewModels
         public void AddTagWindow(object obj)
         {
            tagViewModel.addTagView = new AddTagView();
-            tagViewModel.addTagView.DataContext = this;
+            tagViewModel.addTagView.DataContext = tagViewModel;
             tagViewModel.addTagView.Show();
         }
-        public void AddTag(object obj)
+        public void ShowDeleteTag(object obj)
         {
-            if (tagViewModel.addTagView.NewTagNameTextBox.Text.Length > 0 && tagViewModel.addTagView.NewTagColorPicker.SelectedColorText.Length > 0)
-            {
-                SolidColorBrush brush = new SolidColorBrush((Color)tagViewModel.addTagView.NewTagColorPicker.SelectedColor);
-                var tag = new TagModel() { TagColor = brush, TagName = tagViewModel.addTagView.NewTagNameTextBox.Text, TagTime = new TimeSpan(0, 20, 0) };
-                tagViewModel.Tags.Add(tag);
-               // SqliteDataAccess.saveTag(tag);
-                tagViewModel.addTagView.Close();
-                
-            }
-            else
-                MessageBox.Show("Please insert tag name and tag color", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            tagViewModel.deleteTagView  = new DeleteTagView();
+            tagViewModel.deleteTagView.DataContext = tagViewModel;
+            tagViewModel.deleteTagView.Show();
+        }
+        public void AddRuleWindow(object obj)
+        {
+
+        }
+        public void ShowDeleteRule(object obj)
+        {
+
         }
         #endregion
     }
