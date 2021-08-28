@@ -218,15 +218,15 @@ namespace WPFHook.ViewModels.BackgroundLogic
             var ruleList = SqliteDataAccess.LoadRules();
             if( ruleList.Count==0)
             {
-                Rule rule = new Rule("FGWindowName", "Equals", "",1);
+                RuleModel rule = new RuleModel("FGWindowName", "Equals", "",1);
                 SqliteDataAccess.saveRule(rule);
-                rule = new Rule("FGWindowName", "Contains", "youtube",2);
+                rule = new RuleModel("FGWindowName", "Contains", "youtube",2);
                 SqliteDataAccess.saveRule(rule);
-                rule = new Rule("FGWindowName", "Contains", "facebook",2);
+                rule = new RuleModel("FGWindowName", "Contains", "facebook",2);
                 SqliteDataAccess.saveRule(rule);
-                rule = new Rule("FGWindowName", "Contains", "ragnarok",2);
+                rule = new RuleModel("FGWindowName", "Contains", "ragnarok",2);
                 SqliteDataAccess.saveRule(rule);
-                rule = new Rule(Rule.everythingElseRuleString, Rule.everythingElseRuleString, Rule.everythingElseRuleString, 3);
+                rule = new RuleModel(RuleModel.everythingElseRuleString, RuleModel.everythingElseRuleString, RuleModel.everythingElseRuleString, 3);
                 SqliteDataAccess.saveRule(rule);
             }
 

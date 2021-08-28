@@ -132,32 +132,32 @@ namespace WPFHook.ViewModels.BackgroundLogic
             }
         }
 
-        public static List<Rule> LoadRules()
+        public static List<RuleModel> LoadRules()
         {
             // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
-                var output = cnn.Query<(string, string, string,int)>("select Parameter,Operation,Constant,TagId from Rule", new DynamicParameters());
-                //NOTE: there is no real reason for making a ruleId. i just made it for no reason, have to delete it in the future.
+                var output = cnn.Query<RuleModel>("select * from Rule", new DynamicParameters());
                 var list = output.ToList();
-                List<Rule> rulelist = new List<Rule>();
-                foreach ((string, string, string,int) p in list)
-                {
-                    int tagId;
-                    string parameter;
-                    string operation;
-                    string constant;
-                    ( parameter, operation, constant, tagId) = p;
-                    rulelist.Add(new Rule(parameter, operation, constant, tagId));
-                }
-                return rulelist;
+                return list;
             }
         }
-        public static void saveRule(Rule rule)
+        public static void saveRule(RuleModel rule)
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
                 cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", rule);
+            }
+        }
+        public static void saveRuleLast(RuleModel rule)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
+            {
+                var output = cnn.Query<RuleModel>("SELECT * FROM Rule ORDER BY id DESC LIMIT 1");
+                var lastRule = (output.ToList())[0];
+                cnn.Execute("DELETE FROM Rule where id = @RuleId", lastRule);
+                cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", rule);
+                cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", lastRule);
             }
         }
         public static void DeleteTag(TagModel tag)
@@ -167,5 +167,6 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 cnn.Execute("DELETE FROM Tags where id = @TagID", tag);
             }
         }
+
     }
 }

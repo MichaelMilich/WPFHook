@@ -4,14 +4,15 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace WPFHook.ViewModels.BackgroundLogic
+namespace WPFHook.Models
 {
-    public class Rule
+    public class RuleModel
     {
         private string parameter;
         private string operation;
         private string constant;
         private int tagId;
+        private int ruleId;
         public static string everythingElseRuleString = "EveryTHingElse";
         public string Parameter
         {
@@ -33,21 +34,34 @@ namespace WPFHook.ViewModels.BackgroundLogic
             get { return tagId; }
             set { tagId = value; }
         }
-        public Rule()
+        public int RuleId
+        {
+            get { return ruleId; }
+            set { ruleId = value; }
+        }
+        public RuleModel()
         {
 
         }
-        public Rule(string parameter, string operation, string constant,int tagId)
+        public RuleModel(string parameter, string operation, string constant,int tagId)
         {
             this.parameter = parameter;
             this.operation = operation;
             this.constant = constant;
             this.tagId = tagId;
         }
-
-        public static Func<T, bool> CompileRule<T>(Rule r)
+        public RuleModel(int ruleId,string parameter, string operation, string constant, int tagId)
         {
-            if (r.Operation.Equals(Rule.everythingElseRuleString)) // if the function is everything else is the last tag than ,make a function that makes everything last tag
+            this.ruleId = ruleId;
+            this.parameter = parameter;
+            this.operation = operation;
+            this.constant = constant;
+            this.tagId = tagId;
+        }
+
+        public static Func<T, bool> CompileRule<T>(RuleModel r)
+        {
+            if (r.Operation.Equals(RuleModel.everythingElseRuleString)) // if the function is everything else is the last tag than ,make a function that makes everything last tag
             {
                var exp= Expression.Lambda<Func<T, bool>>(Expression.Constant(true), Expression.Parameter(typeof(T), "_"));
                 return exp.Compile();
@@ -63,7 +77,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         private static readonly MethodInfo StringContainExpressionMethodInfo = typeof(string).GetMethod("Contains", new Type[] {
         typeof(string), typeof(StringComparison)});
 
-        static Expression BuildExpr<T>(Rule r, ParameterExpression param)
+        static Expression BuildExpr<T>(RuleModel r, ParameterExpression param)
         {
             var left = MemberExpression.Property(param, r.Parameter);
             var tProp = typeof(T).GetProperty(r.Parameter).PropertyType;

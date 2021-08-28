@@ -29,16 +29,16 @@ namespace WPFHook.ViewModels.BackgroundLogic
         /// </summary>
         public static string[] distractionWords;
         private static List<TagModel> tagList;
-        private static List<Rule> ruleList;
+        private static List<RuleModel> ruleList;
         private static List<Func<ActivityLine, bool>> ruleFunctions;
         public static void StartUp()
         {
             Tagger.BuildTagList(SqliteDataAccess.LoadTags());
             ruleList = SqliteDataAccess.LoadRules();
             ruleFunctions = new List<Func<ActivityLine, bool>>();
-            foreach (Rule r in ruleList)
+            foreach (RuleModel r in ruleList)
             {
-                ruleFunctions.Add(Rule.CompileRule<ActivityLine>(r));
+                ruleFunctions.Add(RuleModel.CompileRule<ActivityLine>(r));
             }
         }
         public static (string, Brush) getTag(ActivityLine line)

@@ -5,8 +5,44 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFHook.Views"
         mc:Ignorable="d"
-        Title="AddRuleView" Height="450" Width="800">
+        Title="AddRuleView" SizeToContent="WidthAndHeight">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Margin="10">Add Rule to Tag</Label>
+        <ComboBox Name="tagsComboBox" Grid.Row="0" Grid.Column="1" Margin="10" ItemsSource="{Binding TagViewModel.Tags}"
+                   SelectedIndex="0">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Rectangle Fill="{Binding TagColor}" Width="16" Height="16" Margin="0,2,5,2" />
+                        <TextBlock Text="{Binding TagName}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Label Grid.Row="1" Grid.Column="0" Margin="10"> Rule Parameter</Label>
+        <ComboBox Name="ruleParamters" Grid.Column="1" Grid.Row="1" Margin="10"  >
+            <ComboBoxItem Selector.IsSelected="True">Foreground Window Name</ComboBoxItem>
+            <ComboBoxItem>Foreground Process Name</ComboBoxItem>
+        </ComboBox>
+        <Label Grid.Row="2" Grid.Column="0" Margin="10">Rule Operators</Label>
+        <ComboBox Name="ruleOperators" Grid.Column="1" Grid.Row="2" Margin="10">
+            <ComboBoxItem Selector.IsSelected="True">Contains</ComboBoxItem>
+            <ComboBoxItem>Equals</ComboBoxItem>
+            <ComboBoxItem>Every thing else</ComboBoxItem>
+        </ComboBox>
+        <Label Grid.Row="3" Grid.Column="0" Margin="10">Rule Constant</Label>
+        <TextBox x:Name="constantTextBox" Grid.Row="3" Grid.Column="1" Margin="10" VerticalAlignment="Center">beep boop</TextBox>
+        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding AddRuleCommand}" Margin="10">Add Rule</Button>
     </Grid>
 </Window>

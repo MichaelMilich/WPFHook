@@ -28,6 +28,6 @@
                 
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding DeleteTagComand}" Margin="10">Submit</Button>
+        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Command="{Binding DeleteTagComand}" Margin="10">Delete Tag</Button>
     </Grid>
 </Window>

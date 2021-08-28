@@ -38,6 +38,7 @@ namespace WPFHook.ViewModels
             view = mainWindow;
             tagViewModel = new TagViewModel(SqliteDataAccess.LoadTags());
             view.TagView.DataContext = tagViewModel;
+            ruleViewModel = new RuleViewModel(SqliteDataAccess.LoadRules(),tagViewModel);
             // ------ viewmodel code---------
             // ------ background logic code---------
             SetUpHook();
@@ -75,6 +76,11 @@ namespace WPFHook.ViewModels
         #region ViewModel region
         private MainWindow view;
         private TagViewModel tagViewModel;
+        private RuleViewModel ruleViewModel;
+        public RuleViewModel RuleViewModel
+        {
+            get { return ruleViewModel; }
+        }
         public TagViewModel TagViewModel
         {
             get { return tagViewModel; }
@@ -209,7 +215,9 @@ namespace WPFHook.ViewModels
         }
         public void AddRuleWindow(object obj)
         {
-
+            ruleViewModel.addRuleView = new AddRuleView();
+            ruleViewModel.addRuleView.DataContext = ruleViewModel;
+            ruleViewModel.addRuleView.Show();
         }
         public void ShowDeleteRule(object obj)
         {
