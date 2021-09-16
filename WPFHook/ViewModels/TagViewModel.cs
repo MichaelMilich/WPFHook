@@ -68,6 +68,8 @@ namespace WPFHook.ViewModels
                 SqliteDataAccess.DeleteTag(selected);
                 _tags.Remove(selected);
                 Tagger.UpdateTagList();
+                // have to make the taggerupdate its rules in the application
+                // have to update the rules list in the rule view model.
                 deleteTagView.Close();
             }
         }

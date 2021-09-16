@@ -182,6 +182,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
                 cnn.Execute("PRAGMA foreign_keys=ON");
+                cnn.Execute("DELETE FROM Rule where TagId = @TagID", tag);
                 cnn.Execute("DELETE FROM Tags where id = @TagID", tag);
             }
         }
