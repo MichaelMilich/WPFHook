@@ -64,6 +64,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
             }
             return max;
         }
+        public static void UpdateTagList()
+        {
+            Tagger.BuildTagList(SqliteDataAccess.LoadTags());
+        }
         private static void BuildTagList(List<TagModel> smalltagList)
         {
             var max = getMaxTagId(smalltagList);

@@ -118,6 +118,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
+                cnn.Execute("PRAGMA foreign_keys=ON");
                 cnn.Execute("insert into Tags (tagName,tagColor) values (@TagName,@TagColorString)", tagModel);
             }
         }
@@ -125,6 +126,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
+                cnn.Execute("PRAGMA foreign_keys=ON");
                 cnn.Execute("insert into Tags (tagName,tagColor) values (@TagName,@TagColorString)", tagModel);
                 var output = cnn.Query<int>("select Max(id) from Tags");
                 var list = output.ToList();
@@ -146,6 +148,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
+                cnn.Execute("PRAGMA foreign_keys=ON");
                 cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", rule);
             }
         }
@@ -155,6 +158,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             var lastRule = ruleList[ruleList.Count - 1];
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
+                cnn.Execute("PRAGMA foreign_keys=ON");
                 cnn.Execute("DELETE FROM Rule where rowid = @RowId", lastRule);
                 try
                 {
@@ -177,6 +181,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
+                cnn.Execute("PRAGMA foreign_keys=ON");
                 cnn.Execute("DELETE FROM Tags where id = @TagID", tag);
             }
         }

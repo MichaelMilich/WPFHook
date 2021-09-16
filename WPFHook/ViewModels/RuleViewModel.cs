@@ -42,6 +42,8 @@ namespace WPFHook.ViewModels
                 _rules.Add(r);
             }
         }
+
+
         private void UpdateRuleList(List<RuleModel> ruleModels)
         {
             _rules = new ObservableCollection<RuleModel>();

@@ -67,6 +67,7 @@ namespace WPFHook.ViewModels
                 TagModel selected = ((TagModel)deleteTagView.tagsComboBox.SelectedItem);
                 SqliteDataAccess.DeleteTag(selected);
                 _tags.Remove(selected);
+                Tagger.UpdateTagList();
                 deleteTagView.Close();
             }
         }
@@ -75,9 +76,10 @@ namespace WPFHook.ViewModels
             if (addTagView.NewTagNameTextBox.Text.Length > 0 && addTagView.NewTagColorPicker.SelectedColorText.Length > 0)
             {
                 SolidColorBrush brush = new SolidColorBrush((Color)addTagView.NewTagColorPicker.SelectedColor);
-                var tag = new TagModel() { TagColor = brush, TagName = addTagView.NewTagNameTextBox.Text, TagTime = new TimeSpan(0, 20, 0) };
+                var tag = new TagModel() { TagColor = brush, TagName = addTagView.NewTagNameTextBox.Text, TagTime = new TimeSpan(0, 0, 0) };
                 tag.TagID = SqliteDataAccess.saveTagAndGetId(tag);
                 Tags.Add(tag);
+                Tagger.UpdateTagList();
                 addTagView.Close();
 
             }
