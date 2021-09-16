@@ -34,12 +34,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
         public static void StartUp()
         {
             Tagger.BuildTagList(SqliteDataAccess.LoadTags());
-            ruleList = SqliteDataAccess.LoadRules();
-            ruleFunctions = new List<Func<ActivityLine, bool>>();
-            foreach (RuleModel r in ruleList)
-            {
-                ruleFunctions.Add(RuleModel.CompileRule<ActivityLine>(r));
-            }
+            BuildRules();
         }
         public static (string, Brush) getTag(ActivityLine line)
         {
@@ -85,6 +80,20 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 j++;
             }
             // builds the tagList with nulls were there are no TagID
+        }
+        public static List<RuleModel> BuildRules()
+        {
+            ruleList = SqliteDataAccess.LoadRules();
+            ruleFunctions = new List<Func<ActivityLine, bool>>();
+            foreach (RuleModel r in ruleList)
+            {
+                ruleFunctions.Add(RuleModel.CompileRule<ActivityLine>(r));
+            }
+            return ruleList;
+        }
+        public static List<RuleModel> getRulesList()
+        {
+            return ruleList;
         }
     }
 }

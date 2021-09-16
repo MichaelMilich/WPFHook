@@ -119,6 +119,8 @@ namespace WPFHook.ViewModels
         }
         private void DailyReport(object obj)
         {
+            MessageBox.Show("Under Construction - currently does not work!", "Info", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            /*
             DateTime date = (DateTime)view.dailyReportDayPicker.SelectedDate;
             if (date == null)
                 date = DateTime.Now;
@@ -130,6 +132,7 @@ namespace WPFHook.ViewModels
             TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
             reportWindowViewModel.View.TimeLineVisual.DataContext = timeLineViewModel;
             reportWindowViewModel.Show();
+            */
         }
         private DayReportModel getDailyReport(DateTime date)
         {

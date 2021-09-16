@@ -21,5 +21,17 @@ namespace WPFHook.Views
         {
             InitializeComponent();
         }
+
+
+        private void ruleOperators_DropDownClosed(object sender, EventArgs e)
+        {
+            if (ruleOperators.Text.Equals("Every thing else"))
+            {
+                constantTextBox.Text = "Every thing else";
+                constantTextBox.IsReadOnly = true;
+            }
+            else
+                constantTextBox.IsReadOnly = false;
+        }
     }
 }

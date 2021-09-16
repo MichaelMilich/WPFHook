@@ -13,7 +13,7 @@ namespace WPFHook.Models
         private string constant;
         private int tagId;
         private int ruleId;
-        public static string everythingElseRuleString = "EveryTHingElse";
+        public static string everythingElseRuleString = "EveryThingElse";
         public string Parameter
         {
             get { return parameter; }
@@ -34,7 +34,7 @@ namespace WPFHook.Models
             get { return tagId; }
             set { tagId = value; }
         }
-        public int RuleId
+        public int RowId
         {
             get { return ruleId; }
             set { ruleId = value; }

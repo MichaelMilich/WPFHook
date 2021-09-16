@@ -137,7 +137,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
-                var output = cnn.Query<RuleModel>("select * from Rule", new DynamicParameters());
+                var output = cnn.Query<RuleModel>("select rowid,Parameter,Operation,Constant,TagId from Rule", new DynamicParameters());
                 var list = output.ToList();
                 return list;
             }
@@ -151,13 +151,26 @@ namespace WPFHook.ViewModels.BackgroundLogic
         }
         public static void saveRuleLast(RuleModel rule)
         {
+            var ruleList = Tagger.getRulesList();
+            var lastRule = ruleList[ruleList.Count - 1];
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
             {
-                var output = cnn.Query<RuleModel>("SELECT * FROM Rule ORDER BY id DESC LIMIT 1");
-                var lastRule = (output.ToList())[0];
-                cnn.Execute("DELETE FROM Rule where id = @RuleId", lastRule);
-                cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", rule);
-                cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", lastRule);
+                cnn.Execute("DELETE FROM Rule where rowid = @RowId", lastRule);
+                try
+                {
+                    cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", rule);
+                    cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", lastRule);
+                }
+                catch(SQLiteException e)
+                {
+                    if (e.Message.Contains("UNIQUE"))
+                    {
+                        MessageBox.Show("This Rule existis already. \n Can't add same rule for different Tag!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", lastRule);
+                    }
+                    else
+                        MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
         public static void DeleteTag(TagModel tag)
