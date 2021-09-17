@@ -37,12 +37,17 @@ namespace WPFHook.ViewModels
         public RuleViewModel(List<RuleModel> ruleModels, TagViewModel tagViewModel)
         {
             this.tagViewModel = tagViewModel;
+            tagViewModel.TagDeleted += TagViewModel_TagDeleted;
             foreach(RuleModel r in ruleModels)
             {
                 _rules.Add(r);
             }
         }
 
+        private void TagViewModel_TagDeleted(object sender, EventArgs e)
+        {
+            UpdateRuleList(Tagger.BuildRules());
+        }
 
         private void UpdateRuleList(List<RuleModel> ruleModels)
         {

@@ -16,6 +16,7 @@ namespace WPFHook.ViewModels
 {
     public class TagViewModel : INotifyPropertyChanged
     {
+        public event EventHandler TagDeleted;
         private ObservableCollection<TagModel> _tags = new ObservableCollection<TagModel>();
         public ObservableCollection<TagModel> Tags
         {
@@ -52,7 +53,10 @@ namespace WPFHook.ViewModels
                 _tags.Add(model);
             }
         }
-
+        protected virtual void OnTagDeleted()
+        {
+            TagDeleted?.Invoke(this, EventArgs.Empty);
+        }
         #region ViewModel commands
         public ICommand AddTagCommand { get { return new RelayCommand(e => true, this.AddTag); } }
         public ICommand DeleteTagComand { get { return new RelayCommand(e => true, this.DeleteTag); } }
@@ -65,10 +69,11 @@ namespace WPFHook.ViewModels
             else if (MessageBox.Show("Are You sure you want to delete this tag?","Question",MessageBoxButton.YesNoCancel,MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 TagModel selected = ((TagModel)deleteTagView.tagsComboBox.SelectedItem);
-                SqliteDataAccess.DeleteTag(selected);
+                SqliteDataAccess.DeleteTag(selected); // deletes from both Tags and Rules the row with this tagId
                 _tags.Remove(selected);
                 Tagger.UpdateTagList();
                 // have to make the taggerupdate its rules in the application
+                OnTagDeleted();
                 // have to update the rules list in the rule view model.
                 deleteTagView.Close();
             }
