@@ -7,6 +7,7 @@ using System.Windows.Input;
 using WPFHook.Commands;
 using WPFHook.Models;
 using WPFHook.Views;
+using System.Linq;
 using WPFHook.ViewModels.BackgroundLogic;
 
 namespace WPFHook.ViewModels
@@ -29,6 +30,36 @@ namespace WPFHook.ViewModels
         }
         public AddRuleView addRuleView;
         public DeleteRuleWindow deleteRuleWindow;
+        private ObservableCollection<RuleTagModel> ruleTag = new ObservableCollection<RuleTagModel>();
+        public ObservableCollection<RuleTagModel> RuleTag
+        {
+            get
+            {
+                ruleTag.Clear();
+                var query = from rule in _rules
+                            join tag in tagViewModel.Tags on rule.TagId equals tag.TagID
+                            select new
+                            {
+                                RuleId = rule.RowId,
+                                Parameter = rule.Parameter,
+                                Operator = rule.Operation,
+                                Constant = rule.Constant,
+                                TagName = tag.TagName,
+                                TagColor = tag.TagColor
+                            };
+                foreach (var RuleTag in query)
+                    ruleTag.Add(new RuleTagModel()
+                    {
+                        RuleId = RuleTag.RuleId,
+                        Parameter = RuleTag.Parameter,
+                        Constant = RuleTag.Constant,
+                        Operator = RuleTag.Operator,
+                        TagColor = RuleTag.TagColor,
+                        TagName = RuleTag.TagName
+                    });
+                return ruleTag;
+            }
+        }
 
         public RuleViewModel()
         {
@@ -43,7 +74,6 @@ namespace WPFHook.ViewModels
                 _rules.Add(r);
             }
         }
-
         private void TagViewModel_TagDeleted(object sender, EventArgs e)
         {
             UpdateRuleList(Tagger.BuildRules());
@@ -58,6 +88,7 @@ namespace WPFHook.ViewModels
             }
         }
         public ICommand AddRuleCommand { get { return new RelayCommand(e => true, this.AddRule); } }
+        public ICommand OnDeleteRule { get { return new RelayCommand(e => true, this.DeleteRule); } }
         public void AddRule(object obj)
         {
             if (addRuleView.tagsComboBox.SelectedItem.Equals(tagViewModel.Tags[0]))
@@ -70,15 +101,6 @@ namespace WPFHook.ViewModels
                 string ruleOpertor = "";
                 string ruleConstant = addRuleView.constantTextBox.Text;
                 TagModel selectedTag = (TagModel)addRuleView.tagsComboBox.SelectedItem;
-                /* string s = "Parmater Value = " + addRuleView.ruleParamters.Text + "\n"
-                     + "Operator Value = " + addRuleView.ruleOperators.Text + "\n"
-                     + "Constant value = " + addRuleView.constantTextBox.Text;
-                 MessageBox.Show(s);
-                */
-
-                //first - make the strings according to the database requirements. maybe i should have a static function for that
-                //Second - make checks like - the everything else rule can be only one, if someone makes it, we have to make sure there is still only one.
-                //Further checks - make sure that there is no two rules with the same operator and the same constant for different tags.
                 switch (addRuleView.ruleParamters.Text)
                 {
                     case "":
@@ -98,12 +120,31 @@ namespace WPFHook.ViewModels
                 }
                 else
                     ruleOpertor = addRuleView.ruleOperators.Text;
-                RuleModel newRule = new RuleModel(_rules[_rules.Count-1].RowId,ruleParameter, ruleOpertor, ruleConstant, selectedTag.TagID);
-                SqliteDataAccess.saveRuleLast(newRule);
+                RuleModel newRule = new RuleModel(0,ruleParameter, ruleOpertor, ruleConstant, selectedTag.TagID);
+                SqliteDataAccess.saveRule(newRule);
                 UpdateRuleList(Tagger.BuildRules());
                 addRuleView.Close();
             }
         }
-
+        public void DeleteRule(object obj)
+        {
+            if(deleteRuleWindow.RuleTagData.SelectedItem == null)
+            {
+                MessageBox.Show("Can't delete nothing :)", "Error",MessageBoxButton.OK,MessageBoxImage.Error);
+            }
+            else
+            {
+                var selected =(RuleTagModel) deleteRuleWindow.RuleTagData.SelectedItem;
+                var query = from rules in _rules where rules.RowId == selected.RuleId select rules;
+                RuleModel selectedRule=null;
+                foreach (var r in query)
+                    selectedRule = r;
+                SqliteDataAccess.DeleteRule(selectedRule);
+                _rules.Remove(selectedRule);
+                ruleTag.Remove(selected);
+                UpdateRuleList(Tagger.BuildRules());
+                deleteRuleWindow.RuleTagData.Items.Refresh();
+            }
+        }
     }
 }

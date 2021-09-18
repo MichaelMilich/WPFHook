@@ -186,6 +186,14 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 cnn.Execute("DELETE FROM Tags where id = @TagID", tag);
             }
         }
+        public static void DeleteRule(RuleModel rule)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
+            {
+                cnn.Execute("PRAGMA foreign_keys=ON");
+                cnn.Execute("DELETE FROM Rule where rowid = @RowId", rule);
 
+            }
+        }
     }
 }

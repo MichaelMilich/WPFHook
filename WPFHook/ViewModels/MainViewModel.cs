@@ -162,47 +162,7 @@ namespace WPFHook.ViewModels
         }
         private void OpenTestWindow(object obj)
         {
-            /*Rule[] rules = new Rule[4];
-            rules[0] = new Rule("FGWindowName", "Equals", "");
-            rules[1] = new Rule("FGWindowName", "Contains", "ragnarok");
-            rules[2] = new Rule("FGWindowName", "Contains", "facebook");
-            rules[3] = new Rule("FGWindowName", "Contains", "youtube");
-
-            DateTime date = (DateTime)view.dailyReportDayPicker.SelectedDate;
-            if (date == null)
-                date = DateTime.Now;
-            string parameter = "Date";
-            string value = date.ToString("dd/MM/yyyy");
-            List<ActivityLine> dailyList = SqliteDataAccess.LoadActivities(parameter, value);
-
-            var ruleFunctions = new List<Func<ActivityLine, bool>>();
-            var SystemRule =  Rule.CompileRule<ActivityLine>(rules[0]);
-            var DistractionRule1= Rule.CompileRule<ActivityLine>(rules[1]);
-            var DistractionRule2 = Rule.CompileRule<ActivityLine>(rules[2]);
-            var DistractionRule3 = Rule.CompileRule<ActivityLine>(rules[3]);
-
-            string[,] test = new string[2, dailyList.Count];
-
-            for(int i=0;i< dailyList.Count;i++)
-            {
-                test[0, i] = dailyList[i].FGWindowName;
-                if (SystemRule(dailyList[i]))
-                {
-                    test[1, i] = "system";
-                }
-                else
-                {
-                    if(DistractionRule1(dailyList[i]) || DistractionRule2(dailyList[i]) || DistractionRule3(dailyList[i]))
-                        test[1, i] = "distraction";
-                    else
-                        test[1, i] = "work";
-                }
-            }
-
-            TestWindow window = new TestWindow(test);
-            window.Show();
-            */
-
+            // used to test stuff if needed
         }
         public void AddTagWindow(object obj)
         {
@@ -224,7 +184,9 @@ namespace WPFHook.ViewModels
         }
         public void ShowDeleteRule(object obj)
         {
-
+            ruleViewModel.deleteRuleWindow = new DeleteRuleWindow();
+            ruleViewModel.deleteRuleWindow.DataContext = ruleViewModel;
+            ruleViewModel.deleteRuleWindow.Show();
         }
         #endregion
     }

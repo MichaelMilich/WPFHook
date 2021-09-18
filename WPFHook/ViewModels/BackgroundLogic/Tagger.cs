@@ -70,18 +70,25 @@ namespace WPFHook.ViewModels.BackgroundLogic
         }
         private static void BuildTagList(List<TagModel> smalltagList)
         {
-            var max = getMaxTagId(smalltagList);
-            int j = 0;
-            tagList = new List<TagModel>();
-            for (int i = 0; i <= max; i++)
+            if (smalltagList.Count == 0)
             {
-                while (i < smalltagList[j].TagID)
+                tagList = new List<TagModel>();
+            }
+            else
+            {
+                var max = getMaxTagId(smalltagList);
+                int j = 0;
+                tagList = new List<TagModel>();
+                for (int i = 0; i <= max; i++)
                 {
-                    tagList.Add(null);
-                    i++;
+                    while (i < smalltagList[j].TagID)
+                    {
+                        tagList.Add(null);
+                        i++;
+                    }
+                    tagList.Add(smalltagList[j]);
+                    j++;
                 }
-                tagList.Add(smalltagList[j]);
-                j++;
             }
             // builds the tagList with nulls were there are no TagID
         }

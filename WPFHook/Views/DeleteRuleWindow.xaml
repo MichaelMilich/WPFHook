@@ -5,8 +5,37 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFHook.Views"
         mc:Ignorable="d"
-        Title="DeleteRuleWindow" Height="450" Width="800">
+        xmlns:viewmodels="clr-namespace:WPFHook.ViewModels" 
+        Title="DeleteRuleWindow" Height="450" Width="400" d:DataContext="{d:DesignInstance Type=viewmodels:RuleViewModel}">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Margin="10">Please select the rule you want to delete</Label>
+        <DataGrid x:Name="RuleTagData" Margin="10" ItemsSource="{Binding RuleTag}"
+                  AutoGenerateColumns="False" Width="Auto" IsReadOnly="True"
+                  Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Rule #" Binding="{Binding RuleId}" ></DataGridTextColumn>
+                <DataGridTextColumn Header="Parameter" Binding="{Binding Parameter}" ></DataGridTextColumn>
+                <DataGridTextColumn Header="Operation" Binding="{Binding Operator}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Constant" Binding="{Binding Constant}"  IsReadOnly="False"></DataGridTextColumn>
+                <DataGridTemplateColumn Header="Tag Color" Width="30">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Rectangle Fill="{Binding TagColor}"></Rectangle>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Tag Name" Binding="{Binding TagName}" Width="150"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Grid.Column="1" Grid.Row="2" Margin="30,10,10,5" Command="{Binding OnDeleteRule}">Delete Rule</Button>
     </Grid>
 </Window>

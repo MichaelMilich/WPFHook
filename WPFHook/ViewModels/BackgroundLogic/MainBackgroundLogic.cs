@@ -205,6 +205,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
 
         public static void CheckFirstTime()
         {
+            /*
             var tagList = SqliteDataAccess.LoadTags();
             if (tagList.Count==0)
             {
@@ -229,7 +230,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 rule = new RuleModel(RuleModel.everythingElseRuleString, RuleModel.everythingElseRuleString, RuleModel.everythingElseRuleString, 3);
                 SqliteDataAccess.saveRule(rule);
             }
-
+            */
         }
         #endregion
     }
