@@ -6,14 +6,13 @@
         xmlns:local="clr-namespace:WPFHook.Views"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="WPFHook"  MinHeight="150" MinWidth="200" Height="250" Width="300"
+        Title="WPFHook"  MinHeight="150" MinWidth="200" Height="150" Width="300"
         Background="AliceBlue">
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="LightGray">
             <MenuItem Header="_File" >
                 <MenuItem Header="_Show Activity List" Command="{Binding ShowActivityListCommand}"/>
                 <MenuItem Header="_Run on Startup" Command="{Binding RunOnStartupCommand}"/>
-                <MenuItem Header="_Open Test Window" Command="{Binding OpenTestWindowCommand}"/>
                 <Separator />
                 <MenuItem x:Name="ExitHeader" Header="_Exit" />
             </MenuItem>

@@ -37,6 +37,7 @@ namespace WPFHook.ViewModels
             // ------ viewmodel code---------
             view = mainWindow;
             tagViewModel = new TagViewModel(SqliteDataAccess.LoadTags());
+            tagViewModel.Title = "Current App: ";
             view.TagView.DataContext = tagViewModel;
             ruleViewModel = new RuleViewModel(SqliteDataAccess.LoadRules(),tagViewModel);
             // ------ viewmodel code---------
@@ -98,7 +99,6 @@ namespace WPFHook.ViewModels
         public ICommand ShowActivityListCommand { get { return new RelayCommand(e => true, this.ShowActivityList); } }
         public ICommand RunOnStartupCommand { get { return new RelayCommand(e => true, this.RunOnStartup); } }
         public ICommand DailyReportCommand { get { return new RelayCommand(e => true, this.DailyReport); } }
-        public ICommand OpenTestWindowCommand { get { return new RelayCommand(e => true, this.OpenTestWindow); } }
         public ICommand ShowAddTagCommand { get { return new RelayCommand(e => true, this.AddTagWindow); } }
         public ICommand ShowDeleteTagCommand { get { return new RelayCommand(e => true, this.ShowDeleteTag); } }
         public ICommand ShowAddRuleCommand { get { return new RelayCommand(e => true, this.AddRuleWindow); } }
@@ -119,50 +119,36 @@ namespace WPFHook.ViewModels
         }
         private void DailyReport(object obj)
         {
-            MessageBox.Show("Under Construction - currently does not work!", "Info", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            /*
             DateTime date = (DateTime)view.dailyReportDayPicker.SelectedDate;
             if (date == null)
                 date = DateTime.Now;
-            DayReportViewModel reportWindowViewModel = new DayReportViewModel(getDailyReport(date));
-
             string parameter = "Date";
             string value = date.ToString("dd/MM/yyyy");
             List<ActivityLine> dailyList = SqliteDataAccess.LoadActivities(parameter, value);
             TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
+            DayReportViewModel reportWindowViewModel = new DayReportViewModel(getDailyReport(date), dailyList);
             reportWindowViewModel.View.TimeLineVisual.DataContext = timeLineViewModel;
             reportWindowViewModel.Show();
-            */
+            
         }
-        private DayReportModel getDailyReport(DateTime date)
+        private TagViewModel getDailyReport(DateTime date)
         {
             string parameter = "Date";
             string value = date.ToString("dd/MM/yyyy");
-            DayReportModel dayReportModel = new DayReportModel();
-            dayReportModel.Date = date;
+            TagViewModel newDailyReport = new TagViewModel(SqliteDataAccess.LoadTags());
             List<ActivityLine> dailyList = SqliteDataAccess.LoadActivities(parameter, value);
             foreach (ActivityLine line in dailyList)
             {
-                dayReportModel.TotalTime = dayReportModel.TotalTime.Add(line.inAppTime);
-                switch (line.Tag)
+                newDailyReport.Tags[0].TagTime = newDailyReport.Tags[0].TagTime.Add(line.inAppTime);
+                for (int i=1; i<newDailyReport.Tags.Count;i++)
                 {
-                    case "work":
-                        dayReportModel.WorkTime = dayReportModel.WorkTime.Add(line.inAppTime);
-                        break;
-                    case "distraction":
-                        dayReportModel.DistractionTime = dayReportModel.DistractionTime.Add(line.inAppTime);
-                        break;
-                    case "system":
-                        dayReportModel.SystemTime = dayReportModel.SystemTime.Add(line.inAppTime);
-                        break;
+                    if(line.Tag.Equals(newDailyReport.Tags[i].TagName))
+                        newDailyReport.Tags[i].TagTime = newDailyReport.Tags[i].TagTime.Add(line.inAppTime);
                 }
             }
-            dayReportModel.Data = dailyList;
-            return dayReportModel;
-        }
-        private void OpenTestWindow(object obj)
-        {
-            // used to test stuff if needed
+            newDailyReport.Title = "Daily Report for " + value;
+            newDailyReport.setEfficiencyTitle();
+            return newDailyReport;
         }
         public void AddTagWindow(object obj)
         {

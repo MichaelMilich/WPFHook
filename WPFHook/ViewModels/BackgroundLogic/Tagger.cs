@@ -49,8 +49,11 @@ namespace WPFHook.ViewModels.BackgroundLogic
         {
             foreach(TagModel tagModel in tagList)
             {
-                if (tagModel.TagName.Equals(tag))
-                    return tagModel.TagColor;
+                if (tagModel != null)
+                {
+                    if (tagModel.TagName.Equals(tag))
+                        return tagModel.TagColor;
+                }
             }
             return Brushes.Black;
         }

@@ -48,7 +48,7 @@
                     <Binding Path="Tags.Count"/>
                 </MultiBinding>
             </Grid.Height>
-            <TextBox Text="Current App:" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Column="0"  Background="LightGray" Style="{StaticResource FontConvertorDataContext}"/>
+            <TextBox Text="{Binding Path=Title}" TextWrapping="Wrap"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Grid.Column="0"  Background="LightGray" Style="{StaticResource FontConvertorDataContext}"/>
             <TextBox Text="{Binding Path=ActivityTitle}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"  Grid.Column="1" Style="{StaticResource FontConvertorDataContext}"/>
         </Grid>
 

@@ -3,18 +3,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPFHook"
+        xmlns:local="clr-namespace:WPFHook.Views"
         xmlns:uc="clr-namespace:WPFHook.Views"
         mc:Ignorable="d"
-        Title="ReportWindow" Width="300" SizeToContent="Height">
+        Title="ReportWindow" Width="400" SizeToContent="Height" MaxHeight="600">
     <Grid>
         <TabControl>
             <TabItem Header="Summery">
                 <Grid>
-                    <StackPanel>
-                        <uc:DayReport x:Name="Report" />
-                        <uc:TimeLineView x:Name="TimeLineVisual" />
-                    </StackPanel>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" MinHeight="100"/>
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <local:TagView x:Name="Report" Grid.Row="0" >
+                        
+                    </local:TagView>
+                    <uc:TimeLineView x:Name="TimeLineVisual" Grid.Row="1" />
                 </Grid>
             </TabItem>
             <TabItem Header="Details">

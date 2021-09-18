@@ -39,6 +39,7 @@ namespace WPFHook.ViewModels
                 OnPropertyChanged("ActivityTitle");
             }
         }
+        public string Title { get; set; }
         public AddTagView addTagView;
         public DeleteTagView deleteTagView;
         public TagViewModel()
@@ -51,6 +52,14 @@ namespace WPFHook.ViewModels
             foreach(TagModel model in tags)
             {
                 _tags.Add(model);
+            }
+        }
+        public void setEfficiencyTitle()
+        {
+            if(_tags.Count >1)
+            {
+                double eff = _tags[1].TagTime.Divide(_tags[0].TagTime) *100;
+                ActivityTitle = "today effceincy =" + String.Format("{0:0.00}", eff) + "%";
             }
         }
         protected virtual void OnTagDeleted()
