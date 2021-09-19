@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPFHook.Views" xmlns:xctk1="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:WPFHook.Views" 
+        xmlns:xctk1="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="AddTagView" Height="150" Width="200">
     <Grid Margin="10">

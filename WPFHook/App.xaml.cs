@@ -16,6 +16,21 @@ using WPFHook.Views;
 namespace WPFHook
 {
     /// <summary>
+    /// This application follows after the actions of the user during the day and puts a timestanp on the actions.
+    /// Each activity of the user (like watching youtube) is saved as an activityline (starting date, ending date, duration, window name, process name and Tag).
+    /// The Application then lets the user know how much time he was on the computer duing this or that via the DailyReport.
+    /// 
+    /// The application catches the user input and work via key, mouse and window hooks. each time there is a movement - the hooks let the application know and run a background worker for the application logic.
+    /// 
+    /// The Application has a cool option - the Tags and Rules.
+    /// It lets the userr set his own tags to follow how much time he was on a spesific topic.
+    /// For example, if The user wants to know how much time he was on facebook spesifically, he sets up a tag - lets cal it Facebook.
+    /// He then sets up a new rule assosiated with this tag - each time the window name is facebook count the activity as Facebook Tag, also increment the facebook timer.
+    /// 
+    /// Hopefully in the Future i will make a new update for this application that lets the user set himself reminders or helps that say he was distracted for so and so time.
+    /// 
+    /// This is the main class of the Application.
+    /// This class sets up all the main classes of the application.
     /// Interaction logic for App.xaml
     /// sets up the exceptions and icon of the application.
     /// NOTE - NO STARTUP URI IN THE XAML FILE, THE STARTUP OFF MAIN WINDOW IS IN on_Stratup.
@@ -86,6 +101,7 @@ namespace WPFHook
         private bool isExit;
         /// <summary>
         /// What to do with the application on startup
+        /// Start the SQL connection and start the Tagger logic.
         /// open a new MainWindow (NOTE, THE XMAL FILE DOESNT HAVE STARTUP URI).
         /// set the notification icon.
         /// </summary>
@@ -98,6 +114,7 @@ namespace WPFHook
             base.OnStartup(e);
             SetUpView();
             SetUpViewModel();
+            ShowMainWindow();
         }
         private void SetUpView()
         {

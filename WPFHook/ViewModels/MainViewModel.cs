@@ -18,9 +18,9 @@ using System.Windows.Media;
 namespace WPFHook.ViewModels
 {
     /// <summary>
-    /// This class is in charge of the logics of the application.
-    /// this class is the connection between the event listeners, database and so on to the GUI.
-    /// IT listens to events from the event listeners, processes the data and sends the relevant information to the GUI.
+    /// This class is the main View Model. 
+    /// It connectes between the sub- View models and the relevant Views.
+    /// It also sends all the logic to a sub-class i called main backgroundLogic. The main background logic is simply there for better reading the code.
     /// </summary>
     public class MainViewModel
     {
@@ -30,7 +30,7 @@ namespace WPFHook.ViewModels
         public HookManager manager;
 
         /// <summary>
-        /// Sets up all the components of the application background such as : hooks manager, database connection, activityline object saving the last activity.
+        /// Sets up all the components of the application background such as : hooks manager,  activityline object saving the last activity.
         /// </summary>
         public MainViewModel(MainWindow mainWindow)
         {
@@ -52,6 +52,15 @@ namespace WPFHook.ViewModels
             timer.Tick += backgroundLogic.Timer_Tick;
             // ------ background logic code---------
         }
+        /// <summary>
+        /// Sets up the Hooks of the application.
+        /// The hooks are manadeg by the hook manger that sends all the information to the background logic.
+        /// The hooks are :
+        /// Key Hook
+        /// Mouse Hook
+        /// Window Hook
+        /// 
+        /// </summary>
         public void SetUpHook()
         {
             manager = new HookManager();
@@ -60,9 +69,8 @@ namespace WPFHook.ViewModels
 
         /// <summary>
         /// Event Handler - listens to events in the hook manager.
-        /// It processes the data and sends it to GUI. 
-        /// It sends to window title text box the foreground process window title.
-        /// To the history log it sends a log of the previous app and saves it in the database.
+        /// Sends the new messege to the backgound worker of the mainlogic.
+        /// the background worker will prosess all the data and will send updates to the GUI when it is done.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -96,6 +104,9 @@ namespace WPFHook.ViewModels
 
 
         #region ViewModelsCommands
+        /// This part contains all the functions that are used by the Main View. 
+        /// Some of the functions are self explanitory, so i will not comment on them.
+        
         public ICommand ShowActivityListCommand { get { return new RelayCommand(e => true, this.ShowActivityList); } }
         public ICommand RunOnStartupCommand { get { return new RelayCommand(e => true, this.RunOnStartup); } }
         public ICommand DailyReportCommand { get { return new RelayCommand(e => true, this.DailyReport); } }
@@ -117,6 +128,15 @@ namespace WPFHook.ViewModels
             else if (result == MessageBoxResult.No)
                 App.SetStartup(false);
         }
+        /// <summary>
+        /// Show the Daily report.
+        /// First set up a report for a certian date from the date picker.
+        /// the report is shown in the report window.
+        /// The report window contains a DayReport User control and a TimeLine user control.
+        /// The DayReport uses a TagViewModel as the DataContext.
+        /// TimeLine uses a TimeLineViewModel as dataContext.
+        /// </summary>
+        /// <param name="obj"></param>
         private void DailyReport(object obj)
         {
             DateTime date = (DateTime)view.dailyReportDayPicker.SelectedDate;
@@ -131,6 +151,14 @@ namespace WPFHook.ViewModels
             reportWindowViewModel.Show();
             
         }
+        /// <summary>
+        /// Sets a Report TagViewModel with a tag list with constant timespans.
+        /// The TagModel List is used to present the data as a report and will not be changed.
+        /// The TagViewModel will tell the user how much time he was on the computer on a certian time and how much he was in each tag as described by the user.
+        /// The efficeiny is only the firsttag devided by the computer time. not smart coding but i was tired.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         private TagViewModel getDailyReport(DateTime date)
         {
             string parameter = "Date";

@@ -13,14 +13,19 @@ namespace WPFHook.ViewModels.BackgroundLogic
 {
     /// <summary>
     /// The connection to the data base.
-    /// should make into bigger class that enables me to get spesific activities and so on.
+    /// A static class that provides all the nessery functions to read write and delete the database.
+    /// The database i am using is 2 differrent datas.
+    /// 1 - the activity line database that holds all the information of what happened in during the time the application was running.
+    /// 2 - the Tag and Rule tables (inside Tags.db) that hold all the logic the user wants to do. 
     /// uses dapper and SQLite.core.
-    /// ow can only write to the database and read all of the database.
     /// </summary>
     public static class SqliteDataAccess
     {
         private static string connectionStringActivity;
         private static string connectionStringTags;
+        /// <summary>
+        /// Sets up the connection strings for the databases the application uses
+        /// </summary>
         public static void StartUp()
         {
             connectionStringActivity = GetConnectionStringByName("DailyLogDefault");
@@ -86,7 +91,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 return output.ToList().ElementAt(0);
             }
         }
-
+        /// <summary>
+        /// writes into the ActivityDB.db the activity line
+        /// </summary>
+        /// <param name="activity"></param>
         public static void saveActivityLine(ActivityLine activity)
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringActivity))
@@ -94,6 +102,11 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 cnn.Execute("insert into Activity (Date,Time,FGWindowName,FGProcessName,inAppTime,Tag) values (@Date,@Time,@FGWindowName,@FGProcessName,@inAppTime,@Tag)", activity);
             }
         }
+        /// <summary>
+        /// Loads from the Tags.db all the Tags defined by the user.
+        /// The Tag Model is constructed by int - tagId, string -name , string - color.tostring();
+        /// </summary>
+        /// <returns></returns>
         public static List<TagModel> LoadTags()
         {
             // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
@@ -114,6 +127,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 return taglist;
             }
         }
+        /// <summary>
+        /// Saves the Tag model into the Tags.db
+        /// </summary>
+        /// <param name="tagModel"></param>
         public static void saveTag(TagModel tagModel)
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
@@ -122,6 +139,12 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 cnn.Execute("insert into Tags (tagName,tagColor) values (@TagName,@TagColorString)", tagModel);
             }
         }
+        /// <summary>
+        /// Saves the Tag Model into the Tags.db and returns the Tag id number in the Tags.db table.
+        /// This function is nessery because some tags may be deleted and The Application doesent know what tag id is assigned in thet database.
+        /// </summary>
+        /// <param name="tagModel"></param>
+        /// <returns></returns>
         public static int saveTagAndGetId(TagModel tagModel)
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
@@ -133,7 +156,12 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 return list[0];
             }
         }
-
+        /// <summary>
+        /// returns a list of rules from the Tags.db , Rule table.
+        /// These rules , represented by Operation, Parameter, Constant and TagId are the functions defined by thet user.
+        /// RuleModel stores these strings and later makes them into code using reflection and lambda expressions.
+        /// </summary>
+        /// <returns>list of rules</returns>
         public static List<RuleModel> LoadRules()
         {
             // apperently dapper enables me to make ActivityLine list if ActivityLine has a constructor that gets all the parameters types of the database.
@@ -144,6 +172,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 return list;
             }
         }
+        /// <summary>
+        /// Writes a rule into the rule table in Tags.db
+        /// </summary>
+        /// <param name="rule"></param>
         public static void saveRule(RuleModel rule)
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
@@ -152,6 +184,12 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 cnn.Execute("insert into Rule (Parameter,Operation,Constant,TagId) values (@Parameter,@Operation,@Constant,@TagId)", rule);
             }
         }
+        /// <summary>
+        /// Legac code, isn't relevant.
+        /// This function saves the rule into the database while keeping the last rule (the everything else rule) last.
+        /// I desided that the user should be aware that the everything else should always be last. instead of making my life harder and checking if there even is 
+        /// </summary>
+        /// <param name="rule"></param>
         public static void saveRuleLast(RuleModel rule)
         {
             var ruleList = Tagger.getRulesList();
@@ -177,6 +215,13 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 }
             }
         }
+        /// <summary>
+        /// Delete the Tag from the the Tags table.
+        /// Also makes sure that the corresponding rules in the Rule table are deleted.
+        /// I added the Delete from rule code as a just-in-case the rule table doesn't delete on cascade.
+        /// you know, if its stupid but it works it aint stupid.
+        /// </summary>
+        /// <param name="tag"></param>
         public static void DeleteTag(TagModel tag)
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))
@@ -186,6 +231,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 cnn.Execute("DELETE FROM Tags where id = @TagID", tag);
             }
         }
+        /// <summary>
+        /// Simply deletes Rule from the Rule table.
+        /// </summary>
+        /// <param name="rule"></param>
         public static void DeleteRule(RuleModel rule)
         {
             using (IDbConnection cnn = new SQLiteConnection(connectionStringTags))

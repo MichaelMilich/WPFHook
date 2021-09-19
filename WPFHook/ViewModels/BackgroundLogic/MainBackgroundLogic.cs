@@ -13,10 +13,17 @@ using System.Windows.Media;
 
 namespace WPFHook.ViewModels.BackgroundLogic
 {
+    /// <summary>
+    /// The Logic Part of the MainViewModel.
+    /// An object of this class goes hand to hand with the mainVeiwModel and has a pointer to its instance.
+    /// This class handles writing and saving to the Activity.db
+    /// There are some bugs that i should deal with in this class in next revisions.
+    /// For instance, i would like to scrap the idle function or at least change it.
+    /// </summary>
     public class MainBackgroundLogic
     {
-        public ActivityLine previousActivity;
-        public int counter;
+        public ActivityLine previousActivity; // the current activity that is currently runing on the foreground, waiting to be written into the database.
+        public int counter; // counter that will check if the yser became idle.
         public int dayCounter; // every hour it will check the date, if there is a new date than update the timer and dates.
         public DateTime currentDate;
         public static bool isIdle = false;
@@ -24,6 +31,11 @@ namespace WPFHook.ViewModels.BackgroundLogic
         public MainViewModel mainViewModel;
         public BackgroundWorker managerWindowChangedWorker;
 
+        /// <summary>
+        /// Set Up the MainBackground Logic.
+        /// The hard part to understand from my point of view is the BackgroundWorker.
+        /// </summary>
+        /// <param name="mainViewModel"></param>
         public MainBackgroundLogic(MainViewModel mainViewModel)
         {
             this.mainViewModel = mainViewModel;
@@ -64,7 +76,12 @@ namespace WPFHook.ViewModels.BackgroundLogic
                     break;
             }
         }
-
+        /// <summary>
+        /// This event is called each time the background finnished a call.
+        /// At the end of processing the ActivityLine it has to set the counter to 0, set the idle bool to false and update the tag as well as the title of the application.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ManagerWindowChangedWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             counter = 0;
@@ -73,7 +90,14 @@ namespace WPFHook.ViewModels.BackgroundLogic
             mainViewModel.TagViewModel.ActivityTitle = previousActivity.ToTitle();
 
         }
-
+        /// <summary>
+        /// The hard wor that is done in a seperate thread by the background worker.
+        /// The hard lifting as I see it is the getForegroundProcess(); that is called from the [DllImport("user32.dll")].
+        /// After that the application saves the activity into the database.
+        /// This has to be in the background as to not hold up the Hooks.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ManagerWindowChangedWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             var process = getForegroundProcess();
@@ -88,7 +112,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
                     managerWindowChangedWorker.ReportProgress(0, ex); // the number will be code for what situation it is 0 =exception
                 }
             }
-            else if (isIdle)
+            else if (isIdle) // As i written before, i  might want to change this code (see comment in the Timer_Tick - idle section 19/09/21 21:09)
             {
                 ActivityLine activity = SqliteDataAccess.LoadSecondToLastActivity();
                 UpdatePreviousActivity(activity);
@@ -100,7 +124,7 @@ namespace WPFHook.ViewModels.BackgroundLogic
             // check for idle first, then update the timers.
             var tagViewModel = mainViewModel.TagViewModel;
             var timer = mainViewModel.timer;
-            counter += (int)timer.Interval.TotalSeconds;
+            counter += (int)timer.Interval.TotalSeconds; // adds time in integer to check if the computer is idle.
             dayCounter+= (int)timer.Interval.TotalSeconds;
             if(dayCounter> 3600) // if it has been more than an hour (3600 seconds)
             {
@@ -115,8 +139,10 @@ namespace WPFHook.ViewModels.BackgroundLogic
                 }
                 dayCounter = 0;
             }
-
-            if (counter > idleTimeInSeconds && !isIdle)
+            // this part checks if the computer became idle. 
+            // Currently it will save the activity before the computer became idle and will start a new activity loging how much time the user was idle.
+            // I think to change it so that it will not log anything untill the user gets out of Idle. Just a thought. Michael Millich 19/09/2021 21:09.
+            if (counter > idleTimeInSeconds && !isIdle) 
             {
                 isIdle = true;
                 UpdatePreviousActivity("", "Idle");
@@ -202,7 +228,9 @@ namespace WPFHook.ViewModels.BackgroundLogic
             previousActivity.SetDateAndTime(DateTime.Now);
             mainViewModel.currentTag = previousActivity.Tag;
         }
-
+        /// <summary>
+        /// Obselete Code, Might completle delete it in another revision.
+        /// </summary>
         public static void CheckFirstTime()
         {
             /*
