@@ -14,6 +14,13 @@ using WPFHook.Views;
 
 namespace WPFHook.ViewModels
 {
+    /// <summary>
+    /// The logic view model that enables all the views to show the tags of the User.
+    /// The TagViewModel has an event that it publishes to the ruleviewmodel.
+    /// Other than that it also containts the computer time tag that is not part of the database.
+    /// It is the datacontext for all tags related views such as:
+    /// addTag , DeleteTagView, TagView and ReportWindow
+    /// </summary>
     public class TagViewModel : INotifyPropertyChanged
     {
         public event EventHandler TagDeleted;

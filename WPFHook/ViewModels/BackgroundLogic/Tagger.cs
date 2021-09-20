@@ -19,7 +19,13 @@ namespace WPFHook.ViewModels.BackgroundLogic
         /// but then we run into a new problem. The tags Id autoincrement. mmeaning the next tag id will be higher, no matter if the previous tags are dleted.
         /// It can be that the TagTAble will start from 6,7,8 because we deleted the rest of the tags. or something like 1,3,5,8 becasue we deleted the middle tags.
         /// this creates a problem with the TagList size. 
-        /// Somehow i need to place each tag in its position according to its TagId.
+        /// Somehow i need to place each tag in its position according to its TagId. UPDATE: it was solved bia the BuildTagListFunction.
+        /// Basicly i keep a big array with all the relevant tags in there relevant location. all other locations are null within the array.
+        /// I keep track of all the tags id in the RuleModel and the TagModel so i never call an null location.
+        /// 
+        /// The GetTag function runs on all the functions in the rulefunctions one by one.
+        /// This is important to remember because the user can make a rule Function that always return true at the middle of the ruleFunction List.
+        /// This means the tagger never gets to continue to any other rule function if they exist.
         /// 
         /// </summary>
 

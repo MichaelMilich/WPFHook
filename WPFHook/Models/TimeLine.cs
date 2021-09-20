@@ -11,6 +11,13 @@ using WPFHook.Commands;
 
 namespace WPFHook.Models
 {
+    /// <summary>
+    /// This is a model for a single timeline. 
+    /// It is part of a code i found on the internet and i implemnted it in my project.
+    /// The original code wanted to show serveral timelines in one window, i want to show only one.
+    /// However, the code was good so i used it.
+    /// This holds all the tImeLineEvents and has the logic for the TimeLineView usercontrol
+    /// </summary>
     class TimeLine : INotifyPropertyChanged
     {
         private TimeSpan _duration;

@@ -7,6 +7,12 @@ using System.Windows.Media;
 
 namespace WPFHook.Models
 {
+    /// <summary>
+    /// Model of a timeline Event.
+    /// This is a new object and not an ActtivityLine because i wanted to save instances of activityLines on the GUI.
+    /// Basicly an TimeLineEvent hold all the data of subsequent ActivityLines from the same Tag.
+    /// On a normal day it makes the amount of blocks to show in report are lowered by 50%.
+    /// </summary>
     class TimeLineEvent : INotifyPropertyChanged
     {
         private TimeSpan firstStart;

@@ -6,6 +6,11 @@ using System.Text;
 
 namespace WPFHook.Models
 {
+    /// <summary>
+    /// The RuleModel has 2 important parts.
+    /// The static functions are the functions that take a rulemodel and build in-code function from the strings.
+    /// The second role this class has is object representation of the Rules the user set in.
+    /// </summary>
     public class RuleModel
     {
         private string parameter;
@@ -58,12 +63,19 @@ namespace WPFHook.Models
             this.constant = constant;
             this.tagId = tagId;
         }
-
+        /// <summary>
+        /// This function complies a RuleModel r and returns a complied function 
+        /// This uses the BuildExpr function.
+        /// The functions use LINQ Lambda Expressions to read the strings in the RuleModels and build and expression function.
+        /// </summary>
+        /// <typeparam name="T">RuleModel type but not really restricted</typeparam>
+        /// <param name="r">the rulemodel to complie</param>
+        /// <returns>complied bool function that checks wat the user wanted</returns>
         public static Func<T, bool> CompileRule<T>(RuleModel r)
         {
             if (r.Operation.Equals(RuleModel.everythingElseRuleString)) // if the function is everything else is the last tag than ,make a function that makes everything last tag
             {
-               var exp= Expression.Lambda<Func<T, bool>>(Expression.Constant(true), Expression.Parameter(typeof(T), "_"));
+               var exp= Expression.Lambda<Func<T, bool>>(Expression.Constant(true), Expression.Parameter(typeof(T), "_")); // basicly this function always returns true.
                 return exp.Compile();
             }
             else
@@ -91,7 +103,6 @@ namespace WPFHook.Models
             }
             else
             {
-                // var method = tProp.GetMethod(r.Operation);
                 MethodInfo method = null;
                 var methods = tProp.GetMethods();
                 foreach(var m in methods)

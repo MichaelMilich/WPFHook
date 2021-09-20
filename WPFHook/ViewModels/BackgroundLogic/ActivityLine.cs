@@ -8,6 +8,16 @@ using System.Windows.Media;
 
 namespace WPFHook.ViewModels.BackgroundLogic
 {
+    /// <summary>
+    /// The Basic Building Block of the application.
+    /// All the application functions have to use the activityline.
+    /// This currently has the data of the Window Name, the Process name, the starttime and date of start time.
+    /// This class heavly relies on the Tagger Class to ay what tag it belongs to.
+    /// 
+    /// I can always add more objects to save in the activityline.
+    /// I will have to update the Activity.db database and the SQLiteconnection class.
+    /// But other than that, its easy.
+    /// </summary>
     public class ActivityLine
     {
         private DateTime dateAndTime;

@@ -11,6 +11,10 @@ using WPFHook.Views;
 
 namespace WPFHook.ViewModels
 {
+    /// <summary>
+    /// The ViewModel responsible for the timeLineView userControl.
+    /// It basicly could have used only one TimeLine instance, but i copied this code (with adjustments) from the internet so who cares? it works.
+    /// </summary>
     class TimeLineViewModel
     {
         private ObservableCollection<TimeLine> _timeLines = new ObservableCollection<TimeLine>();
