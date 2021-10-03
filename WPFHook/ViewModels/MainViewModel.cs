@@ -145,10 +145,17 @@ namespace WPFHook.ViewModels
             string parameter = "Date";
             string value = date.ToString("dd/MM/yyyy");
             List<ActivityLine> dailyList = SqliteDataAccess.LoadActivities(parameter, value);
-            TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
-            DayReportViewModel reportWindowViewModel = new DayReportViewModel(getDailyReport(date), dailyList);
-            reportWindowViewModel.View.TimeLineVisual.DataContext = timeLineViewModel;
-            reportWindowViewModel.Show();
+            if (dailyList.Count == 0)
+            {
+                MessageBox.Show("There are no activities in " + value,"No Activities",MessageBoxButton.OK,MessageBoxImage.Information);
+            }
+            else
+            {
+                TimeLineViewModel timeLineViewModel = new TimeLineViewModel(dailyList);
+                DayReportViewModel reportWindowViewModel = new DayReportViewModel(getDailyReport(date), dailyList);
+                reportWindowViewModel.View.TimeLineVisual.DataContext = timeLineViewModel;
+                reportWindowViewModel.Show();
+            }
             
         }
         /// <summary>
